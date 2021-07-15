@@ -517,12 +517,14 @@ css/
 js/
 fonts/
 assets/
-ilf_admin/index.php  ## this is found by file inclusion to see the sourece code
 
 ## monstly from this are forbiden
 -------
 
 Web Enumeration 
+
+Whatweb tool Results
+--------------------
 
 Bootstrap, Country[RUSSIAN FEDERATION][RU], HTML5, HTTPServer[nginx/1.18.0],
 JQuery[3.3.1], 
@@ -531,7 +533,7 @@ Script, Title[InlaneFreight],
 X-Powered-By[PHP/7.3.22], nginx[1.18.0]
 
 --
-totel parmaeter found 
+totel Hidden Directories/files found 
 
 contact                 [Status: 200, Size: 7036, Words: 1569, Lines: 195]
 about                   [Status: 200, Size: 14635, Words: 3194, Lines: 331]
