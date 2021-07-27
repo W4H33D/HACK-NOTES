@@ -1,16 +1,15 @@
-THM Network Wreath 
---------------------
+# THM Network Wreath 
 
-Machine 1 
+## Machine 1 
 
-Ip = 10.200.104.200
---------------------
+**Ip = 10.200.104.200**
 
-Enumeration Part
-=================
 
-Open Ports
+### Enumeration Part
 
+
+#### Open Ports
+```
 PORT      STATE  SERVICE    VERSION
 22/tcp    open   ssh        OpenSSH 8.0 (protocol 2.0)
 | ssh-hostkey: 
@@ -34,96 +33,102 @@ PORT      STATE  SERVICE    VERSION
 9090/tcp  closed zeus-admin
 10000/tcp open   http       MiniServ 1.890 (Webmin httpd)
 |_http-title: Site doesn't have a title (text/html; Charset=iso-8859-1).
-
---------------------------------------------------------------------------------------------------------------------------------------------------------
-
+```
 from port 9090 traceroute information shows ip "10.50.105.1"
------------------------------------------------------------
 
-Question:
-=========
 
+### Question
+
+```
 1) totel Open Ports 
 A: 4
-## nmap scan shows 4 open port and on 1 closed port 
-
+```
+nmap scan shows 4 open port and on 1 closed port 
+```
 2) Operating system they use.
 A: centos 
-## In nmap service scan on http-Headers section they show operating system detail
-
+```
+In nmap service scan on http-Headers section they show operating system detail
+```
 3) by visiting the webserver by ip there they redirect us.
 A: https://thomaswreath.thm/
-
+```
+```
 5) what is thomas mobile phone number?
 A: +447821548812 
-
+```
+```
 6) what server version running here.
 A: MiniServ 1.890 (Webmin httpd)
-## nmap scan report on port 10000 they show you the server version running on.
-
+```
+Nmap scan report on port 10000 they show you the server version running on.
+```
 Q&: This web server is vulnerable to RCE.what is the exploit CVE?
 A: cve-2019-15107
-========================================================================================================================================================
+```
 
-Exploitation Phase
-
+### Exploitation Phase
+```
 Q2: what user was the server running as 
 A: root
-
+```
+```
 Q5: what is the root user password hash.
 A: $6$i9vT8tk3SoXXxK2P$HDIAwho9FOdd4QCecIJKwAwwh8Hwl.BdsbMOUAd3X/chSCvrmpfy.5lrLgnRVNq6/6g0PxK9VqSdy47/qKXad1
-
+```
+```
 Q6: there is a file that gave you consistant access.what is the full path of that file.
 A: /root/.ssh/id_rsa
-## this is the path of ssh privat key just see the content of file using cat and copy the content of the file and save in your local machine 
-========================================================================================================================================================
-Pivoting Part
--------------
+```
+This is the path of ssh privat key just see the content of file using cat and copy the content of the file and save in your local machine 
 
- High-level Overview
- --------------------
+### Pivoting Part
 
+
+ #### High-level Overview
+ 
+```
  Q1:  Which type of pivoting creates a channel through which information can be sent hidden inside another protocol?
  A: Tunnelling
-
+```
+```
  Q2: what meterpreter command use for port forwording.
  A: portfwd
-
-  Enumeration:
-  ------------
-
- ----------------------
+```
+  ### Enumeration:
+  
  bash one liner ping sweep command on linux 
 
- ----------------------------------------------------------------------------
- for i in {1..255}; do (ping -c 1 192.168.1.${i} | grep "bytes from" &); done
- ----------------------------------------------------------------------------
+ 
+ `for i in {1..255}; do (ping -c 1 192.168.1.${i} | grep "bytes from" &); done`
+ 
 
  Port scanning in bash can be done (ideally) entirely natively:
 
- --------------------------------------------------------------------------------------------------
- for i in {1..65535}; do (echo > /dev/tcp/192.168.1.1/$i) >/dev/null 2>&1 && echo $i is open; done
- -------------------------------------------------------------------------------------------------
+ 
+ `for i in {1..65535}; do (echo > /dev/tcp/192.168.1.1/$i) >/dev/null 2>&1 && echo $i is open; done`
+ 
 
-
-
+```
 Q1: What is the absolute path to the file containing DNS entries on Linux?
 A:  /etc/resolv.conf
-
+```
+```
 Q2: What is the absolute path to the hosts file on Windows?
 A: C:\Windows\System32\drivers\etc\hosts
-
+```
+```
 Q3: How could you see which IP addresses are active and allow ICMP echo requests on the 172.16.0.x/24 network using Bash?
 A:  for i in {1..255}; do (ping -c 1 172.16.0.${i} | grep "bytes from" &); done
+```
 
 
+### Proxychains & Foxyproxy:
 
-Proxychains & Foxyproxy:
-------------------------
-
+```
 Q1: What line would you put in your proxychains config file to redirect through a socks4 proxy on 127.0.0.1:4242?
 A: socks4 127.0.0.1 4242
-
+```
 Q2: What command would you use to telnet through a proxy to 172.16.0.100:23?
 A: proxychains telnet 172.16.0.100 23
 
