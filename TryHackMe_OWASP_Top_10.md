@@ -1,81 +1,96 @@
 # TryHackMe Room: OWASP Top 10
 
 
-Task 5 (command injection practicle)
-
+### Task 5 (command injection practicle)
+```
 Q1:  What strange text file is in the website root directory? 
 A: drpepper.txt
-
+```
+```
 Q2: How many non-root/non-service/non-daemon users are there?
 A: 0
-
+```
+```
 Q3: What user is this app running as?
 A: www-data
-
+```
+```
 Q4: What is the user's shell set as?
 A: /usr/sbin/nologin
-
+```
+```
 Q5: What version of Ubuntu is running?
-A:  18.04.4 
- ## this is found by seing the lsb-release file in /etc/ directry
-
+A:  18.04.4
+```
+This is found by seing the lsb-release file in /etc/ directry
+````
  Q6: Print out the MOTD.  What favorite beverage is shown?
  A:  DR PEPPER
-## This is found by first use command "locate motd" they show you list of file that have this name but in the Question hint we have "00-header" and one of the file have this name so just cat/view content of that file and you found that answer
+ ````
+This is found by first use command "locate motd" they show you list of file that have this name but in the Question hint we have "00-header" and one of the file have this name so just cat/view content of that file and you found that answer
 
 
-Tast 7 (Broken Authentication Practical)
-
+### Tast 7 (Broken Authentication Practical)
+```
 Q1: What is the flag that you found in darren's account? 
-A:  fe86079416a21a3c99937fea8874b667 
-## just folow the mentioned instruction in the task 
-
+A:  fe86079416a21a3c99937fea8874b667
+```
+Just folow the mentioned instruction in the task 
+````
 Q2: What is the flag that you found in arthur's account?
 A:  d9ac0f7db4fda460ac3edeb75d75e16e
-## repeat the same process
+````
+Repeat the same process
 
-Task 11 [Severity 3] Sensitive Data Exposure (Challenge) 
-
+### Task 11 [Severity 3] Sensitive Data Exposure (Challenge) 
+```
 Q1:What is the name of the mentioned directory? 
 A: /assets
-## read the source of login page of the website there is a comment by the develper the give to this directory 
-
+```
+Read the source of login page of the website there is a comment by the develper 
+````
 Q2: Navigate to the directory you found in question one. What file stands out as being likely to contain sensitive data?
-A: webapp.db 
-## As we learned the previous section about the "flat_file" database that store in the disk of the computer
-
+A: webapp.db
+````
+As we learned the previous section about the "flat_file" database that store in the disk of the computer
+```
 Q3: Use the supporting material to access the sensitive data. What is the password hash of the admin user?
 A: 6eea9b7ef19179a06954edd0f6c05ceb
-## This is find by follow the previouse mentioned step for asessing the database file and how to dump file just replace the name of the database in the command with the users directory in the database
-
+```
+This is find by follow the previouse mentioned step for asessing the database file and how to dump file just replace the name of the database in the command with the users directory in the database
+```
 Q4: What is the admin's plaintext password?
 A: qwertyuiop
-## go to the crackstaion website and paste the hash and they give you the password
-
+```
+Go to the crackstaion website and paste the hash and they give you the password
+````
 Q5: Login as the admin. What is the flag?
 A: THM{Yzc2YjdkMjE5N2VjMzNhOTE3NjdiMjdl}
-## login with the username: admin and password:qwertyuiop in the website and you lodin in the admin account and they give you the flag
+````
+Login with the username: admin and password:qwertyuiop in the website and you login in the admin account and they give you the flag
 
 
-Task 16 [Severity 4] XML External Entity - Exploiting
-
+### Task 16 [Severity 4] XML External Entity - Exploiting
+```
 Q3:What is the name of the user in /etc/passwd
 A:falcon
-
+```
+```
 Q4:Where is falcon's SSH key located?
 A:/home/falcon/.shh/id_rsa		
-
+```
+```
 Q5:What are the first 18 characters for falcon's private key
 A: MIIEogIBAAKCAQEA7b
+```
 
+### Task 18  [Severity 5] Broken Access Control (IDOR Challenge) 
 
-
-Task 18  [Severity 5] Broken Access Control (IDOR Challenge) 
-
-
+```
 Q3: Look at other users notes. What is the flag?
 A: flag{fivefourthree} 
-## this can be find by changing the value of the parameter to 0 like this http://{machine IP}/note.php?note=0
+```
+This can be find by changing the value of the parameter to 0 like this http://{machine IP}/note.php?note=0
 
 
 
