@@ -280,5 +280,5 @@ When you get the shell back so use the following command to get your flag
 
  ### Task 31 What Next? 
 
-
-==I think now you got your badge for compleating the owasp top 10 good for u kuddos!==
+# <------------------------<The End>---------------------------->
+##### I think now you got your badge for compleating the owasp top 10 good for u kuddos!
