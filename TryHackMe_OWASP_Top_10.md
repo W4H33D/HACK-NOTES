@@ -1,5 +1,5 @@
-Room: OWASP Top 10
-==================
+# TryHackMe Room: OWASP Top 10
+
 
 Task 5 (command injection practicle)
 
@@ -22,7 +22,7 @@ A:  18.04.4
  Q6: Print out the MOTD.  What favorite beverage is shown?
  A:  DR PEPPER
 ## This is found by first use command "locate motd" they show you list of file that have this name but in the Question hint we have "00-header" and one of the file have this name so just cat/view content of that file and you found that answer
-========================================================================================================================================================
+
 
 Tast 7 (Broken Authentication Practical)
 
@@ -33,7 +33,7 @@ A:  fe86079416a21a3c99937fea8874b667
 Q2: What is the flag that you found in arthur's account?
 A:  d9ac0f7db4fda460ac3edeb75d75e16e
 ## repeat the same process
-========================================================================================================================================================
+
 Task 11 [Severity 3] Sensitive Data Exposure (Challenge) 
 
 Q1:What is the name of the mentioned directory? 
@@ -55,7 +55,7 @@ A: qwertyuiop
 Q5: Login as the admin. What is the flag?
 A: THM{Yzc2YjdkMjE5N2VjMzNhOTE3NjdiMjdl}
 ## login with the username: admin and password:qwertyuiop in the website and you lodin in the admin account and they give you the flag
-=============================================================
+
 
 Task 16 [Severity 4] XML External Entity - Exploiting
 
@@ -68,7 +68,7 @@ A:/home/falcon/.shh/id_rsa
 Q5:What are the first 18 characters for falcon's private key
 A: MIIEogIBAAKCAQEA7b
 
-=============================================================
+
 
 Task 18  [Severity 5] Broken Access Control (IDOR Challenge) 
 
@@ -77,7 +77,7 @@ Q3: Look at other users notes. What is the flag?
 A: flag{fivefourthree} 
 ## this can be find by changing the value of the parameter to 0 like this http://{machine IP}/note.php?note=0
 
-=============================================================
+
 
 Task 19  [Severity 6] Security Misconfiguration 
 
@@ -86,7 +86,7 @@ A: thm{4b9513968fd564a87b28aa1f9d672e17}
 
 ## this can be find by first search for the webapp name to google they show you the github page for this webapp there you will find default username and password
 
-=============================================================
+
 
  Task 20 [Severity 7] Cross-site Scripting 
 
@@ -147,7 +147,7 @@ A: websites_can_be_easily_defaced_with_xss
 
 script : <script>document.querySelector('#thm-title').textContent = 'I am a hacker'</script>
 
-============================================================
+
 
 Task 21 [Severity 8] Insecure Deserialization 
 
@@ -160,21 +160,21 @@ A: the Apache Software Foundation
 Q2: What type of attack that crashes services can be performed with insecure deserialization?
 A: denial of services
 
-============================================================
+
 
 Task 22 [Severity 8] Insecure Deserialization - Objects 
 
 Q1: if a dog was sleeping, would this be:
 A: a behaviour
 
-============================================================
+
 
 Task 23 [Severity 8] Insecure Deserialization - Deserialization 
 
 Q1:  What is the name of the base-2 formatting that data is sent across a network as?  
 A: binary
 
-============================================================
+
 
 Task 24 [Severity 8] Insecure Deserialization - Cookies 
 
@@ -184,7 +184,7 @@ A: webapp.com/login
 Q2: What is the acronym for the web technology that Secure cookies work over?
 A: https
 
-============================================================
+
 
  Task 25 [Severity 8] Insecure Deserialization - Cookies Practical 
 
@@ -208,7 +208,7 @@ A: https
  after that change the url with http://machine_ip/admin 
  there you will go to the admin page and there u find that flag
 
- ===========================================================
+ 
 
  Task 26 [Severity 8] Insecure Deserialization - Code Execution
 
@@ -223,15 +223,15 @@ A: https
  ## when you get the shell back so use the following command to get your flag 
  command: cat /home/cmnatic/flag.txt
 
- ===========================================================
+ 
 
  Task 27 [Severity 9] Components With Known Vulnerabilities - Intro 
 
- ===========================================================
+ 
 
  Task 28 [Severity 9] Components With Known Vulnerabilities - Exploit 
 
- ===========================================================
+ 
 
  Task 29 [Severity 9] Components With Known Vulnerabilities - Lab
 
@@ -256,7 +256,7 @@ A: https
 
  this will show you the answer 
 
- ===========================================================
+ 
 
  Task 30 [Severity 10] Insufficient Logging and Monitoring 
 
@@ -270,11 +270,11 @@ A: https
 
  ## this attack use for cracking the username and password attacker use this attack for making such request to the webapp
 
- ===========================================================
+ 
 
  Task 31 What Next? 
 
- ===========================================================
+ 
 
  ## 
 I think now you got your badge for compleating the owasp top 10 good for u kuddos!
