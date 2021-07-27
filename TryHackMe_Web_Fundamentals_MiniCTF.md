@@ -1,7 +1,7 @@
-Web Fundamentals
-================
+#TryHackMe Web Fundamentals Room 
 
-## Mini CTF 
+
+### Mini CTF 
 
 
 ### Tasks
@@ -30,7 +30,7 @@ Flag: `thm{162520bec925bd7979e9ae65a725f99f}`
 
 command:`curl -X POST --data flag_please http://10.10.81.75:8081/ctf/post`
 
-flag:`thm{3517c902e22def9c6e09b99a9040ba09}`
+Flag:`thm{3517c902e22def9c6e09b99a9040ba09}`
 
 
 ### Task 3
