@@ -1,4 +1,4 @@
-                                                   # TryHackme Linux Fundamentals Part 1
+                                                   TryHackme Linux Fundamentals Part 1
                                                    
 
 ### Task 1: Introduction
@@ -19,6 +19,7 @@ A: 1991
    whoami               Find out what user we're currently logged in as!
  
 ```
+```
 Q1: If we wanted to output the text "TryHackMe", what would our command be?
 A: echo TryHackMe
 ```
@@ -37,50 +38,57 @@ Use `whoami` in terminal of diployed machine
   cat                 concatenate
   pwd                 print working directory
 ```
-Discription
-
+#### Discription
+```
 ls: This command is use to list all the content that exits in the directory
 
-#  Pro tip: You can list the contents of a directory without having to navigate to it by using ls and the name of the directory. I.e. ls Pictures
+Pro tip: You can list the contents of a directory without having to navigate to it by using ls and the name of the directory. I.e. ls Pictures
 
 cd: this command is use to change directory with any exitsting directory
 
 cat: this command is use to seing the content of the file   
 
-# Pro tip: You can use cat to output the contents of a file within directories without having to navigate to it by using cat and the name of the directory. I.e. cat /home/ubuntu/Documents/todo.txt
+Pro tip: You can use cat to output the contents of a file within directories without having to navigate to it by using cat and the name of the directory. I.e. cat /home/ubuntu/Documents/todo.txt
 
 pwd: this command is use to print the full path of the current working directory
-
+```
+```
 Q1: On the Linux machine that you deploy, how many folders are there?
 A: 4
-## use ls command
-
+```
+Use `ls` command
+```
 Q2: Which directory contains a file?
 A: folder4
-## use ls folder4
-
+```
+Use `ls` on  folder4
+```
 Q3: What is the contents of this file?
 A: Hello World!
-## cat folder4/note.txt
-
+```
+**cat folder4/note.txt**
+```
 Q4: Use cd to navigate to this file and find out the new current working directory. What is the path?
 A: /home/tryhackme/folder4
-## first cd to folder4 and the use pwd command to get the full path of that file
+```
+First `cd` to folder4 and the use `pwd` command to get the full path of that file
 
-Task 6:  Searching for Files
+### Task 6:  Searching for Files
 
-# Command
-
+#### Command
+```
 find: this command is use to search some specific file in the given directory with some criteria of our choice 
 
 grep: this command is use to search some specific content in the file or terminal output
-
+```
+```
 Q: Use grep on "access.log" to find the flag that has a prefix of "THM". What is the flag?
 A: THM{ACCESS}
-## use "cat access.log | grep THM " command
+```
+Use `cat access.log | grep THM` command
 
-Task 7: An Introduction to Shell Operators
-
+### Task 7: An Introduction to Shell Operators
+```
 Symbol/Operator              Discription
 
 &                     this operator allows you to run commands in the background of your terminal.
@@ -92,19 +100,22 @@ Symbol/Operator              Discription
 
 >>                    this operator does the same function of the > operator but appends the output rather than replacing (meaning                        
                       nothing is overwritten)
-
+```
+```
 Q1: If we wanted to run a command in the background, what operator would we want to use?
 A: &
-
+```
+```
 Q2: If I wanted to replace the contents of a file named "passwords" with the word "password123", what would my command be?
 A: echo password123 > password
-
+```
+```
 Q3: Now if I wanted to add "tryhackme" to this file named "passwords" but also keep "passwords123", what would my command be 
 A: echo tryhackme >> password
+```
+### Task 8: Conclusions & Summaries
 
-Task 8: Conclusions & Summaries
-
-Task 9: Linux Fundamentals Part 2
+### Task 9: Linux Fundamentals Part 2
 
 
                                                    TryHackme Linux Fundamentals Part 2
