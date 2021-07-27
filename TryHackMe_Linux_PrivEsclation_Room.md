@@ -1,26 +1,26 @@
-     ============TryHackMe========================
-Linux privEsc room 
+ # TryHackMe
+## Linux privEsc room 
 
-Target Ip Adresss
-============= 
-10.10.104.17
-=============
+### Target Ip Adresss
+ 
+**10.10.104.17**
+
 
 connect through it with ssh using 
 
-ssh user@10.10.104.17
+``ssh user@10.10.104.17``
 
-password: password321
+password: `password321`
 
-=================================
 
+```
 user account: user@debian
 id: uid=1000(user) gid=1000(user) groups=1000(user),24(cdrom),25(floppy),29(audio),30(dip),44(video),46(plugdev)
+```
 
-===========================
 nmap scan result 
 
-=====================================================
+```
 hown: 993 closed ports
 PORT     STATE    SERVICE VERSION
 22/tcp   open     ssh     OpenSSH 5.5p1 Debian 6+squeeze5 (protocol 2.0)
@@ -52,32 +52,32 @@ PORT     STATE    SERVICE VERSION
 |_http-open-proxy: Proxy might be redirecting requests
 |_http-server-header: nginx/1.6.2
 |_http-title: Welcome to nginx on Debian!
-======================================================
+```
 
-Weak File Permissions - Read/Writable /etc/shadow
-================================================= 
+### Weak File Permissions - Read/Writable /etc/shadow
+ 
 
 As Shadow file is read and writeable so,
  
 Using Shadow found root user password Hash
 
-$6$Tb/euwmK$OXA.dwMeOAcopwBl68boTG5zi65wIHsc84OWAIye5VITLLtVlaXvRDJXET..it8r.jbrlpfZeMdwD3B0fGxJI0
+`$6$Tb/euwmK$OXA.dwMeOAcopwBl68boTG5zi65wIHsc84OWAIye5VITLLtVlaXvRDJXET..it8r.jbrlpfZeMdwD3B0fGxJI0`
 
-crack it using john with wordlist file rockyou.txt 
+crack it using `john` with wordlist file `rockyou.txt`
 
-so we found hash type is "sha512crypt"
+so we found hash type is `sha512crypt`
 and the password is "password123"
 
 so we can login into root user with that password using command 
-su root 
+`su root`
 
 As shadow file writable so we can generate new hash using command 
-mkpasswd -m sha-512 {newpasswordhere}
+`mkpasswd -m sha-512 {newpasswordhere}`
 after successfully generate hash place it to the hash place login with password that you use to generate hash 
 
-============================================
-Weak File Permissions - Writable /etc/passwd
-============================================
+
+### Weak File Permissions - Writable /etc/passwd
+
 
 As passwd file is writable so we use this and generate password hash with the command 
 openssl passwd {NewPasswordHere}
