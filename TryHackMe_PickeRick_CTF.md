@@ -52,12 +52,13 @@ Username: `R1ckRul3s`
 that looks usefull. target website page or subdirectry robots.txt have rendom string that is`Wubbalubbadubdub`This is Suspicious  
 
 ## Directry Scanning 
-
-`/assets`
+```
+/assets
 this have some Common Thing use in website nothing more
-`robots.txt`
-
-As nikto finds `login.php` so go for it.They required username and password we found username and some rendom string try for it 
+robots.txt 
+This have some random string that is like password but not sure
+```
+As nikto finds `login.php` so go for it.They required username and password we found username and some random string try for it 
 
 It works and they provide some command execution portal and this is vulnerable and good for us
 
