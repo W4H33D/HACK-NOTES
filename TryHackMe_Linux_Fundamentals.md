@@ -1,40 +1,42 @@
-                                                   TryHackme Linux Fundamentals Part 1
-                                                   ===================================
+                                                   # TryHackme Linux Fundamentals Part 1
+                                                   
 
-Task 1: Introduction
+### Task 1: Introduction
 
-Task 2: A Bit of Background on Linux
-
+### Task 2: A Bit of Background on Linux
+```
 Q: Research: What year was the first release of a Linux operating system?
 A: 1991
+```
+### Task 3:  Interacting With Your First Linux Machine (In-Browser)
 
-Task 3:  Interacting With Your First Linux Machine (In-Browser)
+### Task 4:  Running Your First few Commands
+```
+ Commands                         Discription                   
 
-Task 4:  Running Your First few Commands
-
-# Commands                   Discription
-
-   echo                 Output any text that we provide
+   echo                Output any text that we provide
 
    whoami               Find out what user we're currently logged in as!
-
+ 
+```
 Q1: If we wanted to output the text "TryHackMe", what would our command be?
 A: echo TryHackMe
-
+```
+```
 Q2: What is the username of who you're logged in as on your deployed Linux machine?
 A: tryhackme
+```
+Use `whoami` in terminal of diployed machine
 
-# use whoami in terminal of diployed machine
-
-Task 5:  Interacting With the Filesystem!
-
-# Commands              Full Name
+### Task 5:  Interacting With the Filesystem!
+```
+ Commands                 Full Name
 
   ls                  listing
   cd                  change directory
   cat                 concatenate
   pwd                 print working directory
-
+```
 Discription
 
 ls: This command is use to list all the content that exits in the directory
