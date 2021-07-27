@@ -53,9 +53,9 @@ that looks usefull. target website page or subdirectry robots.txt have rendom st
 
 ## Directry Scanning 
 
-**/assets**
+`/assets`
 this have some Common Thing use in website nothing more
-**robots.txt**
+`robots.txt`
 
 As nikto finds `login.php` so go for it.They required username and password we found username and some rendom string try for it 
 
