@@ -1,18 +1,18 @@
-HTB Academy Module File Inclusion/Directory Traversal 
+# HTB Academy Module File Inclusion/Directory Traversal 
 
-=====================================================
+
 
 Section 1/Introduction
 ----------------------
 
-File Inclusion
-==============
+## File Inclusion
+
 
 file inclusion occur when attacker include lecal and remote files,potentialy leading to source code disclosure,sensitive data exposure,and code execution under certain 
 conditions.there are two types of file inclusion,namely local file inclusion(LFI) and remote file inclusion(RFI)
 
-LFI vs RFI
-==========
+## LFI vs RFI
+
 
 Almost any Remote File Inclusion (RFI) can also be a Local File Inclusion (LFI); however, any LFI may not be an RFI.
 
@@ -24,8 +24,8 @@ This is primarily because of two reasons:
 
 
 
-Where It's Common
-=================
+## Where It's Common
+
 
 The most common place you will find LFI Vulnerabilities is within templating engines. This is because websites want to keep a large majority of the website the same when 
 navigating between pages, such as the header, navigation bar, and footer. Without dynamic page generation, every page on the server would need to be modified when changes 
@@ -35,8 +35,8 @@ If you see ?lang=en; then the website will grab files from the /en/ directory.
 
 
 
-Other Places
-============
+## Other Places
+
 
 Template Engines are not the only place an LFI Vulnerability can be discovered. It can be found anytime the server allows a user to download a file.  For example, imagine 
 if the server-side code to retrieve your avatar downloaded from /profile/$username/avatar.png. If you managed to craft a malicious username, it might be possible to change 
@@ -45,36 +45,36 @@ utilize that poisoned entry is called "Second Order". Developers often overlook 
 In this example, the retrieve avatar function is grabbing data from the database, and the developer may not realize it is actually user input.
 
 
-Local File Inclusion
-====================
+## Local File Inclusion
+
 
 File inclusion vulnerabilities can often be found in GET request parameters. Server-side scripts include certain files based on the user's choice or input, for example,
 file downloads, choice of language, or website navigation.
 
 
-Basic LFI
-=========
+## Basic LFI
+
 
 Consider the following blog page:
 
-http://example.com/basic/
+`http://example.com/basic/`
 
 The website lets users read articles in English or Spanish, selected from the language drop-down menu.
 
 when change the language in drop-down menu observe how the page changes.
 
-http://example.com/basic/index.php?language=es.php
+`http://example.com/basic/index.php?language=es.php`
 
 The text contained in the card changed to desire language. Looking at the URL, we see that a parameter named language was added with the value of es.php. 
 This is an indication of file inclusion based on the choice of language.
 
-## the following code is use in the server side
+the following code is use in the server side
 
-code: include($_GET['language']);
+code: `include($_GET['language']);`
 
 Let's try changing the filename to a world-readable file, such as /etc/passwd on Linux or C:\Windows\boot.ini on Windows.
 
-http://example.com/basic/index.php?language=/etc/passwd
+`http://example.com/basic/index.php?language=/etc/passwd`
 
 We can view the contents of /etc/passwd directly.
 
@@ -85,41 +85,40 @@ Sometimes, developers specify absolute paths when including files. For example:
 
 the server side code is this 
 
-code: include("./languages/" . $_GET['language']);
+code: `include("./languages/" . $_GET['language']);`
 
 The statement above includes the files present in the languages folder. Let's try including /etc/passwd once again.
 
-http://example.com/basic/index.php?language=/etc/passwd
+`http://example.com/basic/index.php?language=/etc/passwd`
 
 The verbose error returned shows us the string passed to the include() function, stating that there is no /etc/passwd in the languages folder. 
 This restriction can be bypassed by traversing directories using a few ../ before the desired file name.
 
-http://example.com/basic/index.php?language=../../../../../etc/passwd
+`http://example.com/basic/index.php?language=../../../../../etc/passwd`
 
-Another Example
-===============
+### Another Example
 
 Input from parameters can even be used as part of filenames. For example:
 
-## the following code is use in the server side
+the following code is use in the server side
 
-Php Code: include("lang_" . $_GET['language']);
+Php Code: `include("lang_" . $_GET['language']);`
 
-In this scenario, input such as ../../../../../etc/passwd will result in the final string to be lang_../../../../../etc/passwd, which is invalid.
-Instead, prefixing a / before the payload will bypass the filename and traverse directories instead.
+In this scenario, input such as `../../../../../etc/passwd` will result in the final string to be `lang_../../../../../etc/passwd`, which is invalid.
+Instead, prefixing a `/` before the payload will bypass the filename and traverse directories instead.
 
 LFI with Blacklisting
 =====================
 
 Scripts can employ search and replace techniques to avoid path traversals. For example:
 
-php code: $language = str_replace('../', '', $_GET['language']);
+php code: `$language = str_replace('../', '', $_GET['language']);`
 
 Let's try including /etc/passwd using path traversal like the previous section.
 
-http://example.com/basic/index.php?language=../../../../../etc/passwd
+`http://example.com/basic/index.php?language=../../../../../etc/passwd`
 
-## in the output they removed all the "../" string.
+in the output they removed all the "../" string.
 
 All the ../ substrings were removed, which resulted in a final path of ./languages/etc/passwd, but there is an issue with how this check was coded.
 It is not removing ../ recursively, which means removing the occurrences from the string a single time. If removing ../, creates a new instance of ../, the new instance will not
@@ -127,24 +126,24 @@ be removed. For example, both ..././ and ....// would become ../ after the repla
 
 now payload looks like this
 
-http://example.com/basic/index.php?language=....//....//....//....//....//etc/passwd
+`http://example.com/basic/index.php?language=....//....//....//....//....//etc/passwd`
 
 The inclusion was successful and we're able to view /etc/passwd again. If the defender wanted to prevent this, an example of doing this recursively would be:
 
 php code: 
-
+```
 $lfi = "....././/..../..//filename";
 while( substr_count($lfi, '../', 0)) {
  $lfi = str_replace('../', '', $lfi);
 };
+```
 
-
-Of course, the best way to patch this is to use the basename($_GET['language']), however if your application goes into a directory this could break the application.
+Of course, the best way to patch this is to use the `basename($_GET['language'])`, however if your application goes into a directory this could break the application.
 While the above example works, it is best to try to find a native function in either your language or framework to perform the action. If you create your own function to do
 this method, it is possible you are not accounting for a weird edge case. For example, in your bash terminal go into your home directly (cd ~) and run the command 
-cat .?/.*/.?/etc/passwd. You'll see Bash allows for for the ? and * wildcards to be used as a ..
+`cat .?/.*/.?/etc/passwd`. You'll see Bash allows for for the `?` and `*`wildcards to be used as a `..`
 
-Now type php -a to enter the PHP Command Line interpreter and run echo file_get_contents('.?/.*/.?/etc/passwd');. You'll see PHP does not have the same behavior with
+Now type php -a to enter the PHP Command Line interpreter and run `echo file_get_contents('.?/.*/.?/etc/passwd');`. You'll see PHP does not have the same behavior with
 the wildcards, if you replace ? and * with ., the command will work as expected. This demonstrates there is an edge cases with our above function,
 if we have PHP execute bash with the system function the attacker would be able to bypass our directory traversal prevention. If we use native functions to the framework 
 we are in, there is a chance other users would catch edge cases like this and fix it before it gets exploited in our web application.
