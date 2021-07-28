@@ -235,10 +235,12 @@ to it but is truncated to `/etc/passwd\x00` by the APIs written in C. This resul
 
 ### HTB Academy Question&Answer
 
-1.Using the file inclusion find the name of a user on the system that starts with "b". 
+1.Using the file inclusion find the name of a user on the system that starts with "b".
+
 A. barry
 
-2.Submit the contents of the flag.txt file located in the /usr/share/flags directory. 
+2.Submit the contents of the flag.txt file located in the /usr/share/flags directory.
+
 A. e8cb4f6c9bc13c3b43ee4a78ced6b521
 
 
@@ -312,10 +314,12 @@ along with the examples**.
 
 ### HTB Academy Questions:
 
-1. Using the LFI to RCE vulnerability run the command 'cat /etc/issue'. Submit the OS version as your answer (i.e. Ubuntu 14.04.2 LTS)
+1. Using the LFI to RCE vulnerability run the command 'cat /etc/issue'. Submit the OS version as your answer (i.e. Ubuntu 14.04.2 LTS).
+
 A. Ubuntu 18.04.4 LTS
 
 2. Submit the contents of the flag.txt file located in the /exercise directory.
+
 A. 2ed328e2598271ad3d2831aa4a0c4bab
 
 Other PHP Wrappers
@@ -381,6 +385,7 @@ in the example above `#` is encoded to `%23` to prevent the browser from recogni
 ### HTB Academy Questions
 
 1. Gain command execution using one of the PHP wrappers discussed in this section. Submit the contents of the flag.txt file located in the /secrets directory.
+
 A. 62eb4f8836329caec43389971b683ec8
 
 Remote File Inclusion
@@ -462,6 +467,7 @@ HTB Academy Questions:
 ======================
 
 1. Attack the target, gain command execution by exploiting the RFI vulnerability, and submit the contents of the flag.txt file located in the /exercise directory.
+
 A. 99a8fc05f033f2fc0cf9a6f9826f83f4
 
 Hardening Tips
@@ -485,10 +491,12 @@ be done by adding open_basedir = /var/www in the php.ini file
 ### HTB Academy Question
 
 1. What is the full path to the php.ini file for Apache?
+
 A. /etc/php/7.4/apache2/php.ini
 
 2. Edit the php.ini file to block system(), then try to execute PHP Code that uses system. Read the /var/log/apache2/error.log file and fill in the blank: system() has been 
 disabled for ________ reasons.
+
 A. security
 
 
@@ -497,6 +505,7 @@ Section 4/Skills Assessment-File Inclusion/Directory Traversal Part
 
 Q: Assess the web application and use a variety of techniques to gain remote code execution and find a flag in the / root directory of the file system.
 Submit the contents of the flag as your answer.
+
 A: a9a892dbc9faf9a014f58e007721835e
 
 # Solution
