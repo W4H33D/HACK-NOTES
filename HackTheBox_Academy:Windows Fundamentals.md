@@ -1888,7 +1888,9 @@ $ Get-WmiObject win32_useraccount -Filter "name = 'Jim'"
 ```
 
 Q5:  What is the SDDL string for the HR security group's permissions over the Company Data folder? (Format: x;xxxxx;xxxxxxx;;;x-x-x-x-x-x-x-x, no parentheses in final answer)
-A: A;OICI;0x1301bf;;;S-1-5-21-2614195641-1726409526-3792725429-1005
+
+A: `A;OICI;0x1301bf;;;S-1-5-21-2614195641-1726409526-3792725429-1005`
+
 Hint: Get-Acl and become one with the SID also focus on the SDDL format associated with the HR group
 ```
 To Find the answer of the above question first you have to make sure the all previous things are made correct and  specially the following things
