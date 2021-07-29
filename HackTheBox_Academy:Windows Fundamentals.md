@@ -1918,5 +1918,8 @@ Command:
 
 $ Get-Acl -Path 'C:\Users\htb-student\Desktop\Company Data' | Format-List
 
-This will show you the SDDL of the shared folder and we make sure the HR group is added on the share and NTFS permission so there we also see the SDDL on the HR group you just have to find that SDDL value that have SID of the HR group that you find in the previous step and that's it you got the SDDL value
+This will show you the SDDL of the shared folder and we privously make sure the HR group is added on the share and NTFS permission.
+So now we will see the SDDL of the 'Companay Data' folder but there is lot of SDDL value how we will find the SDDL value of HR group we added.
+There we have a use of HR group SID we note privously so we have to match the SID of HR group to the all SDDL value and find which value have 
+the SID of HR group when you find it that SDDL value is HR group SDDL value and that's it.
 ```
