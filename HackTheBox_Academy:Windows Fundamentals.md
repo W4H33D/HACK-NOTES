@@ -174,7 +174,8 @@ $ tree c:\ /f | more
 
 
  Q: Find the non-standard directory in the C drive. Submit the contents of the flag file saved in this directory.
- A: c8fe8d977d3a0c655ed7cf81e4d13c75
+ 
+ A: `c8fe8d977d3a0c655ed7cf81e4d13c75`
  
  ##### page 3 / File System #page3
  
@@ -324,7 +325,8 @@ A full listing of `icacls` command-line arguments and detailed permission settin
 
 
 Q:  What system user has full control over the c:\users directory?
-A: bob.smith
+
+A: `bob.smith`
 
 ##### page 4 / NTFS vs. Share Permissions #page4
 
@@ -483,6 +485,7 @@ Hint: This is exactly where we created the Company Data folder in the directory 
 Challenge your understanding of the Module content and answer the optional question(s) below. These are considered supplementary content and are not required to complete the Module. You can reveal the answer at any time to check your work.
 
 Q: Complete all the steps in this walkthrough using only the command line tools pre-installed on the Pwnbox and Attack box.
+
 A: This is done by using command `net share`
 
 ##### Page 5 / Windows Services & Processes #page5
@@ -640,7 +643,8 @@ Windows Task Manager is a powerful tool for managing Windows systems. It provide
 [Process Explorer](https://docs.microsoft.com/en-us/sysinternals/downloads/process-explorer) is a part of the Sysinternals tool suite. This tool can show which handles and DLL processes are loaded when a program runs. Process Explorer shows a list of currently running processes, and from there, we can see what handles the process has selected in one view or the DLLs and memory-swapped files that have been loaded in another view. We can also search within the tool to show which processes tie back to a specific handle or DLL. The tool can also be used to analyze parent-child process relationships to see what child processes are spawned by an application and help troubleshoot any issues such as orphaned processed that can be left behind when a process is terminated.
 
 Q:  Identify one of the non-standard update services running on the host. Submit the full name of the service executable (not the DisplayName) as your answer.
-A: FoxitReaderUpdateService.exe
+
+A: `FoxitReaderUpdateService.exe`
 Hint: Use PowerShell! - the service is related to PDF editing
 
 ##### Page 6 / Service Permissions #page6
@@ -1257,10 +1261,12 @@ MachinePolicy       Undefined
 ```
 
 Q: What is the alias set for the ipconfig.exe command?
-A: ifconfig
+
+A: `ifconfig`
 
 Q:  Find the Execution Policy set for the LocalMachine scope.
-A: Unrestricted
+
+A: `Unrestricted`
 
 
 ##### Page 9 / Windows Management Instrumentation (WMI) #page9
@@ -1377,7 +1383,8 @@ PSComputerName   :
 This section provides a brief overview of `WMI`, `WMIC`, and combining `WMIC` and `PowerShell`. `WMI` has a wide variety of uses for both blue team and red team operators. Later sections of this course will show some ways that `WMI` can be leveraged offensively for both enumeration and lateral movement.
 
 Q: Use WMI to find the serial number of the system.
-A:  00329-10284-98099-AA406
+
+A:  `00329-10284-98099-AA406`
 
 
 ##### Page 10 / Microsoft Management Console (MMC) #page10
