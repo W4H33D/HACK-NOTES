@@ -1892,6 +1892,8 @@ Q5:  What is the SDDL string for the HR security group's permissions over the Co
 A: `A;OICI;0x1301bf;;;S-1-5-21-2614195641-1726409526-3792725429-1005`
 
 Hint: Get-Acl and become one with the SID also focus on the SDDL format associated with the HR group
+
+#### Solution
 ```
 To Find the answer of the above question first you have to make sure the all previous things are made correct and  specially the following things
 Please make sure the following thing are exits
