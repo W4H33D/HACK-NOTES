@@ -118,6 +118,7 @@ Waheed Nusrat@htb[/htb]$ xfreerdp /v:<targetIp> /u:htb-student /p:Password
 Note: It may take 1-2 minutes for your target instance to spawn.
 
 Q1: What is the Build Number of the target workstation?
+
 A: 18362
 
 ````````````````````````````````````````````````````````````````````
@@ -128,6 +129,7 @@ $ Get-WmiObject -class win32_OperatingSystem
 ````````````````````````````````````````````````````````````````````
 
 Q2: Which Windows NT version is installed on the workstation? (i.e. Windows X - case sensitive)
+
 A:  Windows 10
 
 ##### Page 2 / Operating system Structure #page2
@@ -470,14 +472,18 @@ We can poke around in Shares, Sessions, and Open Files to get an idea of what in
 ![event viewer](https://academy.hackthebox.eu/storage/modules/49/event_viewer.png)
 
 Q1: What is the exact name of the predefined firewall rule that must be enabled to connect to the share from the Pwnbox? ( Format: Name of firewall rule () )
+
 A: File and Printer Sharing (SMB-in)
 Hint: Try looking through the predefined firewall rules in Windows
 
 Q2:   What is the name of the utility that can be used to view logs made by a Windows system? (Format: 2 words, 1 space, not case sensitive)
+
 A: Event Viewer
 
 Q3:  What is the full directory path to the Company Data share we created?
-A: C:\Users\htb-student\Desktop\Company Data
+
+A: `C:\Users\htb-student\Desktop\Company Data`
+
 Hint: This is exactly where we created the Company Data folder in the directory structure in Windows
 
 #### Optional Exercises
@@ -1762,7 +1768,8 @@ Windows Defender will pick up payloads from common open-source frameworks such a
 Though it is becoming increasingly difficult, it is still possible to fully bypass Windows Defender protections enforced by the latest version with the most up-to-date definitions installed.
 
 Q1:  Find the SID of the bob.smith user.
-A:  S-1-5-21-2614195641-1726409526-3792725429-1003
+
+A:  `S-1-5-21-2614195641-1726409526-3792725429-1003`
 Hint: Use the PowerShell Get-WmiObject cmdlet.
 
 ==Solution==
@@ -1780,6 +1787,7 @@ $  Get-WmiObject win32_useraccount
 ``````````````````````````````````````````````````````
 
 Q2:  What non-standard application is running under the current user ? (The answer is case sensitive).
+
 A: NordVpn
 
 ==Solution==
@@ -1829,7 +1837,9 @@ Note: It is important that each step is completed in the order they are presente
 
 
 Q1:  What is the name of the group that is present by default in a newly created share?
+
 A: Everyone
+
 Hint: It is the first group listed and already exists on the system 
 
 ```
@@ -1868,10 +1878,13 @@ Solution:
 ```
 
 Q2:  What is the name of the tab that allows you to configure NTFS permissions?
+
 A: Security
+
 Hint: You will find this answer as you complete the steps
 
 Q3:  What is the name of the service associated with Windows Update?
+
 A:  wuauserv
 ```
 Open power shell and Use the following command on it 
@@ -1885,7 +1898,8 @@ This command will list you all the service just locate the Windows update servic
 ```
 
 Q4: List the SID associated with the user account Jim
-A: S-1-5-21-2614195641-1726409526-3792725429-1004
+
+A: `S-1-5-21-2614195641-1726409526-3792725429-1004`
 ```
 Use the following command on powershell to get the sid of the User Jim
 
