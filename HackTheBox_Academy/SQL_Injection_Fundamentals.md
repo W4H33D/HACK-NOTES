@@ -388,7 +388,7 @@ the result shows like this when you use this sort option as you can see they sor
  The query above selects the record where the username is admin. We can use the UPDATE statement to update certain records that meet a specific condition.
 
 
- # NOTE: String and date data types should be surrounded by single quote (') or double quotes ("), while numbers can be used directly.
+ NOTE: String and date data types should be surrounded by single quote (') or double quotes ("), while numbers can be used directly.
 
 LIKE Clause
 -----------
