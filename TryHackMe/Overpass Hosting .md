@@ -67,7 +67,8 @@ There a three services running on the target system.So now we start enumerating 
 #### HTTP Enumeration
 
 As target have `http` server running on the machine so our first start is to look into the target website so lets do it. Let's visit the website
-![[OverpassHostingMainPage.png]]
+[OverpassHostingMainPage](https://user-images.githubusercontent.com/85181215/128856555-46d2d0e6-e117-46cc-9bb5-f3bb6b35d458.png)
+
 So this is main page we can see when we visit its  website.They are nothing else just a regular static page contain some information about overpass nothing more.
 
 As we could not find anything special on the site so let's start our Directory scanning for finding some hidden directories target have
@@ -103,18 +104,21 @@ backups                 [Status: 301, Size: 236, Words: 14, Lines: 8]
 ```
 
 So we found one hidden directory name `backups` so we can visit it
-![[OverpassHostingBackups.png]]
+![OverpassHostingBackups](https://user-images.githubusercontent.com/85181215/128856881-38ab8222-53bf-42db-b8d4-5b4f451940d4.png)
+
 
 We can only see one file there name `backup.zip` so let's download it and see what's in there
 
-![[OverpassHostingBackupsZip.png]]
+![OverpassHostingBackupsZip](https://user-images.githubusercontent.com/85181215/128856938-d933b072-84cb-4cc0-b941-5c0f840e4732.png)
+
 
 As we can see from above there are two files in the backup.zip file.
 * `priv.key`
 * ` CustomerDetails.xlsx.gpg`
 
 When we use the `file` command on both the file we see the following output
-![[OverpassHostingBackupsZipFile.png]]
+![OverpassHostingBackupsZipFile](https://user-images.githubusercontent.com/85181215/128857019-2f322423-76ab-41a5-a5d0-e4d759c320f7.png)
+
 
 They show us that the first file(`priv.key`) is a PGP private key block. When i google it to know a little more about it so i came to know that is a private key use to decrypting the files that are encrypted  using the  [GNU Privacy Guard (GnuPG)](https://en.wikipedia.org/wiki/GNU_Privacy_Guard) 
 
@@ -193,17 +197,21 @@ This will add that private key and now we are able to decrypt the file with the 
 Command: `gpg --decrypt CustomerDetails.xlsx.gpg > CustomerDetails.xlsx`
 
 This command decrypt the file and save the content of it on the file `CustomerDetails.xlsx` on our present working directory. If everything go fine then we can see the following files on our directory 
-![[OverpassHostingBackupsZipFileDecrypted.png .png]]
+![OverpassHostingBackupsZipFileDecrypted png ](https://user-images.githubusercontent.com/85181215/128857111-6de20b23-986d-4d61-8e54-ae776af7d347.png)
+
 
 Now when i use file command on `CustomerDetails.xlsx` file they will show us the following file type
-![[OverpassHostingBackupsZipFileDecryptedType.png]]
+![OverpassHostingBackupsZipFileDecryptedType](https://user-images.githubusercontent.com/85181215/128857166-370f5276-57ce-4033-bf4b-a9256f5d272c.png)
+
 
 Now this will become an excel file so we can open it on excel to see its content.
-![[OverpassHostingBackupsZipFileDecryptedTypeDetails.png .png]]
+![OverpassHostingBackupsZipFileDecryptedTypeDetails png ](https://user-images.githubusercontent.com/85181215/128857234-3855709c-a632-4613-8faa-c37e8bfa7e65.png)
+
 This is a content that are in the file there we can see the Customer Name its Username and password and Credit Card Number and also CVC numbers.But wait we can see some of the name from the website also like `Paradox` and `MuirlandOracle` i wonder that username and password is also used in the system ssh. No its not but there is also ftp service running on the server so we can try that username and password on that.
 
 That works we can successfully login to the ftp server using `paradox` username and `ShibesAreGreat123` as its password. when i use `ls` command there we can see this is website home directory there we can see `Backups` directory `index.html`,`main.css` etc. 
-![[OverpassHostingBackupsZipFileDecryptedTypeDetailsFTP.png .png]]
+![OverpassHostingBackupsZipFileDecryptedTypeDetailsFTP png ](https://user-images.githubusercontent.com/85181215/128857326-9f825791-ad38-448f-b15c-9cdedce29d62.png)
+
 So now we can put a [PHP reverse shell](https://github.com/pentestmonkey/php-reverse-shell/blob/master/php-reverse-shell.php) there using ftp so we can get the connection back to us. Download the reverse shell and edit the IP address with your IP address and also change the port number with your own choice. 
 
 So now we are ready to upload the `shell.php` file to the target system. connect to the target ftp server using the following command syntax
@@ -271,9 +279,11 @@ $ su paradox
 password: ShibesAreGreat123
 ```
 So when we use `ls -al` command in the `paradox` user home directory there so we see the following result
-![[OverpassHostingAccess.png]] 
+![OverpassHostingAccess](https://user-images.githubusercontent.com/85181215/128857401-60ee003a-138f-4b0a-b314-d93904e8ed91.png)
+ 
 There is a directory name `.ssh` when we go there we see the following files there
-![[OverpassHostingAccesSsh.png .png]]
+![OverpassHostingAccesSsh png ](https://user-images.githubusercontent.com/85181215/128857483-213107b4-ce2c-4cf9-8afc-b6d8b7446b29.png)
+
 There is only two file there one is `authorized_keys` and the other is `id_rsa.pub` so there is no ssh private key there so we can only connect to the ssh if we add our ssh public key in the `authorized_keys` file. To do that first we have to create a ssh key pair in our system using the following command 
 ```
 $ ssh-keygen -f rsa  
@@ -302,7 +312,8 @@ $ ./linpeas.sh
 ```
 
 As we can see from the `linpeas`  result there is not root privilege escalation vector found we there is a NFS service running as we can see from the `linpeas` result 
-![[OverpassHostingAccessNfs.png .png]]
+![OverpassHostingAccessNfs png ](https://user-images.githubusercontent.com/85181215/128857533-949856b1-3852-41d4-9f59-1ab48f097705.png)
+
 
 But we could not see any NFS service on nmap scan. The NFS service is running on the user `james` and `linpeas` also give us a link about miss configuration so we can visit it to learn about it also. 
 
@@ -333,15 +344,18 @@ if every thing goes right we can successfully mount that share on our system. Th
 $ cd /mnt/nfs
 ```
 3. when you use the `ls -al` command there you see the `bash` binary but they have the normal permission there. 
-![[OverpassHostingNFSbash.png]]
+![OverpassHostingNFSbash](https://user-images.githubusercontent.com/85181215/128857661-46202ed7-b322-408b-a4a3-322e7d1f61b3.png)
+
 4. Now the time to abuse the vulnerability that we discussed above we can change the permission to that file from our system 
     `$ chmod +x /mnt/nfs/bash`
     And we can see from the James ssh account that binary there got the `SUID` bit so now we can get the root with the following command
 	```
 	$ ./bash -p
 	```
-	![[OverpassHostingAccessNfsabusessh.png .png]]
-	![[OverpassHostingAccessNfsabusesshroot.png]]
+	![OverpassHostingAccessNfsabusessh png ](https://user-images.githubusercontent.com/85181215/128857754-774f7931-21ac-46a3-b201-af798469dba9.png)
+
+	![OverpassHostingAccessNfsabusesshroot](https://user-images.githubusercontent.com/85181215/128857798-e306ee32-12ce-44ab-ba93-a1469f966d37.png)
+
 	
 	So that how the `nfs` vulnerability work. `linpese` show us the link and we go there learn about it and now we got the root   
 	
