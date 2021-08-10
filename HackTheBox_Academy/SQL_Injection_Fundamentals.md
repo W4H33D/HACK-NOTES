@@ -807,7 +807,7 @@ select * from logins where username like '%1'; DROP TABLE users;'
 
 As we can see from the syntax highlighting, we are actually able to escape the original query's bounds and have our newly injected query execute as well. Once the query is run, the users table will get deleted.
 
-# NOTE: In the above example, for the sake of simplicity, we added another SQL query after a semi-colon (;). Though this is actually not possible with MySQL, it is possible with MSSQL and PostgreSQL. In the coming sections, we'll discuss the real methods of injecting SQL queries in MySQL.
+NOTE: In the above example, for the sake of simplicity, we added another SQL query after a semi-colon (;). Though this is actually not possible with MySQL, it is possible with MSSQL and PostgreSQL. In the coming sections, we'll discuss the real methods of injecting SQL queries in MySQL.
 
 Syntax Error 
 ------------
