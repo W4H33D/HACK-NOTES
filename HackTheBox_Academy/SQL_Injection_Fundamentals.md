@@ -1,108 +1,103 @@
-                   HTB Academy Module SQL Injection
-                   ================================
+# HTB Academy Module SQL Injection
+ 
 
 
-SQL Injection Fundamentals
----------------------------
+## SQL Injection Fundamentals
 
-Intro to MySQL
-==============
+
+### Intro to MySQL
 
 SQL syntax can differ from one RDBMS to another. However, they're all required to follow the ISO standard for Structured Query Language. We'll be following the MySQL/MariaDB syntax for the examples shown. SQL can be used to perform the following actions:
-
+```
     Retrieve data
     Update data
     Delete data
     Create new tables and databases
     Add / remove users
     Assign permissions to these users
-
-Command Line
-============
-
-to interact with MySQL database use mysql client with command 
-
+```
+#### Command Line
+To interact with MySQL database use mysql client with command 
+```
 $ mysql -u root -h <host ip/address> -P <Port no> -p
+```
+Where
+ -u is use to give username
+ -h flag is use give host name 
+ -P is use to specify port number
+ -p is use to give password #NOTE: if you specify -p empty so they prompt to enter password this is best choice
 
-# the flag -u is use to give username
-# -h flag is use give host name 
-# -P is use to specify port number
-# -p is use to give password #NOTE: if you specify -p empty so they prompt to enter password this is best choice
-
-Creating a Database
-===================
+#### Creating a Database
 
 Once you log in into mysql utility we can start using SQL queries to interact with DBMS there is many command to interact with it but some of them we disscuss here 
-
+```
 mysql> CREATE DATABASE users;
-
-# CREATE DATABASE is the query to crate database so there they crate database called users and to terminate te command with sami-colon(;) sign
+```
+`CREATE DATABASE` is the query to crate database so there they crate database called users and to terminate te command with sami-colon(;) sign
 
 Now we create the database so how we see it so to do that we use following query 
-
+```
 mysql> SHOW DATABASES;
-
-# SHOW DATABASES query is use to show all the database in dbms and sami-colon(;) to terminat the command
+```
+`SHOW DATABASES` query is use to show all the database in dbms and sami-colon(;) to terminat the command
 
 So now we show all the databases so how we interact or use any of the databases
-
+```
 mysql> USE users; 
+```
+`USE users` query is use to interact with any database 
 
-# USE users query is use to interact with any database 
 
-
-Tables
-======
+#### Tables
 
 As Relational database system store data in tables so we have to know how to create table in sql. But first we have to know the table is made up of horizontal rows and vertical columns and itersection of rows and columns is called cell.Every table is created with a fixed set of columns, where each column is of a particular data type.
 
-# the Datatype is define which type of value is stored in column some common example are numbers,strings,data,time and binary data etc . 
+the Datatype is define which type of value is stored in column some common example are numbers,strings,data,time and binary data etc . 
 
 let create a table to create a table use query 
-
+```
 mysql> CREATE TABLE logins (id INT, usernmae VARCHAR(100), password VARCHAR(100), date_of_joining DATETIME,);
-
-# the above query create a table name logins with four columns the first one are id is an integar value the next one is username and password are set to strings of 100 characters each. Any input longer than that this will in an error, and last one are date_of_joining column of type DATETIME stores the date when an entry was added
+```
+The above query create a table name logins with four columns the first one are id is an integar value the next one is username and password are set to strings of 100 characters each. Any input longer than that this will in an error, and last one are date_of_joining column of type DATETIME stores the date when an entry was added
 
 
 So now we create a table so how we see all the table so to do this 
-
+```
 mysql> SHOW TABLES;
-
-# this will show all the tables in database
+```
+this will show all the tables in database
 
 But how we see the content in tables so to do this 
-
+```
 mysql> DESCRIBE logins; 
+```
+this will show all the content in the table logins that we create priviously 
+content involve with the Field name Type etc
 
-# this will show all the content in the table logins that we create priviously 
-# content involve with the Field name Type etc
+#### Table Properties
 
-Table Properties
-================
-
-when creating a table we can create many diffrent type of properties of columns like id column to auto increment so they increment itself when ever the item is added 
+When creating a table we can create many diffrent type of properties of columns like id column to auto increment so they increment itself when ever the item is added 
 
 so some common keyword disscussed here to set the properties of the table
 
-id INT NOT NULL AUTO_INCREMENT
+`id` `INT` `NOT` `NULL` `AUTO_INCREMENT`
 
-# the id is the column name INT is the integer type and NOT NULL specify this column can not be empty and AUTO_INCREMENT is specify auto increment is value
-
+the `id` is the column name `INT` is the integer type and `NOT NULL` specify this column can not be empty and `AUTO_INCREMENT` is specify auto increment is value
+```
 username VARCHAR(100) UNIQUE NOT NULL
-
-# the usernmae is the name of the column and VARCHAR is its datatype and UNIQUE is specify they must be unique no other table have same type of username and NOT NULL we is same we discribe above
-
+```
+the usernmae is the name of the column and `VARCHAR` is its datatype and `UNIQUE` is specify they must be unique no other table have same type of username and `NOT NULL` we is same we discribe above
+```
 date_of_joining DATETIME DEFAULT NOW()
-
-# the date_of_joining is the name of the table and DATETIME is its datatype and DEFAULT NOW() is use to set the column default value to NOW() which returns the current data and time
-    
+```
+The `date_of_joining` is the name of the table and `DATETIME` is its datatype and `DEFAULT NOW()` is use to set the column default value to `NOW()` which returns the current data and time
+```    
 PRIMARY KEY (id)
-
-# the PRIMARY KEY (id) is use to uniquely identify each record in the table,which can refer all data of a record within a table of relational databases
+```
+The PRIMARY KEY (id) is use to uniquely identify each record in the table,which can refer all data of a record within a table of relational databases
 
 So now we know some common parameter so we use our previous example to create table 
-
+```
 myaql> CHREATE TABLE logins (
 id INT NOT NULL AUTO_INCREMENT,
 username VARCHAR(100) UNIQUE NOT NULL,
@@ -110,122 +105,121 @@ password VARCHAR(100) NOT NULL,
 date_of_joining DATETIME DEFAULT NOW(),
 PRIMARY KEY (id)
 );
+```
+This will create the table with all common prameters we disscussed above
 
-# this will create the table with all common prameters we disscussed above
+### HTB Question
 
-HTB Question
-============
+Q: Connect to the database using the MySQL client from the command line. Use the 'show databases;' command to list databases in the DBMS. What is the name of the first database?
 
- Q: Connect to the database using the MySQL client from the command line. Use the 'show databases;' command to list databases in the DBMS. What is the name of the first database?
+A: employees
 
- A: employees
-
- # use show databases; command to show all the databases
+use `show databases;` command to show all the databases
 
 
-SQL Statements
-==============
+### SQL Statements
 
  What we learn above are how to use mysql utility and some common command so now on we learn what is sql statement 
  and how to use it
 
- INSERT Statement
- ================
+ ### INSERT Statement
+ 
 
  when we want to add new records to the table then we use insert statement
 
- syntax
- ------
-
+ **syntax**
+ 
+```
  INSERT INTO table_name VALUES (column1_value, column2_value, column3_value, ...);
-
+```
  Example
- -------
-
+ 
+```
  mysql> INSERT INTO logins VALUES(1, 'admin', 'p@ssw0rd', '2020-07-02');
+```
+Above example show how can add new login to the login table  with appropriate values for each couumn.
 
- # Above example show how can add new login to the login table  with appropriate values for each couumn.
-
- # whenever we want to insert values to specific table column so we use insert statement like this
+whenever we want to insert values to specific table column so we use insert statement like this
  
- syntax
- ======
-
+ **syntax**
+ 
+```
  INSERT INTO table_name(column2, column3, ...) VALUES (column2_value, column3_value, ...);
+```
+Note: skipping columns with the 'NOT NULL' constraint will result in an error, as it is a required value.
  
- # Note: skipping columns with the 'NOT NULL' constraint will result in an error, as it is a required value.
+ Example
  
- example
- =======
-
+```
  mysql> INSERT INTO logins(username, password) VALUES('administrator','adm1n_p@ss');
+```
+In this example we add only username and password column in logins table with values administrator and adm1n_pass and skiping the id and date_of_joining column because they are automated 
 
- # In this example we add only username and password column in logins table with values administrator and adm1n_pass and skiping the id and date_of_joining column because they are automated 
-
- # Note: The examples insert cleartext passwords into the table, for demonstration only. This is a bad practice, as passwords should always be hashed/encrypted before storage.
+Note: The examples insert cleartext passwords into the table, for demonstration only. This is a bad practice, as passwords should always be hashed/encrypted before storage.
 
  So when we want to add multiple record at the same time so we can do this by seprating it with comma
 
- example
- =======
-
+ Example
+ 
+```
  mysql> INSERT INTO logins(username, password) VALUES ('john', 'john123'), ('tom', 'tom123');
+```
+
+In this example we add john and tom record at the same time 
 
 
- # In this example we add john and tom record at the same time 
 
-
-
- SELECT Statement
- ================
+ ### SELECT Statement
+ 
 
  So above we know how to add data in table using insert statement but how we retrieved them so to do that SELECT statement is use and many other purposes also.
 
- syntax
- ======
-
+ **Syntax**
+ 
+```
  SELECT * FROM table_name;
+```
+here * is use as a wild card denote every thing in that table and FROM is a keyword that is use denote which table with use to retrived data.Its also possible to retrived data from certain columns as well 
 
- # here * is use as a wild card denote every thing in that table and FROM is a keyword that is use denote which table with use to retrived data.Its also possible to retrived data from certain columns as well 
-
- syntax
- ======
-
+ **Syntax**
+ 
+```
  SELECT column1, column2 FROM table_name;
+```
+ the above syntax show only the content of the column1 and column2 data only but * show every thing in the data so that the difference
 
- # the above syntax show only the content of the column1 and column2 data only but * show every thing in the data so that the difference
-
- DROP Statement
- ==============
-
+ ### DROP Statement
+ 
  So now we know how to add table but to remove tables we use drop statement
 
  Example
- =======
-
+ 
+```
  mysql> DROP TABLE logins;
+```
+ Note DROP statement permanently remove the table
 
- # Note DROP statement permanently remove the table
 
-
- ALTER Statement
- ===============
+ ### ALTER Statement
 
  we can use this statement to change the name of the table and any of its field or to delete or add new column to an existing table.
 
  Example
- =======
-
+ 
+```
  mysql> ALTER TABLE logins ADD newColumn INT;
- ## this example show how to add new column in the table 
-
+ ```
+this example show how to add new column in the table 
+```
  mysql> ALTER TABLE logins RENAME COLUMN newcolumn TO   oldColumn;
- ## this example show how to rename a column in table 
+```
+this example show how to rename a column in table 
 
- #NOTE we can also change the datatype of the column using MODIFY
-
+`NOTE we can also change the datatype of the column using MODIFY`
+```
  mysql> ALTER TABLE logins MODIFY oldColumn DATE;
- # this will change the oldColumn datatype with DATE
+```
+this will change the oldColumn datatype with DATE
 
  Finaly we can drop a column using DROP
 
@@ -233,76 +227,82 @@ SQL Statements
 
  We can use any of the above statements with any existing table, as long as we have enough privileges to do so.
 
- UPDATE Statement
- ================
+### UPDATE Statement
+ 
 
- While ALTER is used to change a table's properties, the UPDATE statement can be used to update certain records within a table, based on certain conditions. It's general syntax is:
-
+ While `ALTER` is used to change a table's properties, the `UPDATE` statement can be used to update certain records within a table, based on certain conditions. It's general syntax is:
+```
 UPDATE table_name SET column1=newvalue1,column2=newvalue2,.... WHERE <condition>;
+```
+We specify the table name, each column and its new value, and the condition for which records will be updated. Let's look at an example:
 
-# We specify the table name, each column and its new value, and the condition for which records will be updated. Let's look at an example:
-
-
+```
 mysql> UPDATE logins SET password = 'change_password'  WHERE id > 1 ;
+```
+this query change all the password in all recordes where id was greater then 1
 
-# this query change all the password in all recordes where id was greater then 1
+Note: we have to specify the 'WHERE' clause with UPDATE, in order to specify which records get updated. The 'WHERE' clause will be discussed next.
 
-## Note: we have to specify the 'WHERE' clause with UPDATE, in order to specify which records get updated. The 'WHERE' clause will be discussed next.
-
-HTB Academy Question
+# HTB Academy Question
 
 Q: What is the department number for the 'Development' department?
+
 A: d005
 
-##
+##### Solution:
+
 To find the above answer use the following commands
-
+```
 mysql> SHOW DATABASES;
-# this will show you all the databases but for now we use employees database
-
+```
+this will show you all the databases but for now we use employees database
+```
 mysql> USE employees;
-# to use the database
-
+```
+to use the database
+```
 mysql> SHOW TABLES;
-# to show all the tables from the database
-
+```
+to show all the tables from the database
+```
 mysql> SELECT * FROM departments;
-# to retrive all the data from the deparment table
+```
+to retrive all the data from the deparment table
 
-## There you can see the all the deparment name with there number so there 'development' deparment exist with there number
-##
+There you can see the all the deparment name with there number so there 'development' deparment exist with there number
 
 
-Query Results
-=============
+
+### Query Results
+
 
 In this section we learn how to control the results output of any query.
 
 
-Sorting Results
----------------
+### Sorting Results
+
 
 We can sort the results of any query using ORDER BY and spwcifying the column to sort by
 
 Example
---------
 
+```
 mysql> SELECT * FROM logins ORDER BY password;
+```
 
-
-# NOTE: by default the sort is done in ascending order,but we can also sort the results by ASC or DESC.
+NOTE: by default the sort is done in ascending order,but we can also sort the results by ASC or DESC.
 
 
 Example
--------
 
+```
 mysql> SELECT * FROM logins ORDER BY password DESC;
-
-# NOTE: It is also possible to sort by multiple columns, to have a secondary sort for duplicate values in one column
+```
+NOTE: It is also possible to sort by multiple columns, to have a secondary sort for duplicate values in one column
 
 Example
--------
 
+```
 mysql> SELECT * FROM logins ORDER BY password DESC, id ASC;
 
 +----+---------------+-----------------+---------------------+
@@ -314,17 +314,17 @@ mysql> SELECT * FROM logins ORDER BY password DESC, id ASC;
 |  4 | tom           | change_password | 2020-07-02 11:50:20 |
 +----+---------------+-----------------+---------------------+
 4 rows in set (0.00 sec)
+```
+the result shows like this when you use this sort option as you can see they sort the column with the id section in acending order you can see it 
 
-#  the result shows like this when you use this sort option as you can see they sort the column with the id section in acending order you can see it 
+### LIMIT
 
-LIMIT
------
 
  As when databases have to much records so when we search all the record with * then they take to much time so we can limit the records with the LIMIT Query so we can specify how much record we want to save our time
 
  Example
  -------
-
+```
  mysql> SELECT * FROM logins LIMIT 2;
 
  ## this will shows only two upper records from logins table
@@ -339,11 +339,11 @@ LIMIT
  |  3 | john          | john123!   | 2020-07-02 11:47:16 |
  +----+---------------+------------+---------------------+
  2 rows in set (0.00 sec)
+```
 
+  this will shows the result with the offset with 1 meaning 2 and 3 show record 1 is ignored 
 
- ## this will shows the result with the offset with 1 meaning 2 and 3 show record 1 is ignored 
-
- ## Note: the offset marks the order of the first record to be included, starting from 0. For the above, it starts and includes the 2nd record, and returns two values.
+  Note: the offset marks the order of the first record to be included, starting from 0. For the above, it starts and includes the 2nd record, and returns two values.
 
  WHERE Clause
  ------------
@@ -351,15 +351,15 @@ LIMIT
  As we saw above how to sort or filter the result but when we want to filter or search for specifig result we use WHERE clause,to fine-tune the results
 
  Syntax
- ------
-
+ 
+```
  SELECT * FROM table_name WHERE <condition>;
-
- # this query will shows only those result that satisfy the condition
+```
+ this query will shows only those result that satisfy the condition
 
  Example
  -------
-
+```
  mysql> SELECT * FROM logins WHERE id > 1;
 
  +----+---------------+------------+---------------------+
@@ -370,11 +370,11 @@ LIMIT
  |  4 | tom           | tom123!    | 2020-07-02 11:47:16 |
  +----+---------------+------------+---------------------+
  3 rows in set (0.00 sec)
+```
+ As you can see all the result show that are satisfy the condition id > 1
 
- ## As you can see all the result show that are satisfy the condition id > 1
-
- ### we can do that something with usernames or other condition also like 
-
+ we can do that something with usernames or other condition also like 
+```
  mysql> SELECT * FROM logins where username = 'admin';
 
  +----+----------+----------+---------------------+
@@ -383,7 +383,7 @@ LIMIT
  |  1 | admin    | p@ssw0rd | 2020-07-02 00:00:00 |
  +----+----------+----------+---------------------+
  1 row in set (0.00 sec)
-
+```
 
  The query above selects the record where the username is admin. We can use the UPDATE statement to update certain records that meet a specific condition.
 
@@ -397,7 +397,7 @@ LIKE Clause
  
  Example
  -------
-
+```
  mysql> SELECT * FROM logins WHERE username LIKE 'admin%';
 
  +----+---------------+------------+---------------------+
@@ -407,10 +407,10 @@ LIKE Clause
  |  4 | administrator | adm1n_p@ss | 2020-07-02 15:19:02 |
  +----+---------------+------------+---------------------+
  2 rows in set (0.00 sec)
+```
 
-
- # this example shows that query will display all the record that matches the username admin and % act as a wildcard and matches all the characters after admin.its used to match zero or more characters.Similarly the _ symbol is used to match exactly one character.the below query matches all username with exactly three characters in them,whisch in this case was tom
-
+this example shows that query will display all the record that matches the username admin and % act as a wildcard and matches all the characters after admin.its used to match zero or more characters.Similarly the _ symbol is used to match exactly one character.the below query matches all username with exactly three characters in them,whisch in this case was tom
+```
  mysql> SELECT * FROM logins WHERE username like '___';
 
  +----+----------+----------+---------------------+
@@ -419,43 +419,45 @@ LIKE Clause
  |  3 | tom      | tom123!  | 2020-07-02 15:18:56 |
  +----+----------+----------+---------------------+
  1 row in set (0.01 sec)
+```
 
-
-HTB Academy Question
+# HTB Academy Question
 
 Q: What is the last name of the employee whose first name starts with "Bar" AND who was hired on 1990-01-01?
+
 A: Mitchem 
 
-# Use the following commands and steps to get the above answer
+##### Solution:
 
---
+ Use the following commands and steps to get the above answer
+
 step 1: first we have to find all the database so use 
-
+```
 mysql> SHOW DATABASES;
-
-# this will show us all the databases so as we search for employ so we look at the employees database to do that first we have to use that database using
-
+```
+this will show us all the databases so as we search for employ so we look at the employees database to do that first we have to use that database using
+```
 mysql> USE employees;
-
-# this will select employees database. now we are in the data base so we have to find the tables as we don't know how many tables there so we use
-
+```
+this will select employees database. now we are in the data base so we have to find the tables as we don't know how many tables there so we use
+```
 mysql> SHOW TABLES;
-
-# this will show us all the tables so as again we search for employ so we look for the employees table.but first we have to note what we want so in the question they ask for the person last name and give us there name starting string and hiring date so let's dive in
+```
+this will show us all the tables so as again we search for employ so we look for the employees table.but first we have to note what we want so in the question they ask for the person last name and give us there name starting string and hiring date so let's dive in
 
 step 2: we know the table name but we dont know the column name to search for the person so first we have to find the column name with
-
+```
 SELECT * FROM employess LIMIT 1 ;
-
-# this will shows us only one record there we see all the columns name that we use to apply filters
+```
+this will shows us only one record there we see all the columns name that we use to apply filters
 
 Now we know about every thing so we can search for the person with
-
+```
 SELECT * FROM employees WHERE first_name LIKE 'bar%' AND hire_date LIKE '1990-01-01';
+```
+This command search record in the column first_name with the condition first_name start with bar and hire_date column date is 1990-01-01
 
-# This command search record in the column first_name with the condition first_name start with bar and hire_date column date is 1990-01-01
-
-## we find that record if we don't know about column names.
+we find that record if we don't know about column names.
 
 SQL Operators
 =============
@@ -469,15 +471,15 @@ The AND operator takes in two condition and returns true or false based on their
 
 Syntax
 ------
-
+```
 condition1 AND condition2
+```
 
-
-# NOTE: the result of AND operator is true if and only if both conditions evaluate to true
+NOTE: the result of AND operator is true if and only if both conditions evaluate to true
 
 Example
 -------
-
+```
 mysql> SELECT 1 = 1 AND 'test' = 'test';
 
 +---------------------------+
@@ -486,7 +488,8 @@ mysql> SELECT 1 = 1 AND 'test' = 'test';
 |                         1 |
 +---------------------------+
 1 row in set (0.00 sec)
-
+```
+```
 mysql> SELECT 1 = 1 AND 'test' = 'abc';
 
 +--------------------------+
@@ -495,9 +498,9 @@ mysql> SELECT 1 = 1 AND 'test' = 'abc';
 |                        0 |
 +--------------------------+
 1 row in set (0.00 sec)
+```
 
-
-## In MySQL terms, any non-zero value is considered true, and it usually returns the value 1 to signify true. 0 is considered false. As we can see in the example above, the first query returned true as both the expressions evaluated to true. However, the second query returned false as the second condition 'test' = 'abc' is false.
+In MySQL terms, any non-zero value is considered true, and it usually returns the value 1 to signify true. 0 is considered false. As we can see in the example above, the first query returned true as both the expressions evaluated to true. However, the second query returned false as the second condition 'test' = 'abc' is false.
 
 OR Operator
 -----------
@@ -506,7 +509,7 @@ The OR operator take two values also but they have some differences that they wi
 
 Example
 -------
-
+```
 mysql> SELECT 1 = 1 OR 'test' = 'abc';
 
 +-------------------------+
@@ -515,7 +518,8 @@ mysql> SELECT 1 = 1 OR 'test' = 'abc';
 |                       1 |
 +-------------------------+
 1 row in set (0.00 sec)
-
+```
+```
 mysql> SELECT 1 = 2 OR 'test' = 'abc';
 
 +-------------------------+
@@ -524,9 +528,9 @@ mysql> SELECT 1 = 2 OR 'test' = 'abc';
 |                       0 |
 +-------------------------+
 1 row in set (0.00 sec)
+```
 
-
-## The queries above demonstrate how the OR operator works. The first query evaluated to true as the condition 1 = 1 is true. The second query has two false conditions, resulting in false output.
+The queries above demonstrate how the OR operator works. The first query evaluated to true as the condition 1 = 1 is true. The second query has two false conditions, resulting in false output.
 
 
 NOT Operator
@@ -536,7 +540,7 @@ This operator also take two values but they reverse the boolean like if answer i
 
 Example
 -------
-
+```
 mysql> SELECT NOT 1 = 1;
 
 +-----------+
@@ -545,7 +549,8 @@ mysql> SELECT NOT 1 = 1;
 |         0 |
 +-----------+
 1 row in set (0.00 sec)
-
+```
+```
 mysql> SELECT NOT 1 = 2;
 
 +-----------+
@@ -554,9 +559,9 @@ mysql> SELECT NOT 1 = 2;
 |         1 |
 +-----------+
 1 row in set (0.00 sec)
+```
 
-
-## As seen in the examples above, the first query resulted in false, because it is the inverse of the evaluation of 1 = 1, which is true, so its inverse is false. The second was query returned true, as the inverse of 1 = 2 'which is false' is true.
+As seen in the examples above, the first query resulted in false, because it is the inverse of the evaluation of 1 = 1, which is true, so its inverse is false. The second was query returned true, as the inverse of 1 = 2 'which is false' is true.
 
 
 Symbol Operator
@@ -566,7 +571,7 @@ The AND,OR and NOT operator we use above can be represented by the symbols as we
 
 Example
 -------
-
+```
 mysql> SELECT 1 = 1 && 'test' = 'abc';
 
 +-------------------------+
@@ -575,7 +580,8 @@ mysql> SELECT 1 = 1 && 'test' = 'abc';
 |                       0 |
 +-------------------------+
 1 row in set, 1 warning (0.00 sec)
-
+```
+```
 mysql> SELECT 1 = 1 || 'test' = 'abc';
 
 +-------------------------+
@@ -584,7 +590,8 @@ mysql> SELECT 1 = 1 || 'test' = 'abc';
 |                       1 |
 +-------------------------+
 1 row in set, 1 warning (0.00 sec)
-
+```
+```
 mysql> SELECT 1 != 1;
 
 +--------+
@@ -593,7 +600,7 @@ mysql> SELECT 1 != 1;
 |      0 |
 +--------+
 1 row in set (0.00 sec)
-
+```
 
 Operators in queries
 --------------------
@@ -602,7 +609,7 @@ As we now know the common operators so now we use that operators in sql queries 
 
 Example
 -------
-
+```
 mysql> SELECT * FROM logins WHERE username != 'john';
 +----+---------------+------------+---------------------+
 | id | username      | password   | date_of_joining     |
@@ -612,12 +619,12 @@ mysql> SELECT * FROM logins WHERE username != 'john';
 |  4 | tom           | tom123!    | 2020-07-02 11:47:16 |
 +----+---------------+------------+---------------------+
 3 rows in set (0.00 sec)
-
-# the query search for username in username column but username is not equal to john so our result have all the username that are not equal to john
+```
+the query search for username in username column but username is not equal to john so our result have all the username that are not equal to john
 
 Example
 -------
-
+```
 mysql> SELECT * FROM logins WHERE username != 'john' AND id > 1;
 
 +----+---------------+------------+---------------------+
@@ -627,9 +634,9 @@ mysql> SELECT * FROM logins WHERE username != 'john' AND id > 1;
 |  4 | tom           | tom123!    | 2020-07-02 11:47:16 |
 +----+---------------+------------+---------------------+
 2 rows in set (0.00 sec)
+```
 
-
-## Now the above query search for all user whose id column have greater value then 1 but there username not equal to john so the show us result with user that name is not john and there id is greater then 1
+Now the above query search for all user whose id column have greater value then 1 but there username not equal to john so the show us result with user that name is not john and there id is greater then 1
 
 Multiple Operator Precedence
 ----------------------------
