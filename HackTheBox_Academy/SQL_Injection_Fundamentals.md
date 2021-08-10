@@ -1824,12 +1824,12 @@ echo "Executing query: " . $query . "<br /><br />";
 
 ````
 
-Now if you try to use sql injection on that backend source code they will not allow you to authenticate bypass because of real_escape_string().A similar example is the pg_escape_string() which used to escape PostgreSQL queries.
+Now if you try to use sql injection on that backend source code they will not allow you to authenticate bypass because of `real_escape_string()`.A similar example is the `pg_escape_string()` which used to escape PostgreSQL queries.
 
 Input Validation
 ----------------
 
-User input can also be validated based on the data used to query to ensure that it matches the expected input. For example, when taking an email as an input, we can validate that the input is in the form of ...@email.com, and so on.
+User input can also be validated based on the data used to query to ensure that it matches the expected input. For example, when taking an email as an input, we can validate that the input is in the form of `...@email.com`, and so on.
 
 Consider the following code snippet from the ports page, which we used UNION injections on
 
