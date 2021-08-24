@@ -207,7 +207,7 @@ Now when i use file command on `CustomerDetails.xlsx` file they will show us the
 Now this will become an excel file so we can open it on excel to see its content.
 <!--- ![OverpassHostingBackupsZipFileDecryptedTypeDetails png ](https://user-images.githubusercontent.com/85181215/128857234-3855709c-a632-4613-8faa-c37e8bfa7e65.png) -->
 
-This is a content that are in the file there we can see the Customer Name its Username and password and Credit Card Number and also CVC numbers.But wait we can see some of the name from the website also like `Paradox` and `MuirlandOracle` i wonder that username and password is also used in the system ssh. No its not but there is also ftp service running on the server so we can try that username and password on that.
+The content we see in the file are Customer Name its Username and password and Credit Card Number and also CVC numbers.But wait we can see some of the name from the website also like `Paradox` and `MuirlandOracle` i wonder that username and password is also used in the system ssh. No its not but there is also ftp service running on the server so we can try that username and password on that.
 
 That works we can successfully login to the ftp server using `paradox` user with the passwrod given in the exel file. when i use `ls` command there we can see this is website home directory there we can see `Backups` directory `index.html`,`main.css` etc. 
 ![OverpassHostingBackupsZipFileDecryptedTypeDetailsFTP png ](https://user-images.githubusercontent.com/85181215/128857326-9f825791-ad38-448f-b15c-9cdedce29d62.png)
@@ -217,7 +217,7 @@ So now we can put a [PHP reverse shell](https://github.com/pentestmonkey/php-rev
 So now we are ready to upload the `shell.php` file to the target system. connect to the target ftp server using the following command syntax
 
 Syntax: `ftp Target_IP_Here`
-password: `ShibesAreGreat123`
+password: 
 
 so when we are connected to the ftp server using the following command to upload the shell to the target web directory
 ```
@@ -276,7 +276,7 @@ Once you done that you should get the netcat shell like a `ssh` shell.
 So we have the ftp credentials for `paradox` user so we can do local priv-escalation so use the following command to login into `paradox` user
 ```
 $ su paradox
-password: ShibesAreGreat123
+password:
 ```
 So when we use `ls -al` command in the `paradox` user home directory there so we see the following result
 ![OverpassHostingAccess](https://user-images.githubusercontent.com/85181215/128857401-60ee003a-138f-4b0a-b314-d93904e8ed91.png)
