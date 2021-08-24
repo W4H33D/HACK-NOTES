@@ -362,11 +362,4 @@ $ cd /mnt/nfs
 
 # Flags
 
-**Web Flag**
-A: thm{0ae72f7870c3687129f7a824194be09d}
-
-**User Flag**
-A: thm{3693fc86661faa21f16ac9508a43e1ae}
-
-**Root flag**
-A: thm{a4f6adb70371a4bceb32988417456c44}
+You want flags you can have it. I put all flags in one place you just have to find it.
