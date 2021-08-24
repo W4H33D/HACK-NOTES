@@ -311,7 +311,7 @@ And now we can run it using the following command
 $ ./linpeas.sh
 ```
 
-As we can see from the `linpeas`  result there is not root privilege escalation vector found we there is a NFS service running as we can see from the `linpeas` result 
+As we can see from the `linpeas`  result there is root privilege escalation vector found. we see there is a NFS service running as we can see from the `linpeas` result 
 ![OverpassHostingAccessNfs png ](https://user-images.githubusercontent.com/85181215/128857533-949856b1-3852-41d4-9f59-1ab48f097705.png)
 
 
