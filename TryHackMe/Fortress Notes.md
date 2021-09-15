@@ -125,18 +125,18 @@ Password:
 ```
 **Note: In anonymous account you don't need to give a password just press enter there or leave him empity**
 When we use `ls -al` command there we can see there is two files there one is `marked.txt` and the other is hidden and its name is `.file`
-![[fortress.ftp.png]]
+![fortress ftp](https://user-images.githubusercontent.com/85181215/133457307-6a173bcd-4640-4b9c-bac5-5845f821476e.png)
 We can download that file using the `get` command there like follows 
 ```ftp
 $ get .file marked.txt
 ```
-![[fortress.ftp.get.png .png]]
+![fortress ftp get png ](https://user-images.githubusercontent.com/85181215/133457389-33242086-8542-4b8a-aafe-221e8a999386.png)
 Above command download that files on our current directory where we open the ftp server.So now we have that files we can see the content of that files so now we can examine that files to see what is in there `.file` don't have any extension there so we can use `file` command on it to see what type of file is that like follows
 ```shell
 $ file .file
 ```
 This show us the file type of `.file` file and the other file have extension `.txt` so that means that file is a text file so we can see its content using `cat` command
-![[fortress.ftpFiles.png .png]]
+![fortress ftpFiles png ](https://user-images.githubusercontent.com/85181215/133457482-9780e7c9-3760-4726-bf48-9fa96ae7d149.png)
 The text file have text on it but `.file` is a `python 2.7 byte-complied` that mean we have to decompiled it first so we can use [ uncompyle2](https://github.com/wibiti/uncompyle2) that `decompiles` that code so we can see what inside that code.We can do this with the following command
 ```shell
 $ git clone https://github.com/wibiti/uncompyle2
@@ -148,7 +148,7 @@ $ sudo ./setup.py install
 $ ./scripts/uncompyle2 ../.file > decompiled.py
 ```
 This will decompiled that code and stored its output to the file name `decompiled_backdoor.py`
-![[fortress.ftpFilesDecompile2.png]]
+![fortress ftpFilesDecompile2](https://user-images.githubusercontent.com/85181215/133457556-b6c23a5e-8bbe-45dc-a661-f37dab46ee32.png)
 
 ![[fortress.ftpFilesDecompileContent.png]]
 After Decompiling we can see their is `usern` and `passw` variable that have `bytes_to_long` encoded data so we have to decode that values to get the `usern` and `passw` value so we know that is encoded to `bytes_to_long` utility so we can decode it using `long_to_bytes` with the following python3 code
@@ -174,15 +174,15 @@ to do that we can use the following command
 $ nc $IpAdd_Here 5752
 ```
 When we do that we see the following output
-![[fortress.nc.png]]
+![fortress nc](https://user-images.githubusercontent.com/85181215/133457622-39dc71c7-e16d-4e23-a30f-9ea0852630d0.png)
 So their we see we need `username` and `password` there we find credential on ftp enumeration so we can use that credential there and see if they accept that credentials or not.
-![[fortress.nc.result.png]]
+![fortress nc result](https://user-images.githubusercontent.com/85181215/133457689-99dfe677-24d8-4985-a11a-235f993b8319.png)
 And they do so we got some output the but don't know 
 
 3. **HTTP Enumeration**
 
 Above we do enumeration of the service that got us some information that we need in future but now on we enumerate the web server that have a big attacking and  major attacking surface.In enumeration we found out that Target is using Apache web server.When we visit the main page of the site we confirm that also there because they have Apache default web page there
-![[fortressHttppage.png]]
+![fortressHttppage](https://user-images.githubusercontent.com/85181215/133457819-17245356-3a28-4627-9a86-307f8155c2dc.png)
 
 So it is the time for finding hidden directories the target contained in the server so we can find it using the following command 
 ```shell
@@ -206,14 +206,14 @@ troll.html              [Status: 200, Size: 199, Words: 11, Lines: 12]
 ```
 
 there we see `index.html` that we see above the `Apache` default page, `assests` is a directory that we don't access,`private.php` is a page that don't have any content in it they are just a blank page or required some additional things.And `troll.html` is a web page we can access but when we go there they show just a blank page with black background so when we see page source code there we see the following output
-![[fortressHttppageTroll.png]]
+![fortressHttppageTroll](https://user-images.githubusercontent.com/85181215/133457887-97a4e8ca-2f3d-4c54-93cd-f30e8cefaf13.png)
 there we see a message **This is not so easy** and there is also a link of **assests/style.css** that have some base64 encoded message.
 When we decode that message using the following command syntax 
 ```shell
 $ echo 'Base64 string here' | base64 -d
 ```
 Output is like this 
-![[fortressMessage.png]]
+![fortressMessage](https://user-images.githubusercontent.com/85181215/133457959-9727e413-fea5-4341-9767-5191e8089c3c.png)
 This does not give us any hint but why they write all the text in lower case except **COLLIDING** They are in upper case that is suspicious.
 
 That's all we find right now nothing else and they are not enough for initial access.We find a string from `netcat` after successfully login to it what is that we don't know right now maybe they are HTTP hidden directory we can find this also using `ffuf` we have to do is make a file that have string we find from `netcat` and use that as a wordlist like follows
@@ -222,15 +222,15 @@ $ echo 't3mple_0f_y0ur_51n5' > tample.txt
 $ ffuf -u http://10.10.238.81:7331/FUZZ -w tample.txt:FUZZ -e .php,.html,.js,.css
 ```
 and the output is like following
-![[fortress_tampleofsins.png]]
+![fortress_tampleofsins](https://user-images.githubusercontent.com/85181215/133458018-9e922af0-604a-41b6-b46d-e56231be0194.png)
 So this is a hidden directory with two extension `html` and `php`
 `.html` is like this 
-![[fortress_tampleofsins.html.png]]
+![fortress_tampleofsins html](https://user-images.githubusercontent.com/85181215/133458068-f5407082-21e4-4eb8-a2e8-93e920dfdc27.png)
 There source code have interesting thing.They comment out a `php` there 
-![[fortress_tampleofsins.htmlSource.png]]
+![fortress_tampleofsins htmlSource](https://user-images.githubusercontent.com/85181215/133458145-ce4056ec-bd54-48c7-b0dd-7419aca2555d.png)
 
 Lets see `.php` one page.That page have nothing just a black background when i see its source code that also have some interesting thing
-![[fortress_tampleofsins.php.png]]
+![fortress_tampleofsins php](https://user-images.githubusercontent.com/85181215/133458207-fe4b2970-fb07-4633-8aca-760e9c641d0d.png)
 
 They comment out some login forum that use  GET Request Method.
 
