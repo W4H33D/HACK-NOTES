@@ -543,4 +543,4 @@ After that we run that binary and they give us root
 
 ----------------
 
-Special Thank to [A3r1t](https://tryhackme.com/p/Amrit456852) for Helping in this Room you can check out his Notes Also  from [A3r1t](https://github.com/A3r1t/CTF-Notes) there 
+Special Thank to [A3r1t](https://tryhackme.com/p/Amrit456852) for Helping in this Room. 
