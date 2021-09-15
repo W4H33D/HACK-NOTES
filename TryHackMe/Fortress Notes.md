@@ -150,7 +150,7 @@ $ ./scripts/uncompyle2 ../.file > decompiled.py
 This will decompiled that code and stored its output to the file name `decompiled_backdoor.py`
 ![fortress ftpFilesDecompile2](https://user-images.githubusercontent.com/85181215/133457556-b6c23a5e-8bbe-45dc-a661-f37dab46ee32.png)
 
-![[fortress.ftpFilesDecompileContent.png]]
+![fortress ftpFilesDecompileContent](https://user-images.githubusercontent.com/85181215/133458387-c98cd51e-c8f1-40eb-8b43-8cbb4cbce4b0.png)
 After Decompiling we can see their is `usern` and `passw` variable that have `bytes_to_long` encoded data so we have to decode that values to get the `usern` and `passw` value so we know that is encoded to `bytes_to_long` utility so we can decode it using `long_to_bytes` with the following python3 code
 ```python
 from Crypto.Util.number import long_to_bytes 
@@ -260,8 +260,8 @@ else if(strlen($test2) <= 500 and strlen($test1) <= 600){
 ```
 we have to keep this in mind also.So we have to send a small hash collision file that have small size but have same sha1 hash so i found this site useful for this 
 [sha-mbles.io](https://sha-mbles.github.io/). This site have two message files  
-![[fortress_Shambles.png]] that have same sha1 hash and have small size also
-![[fortress_ShamblesHash.png]]. 
+![fortress_Shambles](https://user-images.githubusercontent.com/85181215/133458509-b340c97c-de3f-4317-8578-1a138ea5df2b.png) that have same sha1 hash and have small size also
+![fortress_ShamblesHash](https://user-images.githubusercontent.com/85181215/133458575-1305a463-75f0-496a-9ba9-52fe0b6c2256.png). 
 So now we have the files so we can use that but now the problem is how we send that files in server so i use python3 request method for that using the following code
 ```python3
 import requests
@@ -278,9 +278,9 @@ In that code we request `messageA` and `messageB` file with its complete URL fro
 http://10.10.238.81:7331/t3mple_0f_y0ur_51n5.php
 ```
 with the GET parameter `user` for username and `pass` for password and when that code run they show us the following output
-![[fortress_ShamblesHashKey.png]]
+![fortress_ShamblesHashKey](https://user-images.githubusercontent.com/85181215/133458658-3cb0baaa-5432-4118-98d8-df7400cb3b6d.png)
 They give us a directory name that have the following things
-![[fortress_SSHKey.png]]
+![fortress_SSHKey](https://user-images.githubusercontent.com/85181215/133458721-24988e81-e626-4001-8de8-21c02676fb36.png)
 So now we have the ssh private key for the `h4rdy` user so now we can copy that key in a file and make that private key with the permissions that only we can read it using the following commands
 ```shell
 $ echo 'private key here' > h4rdy_rsa
@@ -296,16 +296,16 @@ $ ssh -i h4rdy_rsa h4rdy@10.10.238.81
 and now we got the initial access
 
 when we use the `ls` command there we got the following errors
-![[fortress_SSH4rdy.png]]
+![fortress_SSH4rdy](https://user-images.githubusercontent.com/85181215/133458777-1a3dcd91-5f47-4968-bf82-139e0e925b57.png)
 so this user have default shell is `rbash` that is a restricted shell so we can't use the many functions there but they have some bypasses when google it and found that method useful
-![[fortress_rbash.png]]
+![fortress_rbash](https://user-images.githubusercontent.com/85181215/133458838-fa57cfec-e328-4900-a9f9-260905054bf3.png)
 So we have to do is to login again to `h4rdy` user using ssh but with the following command
 ```shell
 $ ssh -i h4rdy_rsa h4rdy@10.10.110.53 -t "bash --noprofile"
 ```
 
 So this give us regular `bash` but they don't have any `PATH` or `env` set so we have to do this on your own 
-![[fortress_rbashbypass.png]]
+![fortress_rbashbypass](https://user-images.githubusercontent.com/85181215/133458885-0fca8101-2222-44dd-9dce-c681b5fe47fa.png)
 There we use the following command to add the `PATH`
 ```shell
 $ export PATH=/bin:/usr/bin
@@ -341,7 +341,7 @@ $ chmod 600 j4x0n_rsa
 ```shell
 $ ssh -i j4x0n_rsa   j4x0n@10.10.238.81
 ```
-![[fortress_jaxon.png]]
+![fortress_jaxon](https://user-images.githubusercontent.com/85181215/133458953-c5df9a55-0b89-4a90-b1bd-8acf5371395a.png)
 And we got `j4x0n` also 
 
 So now we can use `sudo -l` there also for easy privilege escalation vectors but they required password we don't have so we can `find` system `SUID` binaries using the following command
@@ -494,7 +494,7 @@ Now we can copy that binary in that location using the following command
 $ cp /home/j4x0n/libfoo.so /usr/lib
 ```
 After that we run that binary and they give us root
-![[fortressRoot.png]]
+![fortressRoot](https://user-images.githubusercontent.com/85181215/133459047-8bcc9394-8858-4d44-98c8-90f5beb118eb.png)
 
 ----------------
 
