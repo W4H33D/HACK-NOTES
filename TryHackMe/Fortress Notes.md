@@ -512,7 +512,7 @@ And this output show some binary that don't have any path or some libraries like
 $ find / -name libfoo.so -exex ls -al {} \; 2>/dev/null
 ```
 so i made a malicious `libfoo.so` with the following procedure 
-- first we have to make a binary name `libfoo.c` with the following code
+- first we have to make a file name `libfoo.c` with the following code
 ```
 #include<stdio.h>
 #include<stdlib.h>
@@ -524,7 +524,7 @@ system("/bin/bash");
 }
 
 ```
-- After that we have to compile that binary with the following command
+- After that we have to compile that file with the following command
 ```shell
 $ gcc -fPIC -shared -o libfoo.so libfoo.c
 ```
