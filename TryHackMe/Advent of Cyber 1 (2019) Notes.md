@@ -37,6 +37,7 @@ By completing these challenges, you give your consent to give your email to Comp
 
 
 ## Task 2  Connect To Our Network
+
 ![](https://i.imgur.com/MouaHym.png)  
 
 When you deploy a machine on TryHackMe, you will need to be connected to our network using an OpenVPN client.
@@ -46,6 +47,7 @@ For information on connecting to our network and downloading your connection pac
 If you have problems connecting, please email us or ask on the [Discord](https://discord.gg/GzVZtGX)!
 
 ## Task 3  Points don't matter
+
 ![](https://i.imgur.com/j4XGTXr.png)  
 
 In this competition, points do not matter. Your leaderboard rank will not affect you.
@@ -56,12 +58,12 @@ Also, everyday you complete a challenge, you get entered into another prize draw
 
 ## Task 4  Our Socials
 
-[![](https://i.imgur.com/d64bltq.png)](https://discord.gg/GzVZtGX)  
+![](https://i.imgur.com/d64bltq.png)](https://discord.gg/GzVZtGX)  
 
 Be a part of our growing community and join our discord!  
   
 
-[![](https://i.imgur.com/ACdReyI.png)](https://twitter.com/RealTryHackMe)
+![](https://i.imgur.com/ACdReyI.png)](https://twitter.com/RealTryHackMe)
 
 Follow us on Twitter to receive daily challenge posts.  
   
@@ -69,7 +71,7 @@ We will choose a random winner everyday, to enter simply complete the challenge 
 
 ## Task 5  [Optional] Your own Kali Linux Machine
 
-[![](https://i.imgur.com/9ud3xbm.png)](https://tryhackme.com/room/kali)  
+![](https://i.imgur.com/9ud3xbm.png)](https://tryhackme.com/room/kali)  
 
 If you don't have the right desktop environment or security tools on your computer, you can deploy and access your own [Kali](https://tryhackme.com/room/kali) Linux machine directly in your browser. This also removes the need to be connected to our OpenVPN server! 
 
@@ -97,16 +99,27 @@ Q1: What is the name of the cookie used for authentication?
 A authid
 **Solution**
 When you go to the page there you can see the page like this 
+
 ![Task1login](https://user-images.githubusercontent.com/85181215/134501778-bc1d1947-d16c-46e4-b8f9-0d7b439d91e6.png)
+
 There you can see you have to login to the account but you don't know the credentials so you can make your own account on the register section so go there and they are something like this
+
 ![Task1Register](https://user-images.githubusercontent.com/85181215/134501831-ffd66051-92b4-4e36-ac2a-e78773e889fd.png)
+
 You can fill the forum with any values you want and login into that account.
+
 ![Task1Inventory](https://user-images.githubusercontent.com/85181215/134501921-c843a0fd-380a-433f-b69e-efc0663a8769.png)
+
 Now you login so we can see the cookie of the user we own so i'm using chrome browser if you are using something else search how to view cookie in that browser.In Chrome go to the search bar/URL bar
+
 ![Task1InventoryCokkie1](https://user-images.githubusercontent.com/85181215/134501989-af5a26da-ea6d-4978-9d28-9e37396c3954.png)
+
 Click on `Not Secure` 
+
 ![Task1InventoryCokkie2](https://user-images.githubusercontent.com/85181215/134502025-8e747650-0114-4b5f-9a5d-f1232a216795.png)
+
 Click on Cookies and you got the cookie and there values 
+
 ![Task1InventoryCokkie3](https://user-images.githubusercontent.com/85181215/134502089-c2997622-4401-4dd8-8d6f-418e25f7b4cf.png)
 
 Q2: If you decode the cookie, what is the value of the fixed part of the cookie?
@@ -130,6 +143,7 @@ So by knowing this we can abuse this to get the mcinventory account with knowled
 mcinventory[fixstring here]
 ```
 If we are able to put that cookie in our request we can easily able to login into mcinventory user and we can do this with burp suit but i'm not do that i'm registering an other account with random email and password but use username `mcinventory` there and when i login into that account and we can login into *mcinventory* user and there we can see the mcinventory reguest
+
 ![Task1RegisterMcinventory](https://user-images.githubusercontent.com/85181215/134502163-ad897d73-4fa3-4fd6-b696-3b451e53e894.png)
 
 ## Task 7  [Day 2] Arctic Forum
@@ -162,9 +176,13 @@ A: defaultpass
 **Solution**
 Now we have access to the hidden page and they are admin panel there we can login to the admin account 
 But we have to find valid admin credential to solve that so when i see the source code of that page there is some interesting comment 
+
 ![Task2SourceCode](https://user-images.githubusercontent.com/85181215/134502246-e02b0c98-7034-4e8e-88ae-c40b0a97f8c6.png)
+
 That give us a clue of who made this admin panel so when we search that Repo in google found the following
+
 ![Task2Repo](https://user-images.githubusercontent.com/85181215/134502286-e614400e-5a52-4ae7-9d99-e8ca09f82bc3.png)
+
 In that repo we found the valid credential.  
 Q3: What do you have to take to the 'partay'
 A: Eggnog
@@ -185,12 +203,14 @@ Q1: Whats the destination IP on packet number 998?
 A: 63.32.89.195
 **Solution**
 Download `Evil Elf.pcap` file and open it in wireshark now there is lot of packet and scroll down all they way to packet no 998 and there you found the the destination IP Address
+
 ![Task3Packet](https://user-images.githubusercontent.com/85181215/134502326-b1b8a0a7-d189-4548-af5d-7d7a782692dc.png)
 
 Q2: What item is on the Christmas list?
 A: ps4
 **Solution**
 Now in the filter bar type `Telnet` and press enter this will filter out all the packet and show you only telnet packet there and only three packets are there so right click on the first packet and they will open a drop down menu and then hover into Follow and then select `Follow TCP stream` and you will see two command there first one have the answer
+
 ![Task3Shadow](https://user-images.githubusercontent.com/85181215/134502350-4346632c-5965-4691-bd19-2e724d47e54f.png)
 
 Q3: Crack buddy's password!
@@ -201,9 +221,11 @@ In the previous step we see attacker use cat command to see the content of the s
 $ john hash.txt --wordlist=/usr/share/wordlists/rockyou.txt
 ```
 ![Task3Cracked](https://user-images.githubusercontent.com/85181215/134502389-140815e7-0ef6-446a-8dd3-f281806223f8.png)
+
 After the cracking is finish we can see the cracked password there
 
 ## Task 9  [Day 4] Training
+
 ![](https://i.imgur.com/yHpBtpX.png)  
 
 With the entire incident, McElferson has been _very_ stressed.
@@ -340,16 +362,22 @@ A: 23/10/2014
 From Lola `Twitter` account we got Lola Personal website when we go there we don't get anything related to when Lola start Photography so to  know about this we go to the website called **`waybackmachine`** 
 [WaybackMachine](https://web.archive.org/)
 This is a web site that take snapshots of the web site so we can see how its looks in past.That is like web archive. so when we search Lola website on there we know about the waybackmachine took  65 snapshots between October 23,2019 and July 9,2021
+
 ![Task10WayBackMachine](https://user-images.githubusercontent.com/85181215/134502497-1179706e-7cfd-40b9-a007-05759bd44317.png)
+
 So when we check the the snapshots of its website from October 23,2019 we see the following output there
+
 ![Task10WayBackMachineSnapshot png ](https://user-images.githubusercontent.com/85181215/134502542-47ea6c5d-bb17-4c9e-9596-7dcc7ff44fcf.png)
+
 There we get Lola start Photography some year back from  October 23,2019 so when we minus that year from 2019 we go the answer 
 
 Q5: What famous woman does Lola have on her web page?
 A: Ada Lovelace
 **Solution**
 In Lola website all snapshots have one photo common and that is 
+
 ![Task10Photo](https://user-images.githubusercontent.com/85181215/134502582-575897a0-f3d4-421b-b601-3027d2262f7b.png)
+
 So we can go to goggle image search for doing reverse image search to get that information about this image there we can paste the url of the image or we can upload the image to get the information
 
 
@@ -379,41 +407,54 @@ Q1: What data was exfiltrated via DNS?
 A: Candy Cane Serial Number 8491
 **Solution**
 TryHackme give us pcap file that have intercepted traffic when we open it on the wireshark we can see there is so many DNS request generated and that have some hex encoded value and that are going to `holidaytheif.com` 
+
 ![Task11DNS](https://user-images.githubusercontent.com/85181215/134502679-8222f580-f848-456b-ba23-bb794413f59a.png)
+
 So when we decode that hex value using the command 
 ```
 $ echo 'hex value here' | xxd -r -p
 ```
 we can see the exfiltrated data attacker send 
+
 ![Task11decode](https://user-images.githubusercontent.com/85181215/134502701-3a12e756-3fbf-4ebf-8b2f-793befb615d2.png)
 
 Q2: What did Little Timmy want to be for Christmas?
 A: pentester
 **Solution**
 Scroll down a little more in wireshark we also see there is some http request also that have some file so we go to wireshark export section to get that file so we can save that file for further forensic 
+
 ![Task11http](https://user-images.githubusercontent.com/85181215/134502736-e9f1e106-a408-4be2-8463-bed93f7ef518.png)
+
 ![Task11http_export](https://user-images.githubusercontent.com/85181215/134502771-fade2a94-791e-4c08-9bf6-f10bfc84d386.png)
+
 After saving that file we can see there is two files there one is an image and the other is zip file.When we open the image file that are simple tryhackme logo image so we use `steghide` to check if they have some hidden data on it so we use the following `steghide` command 
 ```
 $ steghide extract -sf ./TryHackMe.jpg
 ```
 and give password empty and we got the following output 
+
 ![Task11steghide](https://user-images.githubusercontent.com/85181215/134502819-f31b9ce6-1f38-423f-b494-1cc0f541c42e.png)
+
 that save the hidden data on a file name `christmasmonster.txt`.
 Now we move to the zip file and there is many text file there but they have a password protected so we use `fcrackzip` tool to crack that zip file password with the following command 
 ```
 $ fcrackzip -b --method 2 -D -p ~/wordlists/rockyou.txt -v christmaslists.zip
 ```
 this give us the following output.  
+
 ![Task11fcrackzip](https://user-images.githubusercontent.com/85181215/134502855-658bbda3-55b3-4984-9524-a4042466baee.png)
+
 After trying that password we successfully unzip the files and there is a file that have name `christmaslisttimmy.txt` when we `cat` that file we got the following output
+
 ![Task11timmy](https://user-images.githubusercontent.com/85181215/134502895-5ab7a733-5c84-4c43-9e00-e4c8c88d9a80.png)
+
 They have our answer
 
 Q3: What was hidden within the file?
 A:  RFC527
 **Solution**
 In Previous Question we use `steghide` to get the hidden data on the image file we got and they save that data on a file name `christmasmoster.txt`  when we `cat` that file there we got the our answer on second line.
+
 ![Task11poem](https://user-images.githubusercontent.com/85181215/134502937-34ad73dc-efc7-4908-abb8-87122cb882a4.png)
 
 ## Task 12  [Day 7] Skilling Up
@@ -472,6 +513,7 @@ Q4: What is the name of the file that is accessible on the server you found runn
 A: interesting.file
 **Solution**
 As we can see from scan report there is a `http` service is running on port `999` so when we go to that location in browser using `http://<IP_Address_here>:999` we can see the file that are accessible there.
+
 ![Task12HttpServer](https://user-images.githubusercontent.com/85181215/134502984-22bf3176-e0f8-460d-845d-06d10c4e0fac.png)
 
 ## Task 13  [Day 8] SUID Shenanigans
@@ -571,7 +613,7 @@ What? You didn't think us elves got presents too? Well we do and we get first pi
 
 Can you help me hack into Santa's system that keeps track of the naughty and nice people to see if I am on it?
 
-[![](https://i.imgur.com/ODZrb5R.png)](https://blog.tryhackme.com/metasploit/)
+![](https://i.imgur.com/ODZrb5R.png)](https://blog.tryhackme.com/metasploit/)
 
 Check out the [blog post](https://blog.tryhackme.com/metasploit/) shown above to help you on this task.
 
@@ -748,7 +790,9 @@ Hint: Don't leave sensitive information out in the open, even if you think you h
 A: THM{HACK_PLAYER_ONE}
 **Solution**
 After go to the web site `/retro` directory and enumerating all the pages.Found a comment page that have a string looks like some secrets thing like password
+
 ![Task18Wadepassword](https://user-images.githubusercontent.com/85181215/134503211-1519d0ee-f6d4-4967-a6b9-0a120e68c9b0.png)
+
 when use that password in web login page with username:`Wade` and password:`parzival` it does't work but from nmap scan report we found a remote desktop port open so i use that credentials there and they work.We got initial access to the system.Now in desktop we can see the `user.txt` flag
 
 Q3: [Optional] Elevate privileges and read the content of root.txt
@@ -781,6 +825,7 @@ Q1: What is the name of the file you found?
 A: employee_names.txt
 **Solution**
 THM gave us amazon bucket name and that is **advent-bucket-one** so we can search that bucket using the following URL `https://advent-bucket-one.s3.amazonaws.com/` This URL show us the output like following 
+
 ![Task19Bucket](https://user-images.githubusercontent.com/85181215/134503262-c028c9f0-ad5e-4b62-a2e7-165efd3234ca.png)
 
 Q2: What is in the file?
@@ -802,6 +847,7 @@ Q1:What is Charlie going to book a holiday to?
 A: Hawaii
 **Solution**
 Visit the website and its first page have the answer
+
 ![Task20Hawaeii](https://user-images.githubusercontent.com/85181215/134503300-2230eb3c-c18d-47d1-b268-eb64f921cfcd.png)
 
 Q2: Read /etc/shadow and crack Charlies password.
