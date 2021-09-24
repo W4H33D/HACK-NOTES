@@ -883,10 +883,81 @@ Use the questions to guide you on how to write the script. Check out the support
 **Answer the questions below**
 
 Q1: How many files did you extract(excluding all the .zip files)
-A:
+A: 50
 
 Q2: How many files contain Version: 1.1 in their metadata?
-A:
+A: 3 
 
 Q3: Which file contains the password?
-A:
+A: dL6w.txt
+
+**Solution/Script**
+
+I don't know python so i use bash scripting to solve that problem but i also don't know bash scripting that much but they are a little easy because they use Linux command and that we use daily so this will solve our problem but i google to know about `while-read` loop with the help of that i made the following script
+
+```bash
+#!/bin/bash
+
+
+mkdir -p zip/extract
+
+cd zip
+
+unzip ../final-final-compressed.zip
+
+cd extract
+
+zip_files= ls /home/waheed/THM/'Advent of Cyber 1 2019'/task21/zip > temp.txt
+
+
+#filename= temp.txt
+while read line;
+do
+	
+	echo '[+] ----------------------------------------------------';
+
+	unzip /home/waheed/THM/'Advent of Cyber 1 2019'/task21/zip/$line 
+
+done < temp.txt
+ 
+ rm temp.txt 
+
+
+echo '[+] ----------------------------------------------------';
+
+text_files= ls > textFiles 
+
+while read files;
+do
+	exiftool $files | egrep -i '1.1' 
+done < textFiles
+
+echo ''
+
+while read files;
+do
+	
+	cat $files | egrep -i 'password' && echo 'File Contains the Password is [ '$files ']'
+
+done < textFiles
+
+echo -e '\n[+] Extracted Files\n'
+echo -e '====='
+
+ls  /home/waheed/THM/'Advent of Cyber 1 2019'/task21/zip/extract | wc -l
+echo -e '====='
+
+
+rm -r /home/waheed/THM/'Advent of Cyber 1 2019'/task21/zip
+
+
+
+echo ''
+echo '================================================================'
+echo 'Finished'
+echo '================================================================'
+```
+
+Its Output is like this
+
+![image](https://user-images.githubusercontent.com/85181215/134694684-f36dd7eb-0c8f-4325-908c-7ac576eade5b.png)
