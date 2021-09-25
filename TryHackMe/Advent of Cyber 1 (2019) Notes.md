@@ -963,7 +963,7 @@ Its Output is like this
 ![image](https://user-images.githubusercontent.com/85181215/134694684-f36dd7eb-0c8f-4325-908c-7ac576eade5b.png)
 
 
-My fellow `A3r1t` made a code that is written in python that solve our problem the code like this 
+My fellow [A3r1t](https://tryhackme.com/p/Amrit456852) made a code that is written in python that solve our problem the code like this 
 
 ```Python
 import os
@@ -1023,7 +1023,7 @@ And its output is like this
 ![image](https://user-images.githubusercontent.com/85181215/134768400-165f86ed-0cc8-45a0-bdcc-174283dfbac1.png)
 
 This code is written on windows so the path are in windows format and exiftool give you some problem also so if your linux machine have exiftool
-install so use `os` function to call that.
+install so use `os` function to call that and modify the code accordingly
 
 ## Task 22 [Day 17] Hydra-ha-ha-haa 
 
