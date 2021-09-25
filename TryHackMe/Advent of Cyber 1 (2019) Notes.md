@@ -964,6 +964,8 @@ Its Output is like this
 
 ## Task 22 [Day 17] Hydra-ha-ha-haa 
 
+![image](https://user-images.githubusercontent.com/85181215/134759373-cbfa0d2e-7087-4313-96b9-a0abd8a45dda.png)
+
 
 You suspect Elf Molly is communicating with the Christmas Monster. Compromise her accounts by brute forcing them!
 
