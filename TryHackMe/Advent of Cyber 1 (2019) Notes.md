@@ -962,6 +962,67 @@ Its Output is like this
 
 ![image](https://user-images.githubusercontent.com/85181215/134694684-f36dd7eb-0c8f-4325-908c-7ac576eade5b.png)
 
+
+My fellow `A3r1t` made a code that is written in python that solve our problem the code like this 
+
+```Python
+import os
+import zipfile
+import exiftool
+
+# Extracting Main Zip file
+with zipfile.ZipFile('C:\\Users\\Name\\Downloads\\final-final-compressed.zip','r') as zip_ref:
+        zip_ref.extractall('C:\\Users\\Name\\Downloads\\THM')
+
+
+
+# Listing and Extracting Files
+listoffiles = os.listdir('C:\\Users\\Name\\Downloads\\THM')
+
+for f in listoffiles:
+    with zipfile.ZipFile('C:\\Users\\Name\\Downloads\\THM\\{}'.format(f),'r') as zip_ref:
+        zip_ref.extractall('C:\\Users\\Name\\Downloads\\THM')
+
+
+# Listing Extracted FIles
+files= []
+nooffiles = 0
+listoffiles = os.listdir('C:\\Users\\Name\\Downloads\\THM')
+for f in listoffiles:
+    if ".zip" not in f:
+        nooffiles=nooffiles+1
+        files.append("C:\\Users\\Name\\Downloads\\THM\\{}".format(f))
+
+print("No of Files Extracted : ",nooffiles)
+
+
+# Getting and Displaying Version from MetaData
+with exiftool.ExifTool (r'C:\Users\Name\Documents\ex\exiftool.exe') as et:
+    metadata=et.get_tag_batch("Version",files)
+
+count =0
+for d in metadata:
+    if str(d) == "1.1":
+       count=count+1;
+
+print("files contain Version: 1.1 in their metadata : {}".format(count))
+
+
+# Reading Files
+for f in files:
+    filetoread = open(f,'r')
+    for lines in filetoread:
+        if "password" in lines:
+            print(lines)
+            break
+```
+
+And its output is like this 
+
+
+![image](https://user-images.githubusercontent.com/85181215/134768400-165f86ed-0cc8-45a0-bdcc-174283dfbac1.png)
+
+
 ## Task 22 [Day 17] Hydra-ha-ha-haa 
 
 ![image](https://user-images.githubusercontent.com/85181215/134759373-cbfa0d2e-7087-4313-96b9-a0abd8a45dda.png)
