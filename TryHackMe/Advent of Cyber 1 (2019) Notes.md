@@ -1022,6 +1022,7 @@ And its output is like this
 
 ![image](https://user-images.githubusercontent.com/85181215/134768400-165f86ed-0cc8-45a0-bdcc-174283dfbac1.png)
 
+This code is written on windows so the path are in windows format and exiftool give you some problem also
 
 ## Task 22 [Day 17] Hydra-ha-ha-haa 
 
