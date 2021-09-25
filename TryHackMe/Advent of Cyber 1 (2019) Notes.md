@@ -979,6 +979,7 @@ This machine will take between 3-4 minutes to boot.
 
 Q1: Use Hydra to bruteforce molly's web password. What is flag 1? (The flag is mistyped, its THM, not TMH).
 **Hint: If you've tried more than 30 passwords from RockYou.txt, you are doing something wrong!**
+
 A:  THM{2673a7dd116de68e85c48ec0b1f2612e}
 **Solution**
 Use the following hydra command to get the login password for `molly` user 
@@ -988,7 +989,9 @@ $ hydra -l "molly" -P /usr/share/wordlists/rockyou.txt 10.10.210.167 http-post-f
 When you got the credential login to web and got the flag there
 
 Q2: Use Hydra to bruteforce molly's SSH password. What is flag 2?
+
 A:THM{c8eeb0468febbadea859baeb33b2541b}
+
 **Solution**
 Use the following hydra command to bruteforce `molly` user ssh password
 ```
