@@ -961,3 +961,37 @@ echo '================================================================'
 Its Output is like this
 
 ![image](https://user-images.githubusercontent.com/85181215/134694684-f36dd7eb-0c8f-4325-908c-7ac576eade5b.png)
+
+## Task 22 [Day 17] Hydra-ha-ha-haa 
+
+
+You suspect Elf Molly is communicating with the Christmas Monster. Compromise her accounts by brute forcing them!
+
+Use Hydra to brute force Elf Molly's password. Use the rockyou.txt password list, which can be found here.
+
+Supporting materials can be found here.
+
+This machine will take between 3-4 minutes to boot.
+
+**Answer the questions below**
+
+Q1: Use Hydra to bruteforce molly's web password. What is flag 1? (The flag is mistyped, its THM, not TMH)
+Hint: If you've tried more than 30 passwords from RockYou.txt, you are doing something wrong!
+A:
+
+Q2: Use Hydra to bruteforce molly's SSH password. What is flag 2?
+A:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
