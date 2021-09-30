@@ -1135,15 +1135,19 @@ There is no supporting material - the only new concept in this challenge is Linu
 **Answer the questions below**
 
 Q1: What port is SSH running on?
+
 **Hint: Use nmap to enumerate services on ports 4000 and 5000.**
 
 A: 4567
 
 Q2: Crack sam's password and read flag1.txt
+
 **Hint: Complete the challenge on day 17, to understand how to use Hydra.**
 
 A: THM{dec4389bc09669650f3479334532aeab}
+
 **Solution**
+
 So Here we know the username `sam` but we don't know the password for that user so we use hydra to brute force that user password if the password is weak we can easily crack that password. But we have to note `ssh` service is not running on default port so we have to specify port number with `-s` flag. And the final command are following:-
 
 ```hydra
@@ -1184,8 +1188,16 @@ Now you connect to the ssh and read the flag using command `cat flag1.txt`.
 Q3: Escalate your privileges by taking advantage of a cronjob running every minute. What is flag2?
 
 A: THM{b27d33705f97ba2e1f444ec2da5f5f61}
+
 **Solution**
-So Now we got flag 1 but for getting flag 2 we have to do some privilege escalation stuff and from question we see we have to do this using cronjobs so to do that first i use the following command to see cronjobs for the system `cat /etc/crontabs` but there i did not get anything use full so i run `linpeas` for getting some privilege escalation vectors and i see there is also an other user on the system name `ubuntu` so i go there and see `flag2.txt` in there home directory but they are only read able by that user. But in home directory i see a directory name `scripts` and when i go there i see a bash script owned by `ubuntu` user and they are read and writeable to every one so i think that user set cronjob that script and when i see its content they are removing every thing from `/tmp` directory so i edit that script and enter a reverse shell command there so i got reverse shell and after one min i got the shell and now i can see the `flag2.txt`
+
+So Now we got flag 1 but for getting flag 2 we have to do some privilege escalation stuff and from question we see we have to do this using cronjobs so to do that first i use the following command to see cronjobs for the system `cat /etc/crontabs` but there i did not get anything use full so i run `linpeas` for getting some privilege escalation vectors and i see there is also an other user on the system name `ubuntu` so i go there and see `flag2.txt` in there home directory but they are only read able by that user. But in home directory i see a directory name `scripts` and when i go there i see a bash script owned by `ubuntu` user and they are read and writeable to every one so i think that user set cronjob that script and when i see its content they are removing every thing from `/tmp` directory so i edit that script and add the following command
+
+```shell
+chmod 777 /home/ubuntu/flag2.txt
+```
+
+After that we can see the flag2.txt
 
 
 
