@@ -1239,24 +1239,27 @@ Here's we see the `main` function in the output so now we can use the following 
 pdf@main
 ```
 and output is like this 
-![[Task26Pdfmain.png]]
+![Task26Pdfmain](https://user-images.githubusercontent.com/85181215/135634968-c7669658-6fa7-4afc-ac11-38af673bfa04.png)
 
 There we see three variables  `var_ch` `var_8h` and `var_4h` so our question is to find the value of `local_ch` that represent `var_ch` here so do the following steps to find its value first we have to set breakpoints using the following command syntax
 ```r2
 db <memory location>
 ```
 So according to question we have to set three breakpoints first on the following line 
-![[Task26Db1.png]]
+![Task26Db1](https://user-images.githubusercontent.com/85181215/135635051-39a0942b-956c-4f2a-9ad8-b1151cbb27fc.png)
+g]]
 
 Second one is here 
-![[Task26Db2.png]]
+![Task26Db2](https://user-images.githubusercontent.com/85181215/135635144-db4467f7-8036-409b-9760-6143e7dcced0.png)
+ng]]
 
 And third one is here
-![[Task26Db3.png]]
+![Task26Db3](https://user-images.githubusercontent.com/85181215/135635196-82e9997c-2f1a-4152-8c8f-a0b90beca7c5.png)
 
 So we can use its memory address in `db` command syntax and after setting all the breakpoints we get the following output
 
-![[Task26Breakpoints.png]]
+![Task26Breakpoints](https://user-images.githubusercontent.com/85181215/135635269-c5e5c7f2-bc0f-4e13-a4c9-1984cfbd747b.png)
+
 
 We see all the breakpoints address have small `b` after it so that means our breakpoints is set now we can run the binary with the command `dc` they will run the binary and stop on our first break point so now we use the following command  syntax
 ```r2
@@ -1266,10 +1269,12 @@ This show us variable value in hex so the above command is like this
 ```r2
 px @rbp-0xc
 ```
-![[Task26Var_ch.png]]
+![Task26Var_ch](https://user-images.githubusercontent.com/85181215/135635392-f4b43955-9fe6-4f30-9afc-4faa38cfcd9d.png)
+
 
 Here we see hex value is only `0000` so use `ds` command now to compile one step after break point and again use `px @rbp-0xc` command and we see the following output now 
-![[Task26Var_ch1.png]]
+![Task26Var_ch1](https://user-images.githubusercontent.com/85181215/135635487-13f69231-5f60-4d27-b028-92c023fbf3d0.png)
+
 
 And we got the first variable value and it is `1`
 
@@ -1279,7 +1284,8 @@ A: 6
 **Solution**
 
 So Now we use the same procedure again for second break point use `dc` command to compile second break point we set and again use `pdf@main` and we see we are now at second break point and now we `ds` command to compile one step after and now we use `dr` command because we are now interested to see register value not a variable so we use `dr` command and we see our register value is like this
-![[Task26Eax.png]]
+![Task26Eax](https://user-images.githubusercontent.com/85181215/135635568-b169f9e4-884a-4b6e-80d6-2b680e743d00.png)
+
 
 And there we see register value is `6` in last that's its value
 
@@ -1293,7 +1299,8 @@ px @rbp-0x4
 ```
 and our output is like this 
 
-![[Task26Var_ch4.png]]
+![Task26Var_ch4](https://user-images.githubusercontent.com/85181215/135635681-1c2e04ec-5a53-4b35-9a94-b4d7cbec9391.png)
+
 
 and we see the variable hex value have `6` and that our answer
 
