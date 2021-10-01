@@ -1199,8 +1199,103 @@ chmod 777 /home/ubuntu/flag2.txt
 
 After that we can see the flag2.txt
 
+## Task 26  [Day 21] Reverse Elf-ineering
 
+![](https://i.imgur.com/kd2ZbQT.png)  
 
+McSkidy has never really touched low level languages - this is something they must learn in their quest to defeat the Christmas monster.
+
+Download the archive and apply the command to the following binary files: `chmod +x file-name`
+
+Please note that these files are compiled to be executed on Linux x86-64 systems.
+
+The questions below are regarding the challenge1 binary file.
+
+Read the supporting materials [here](https://drive.google.com/file/d/1maTcdquyqnZCIcJO7jLtt4cNHuRQuK4x/view?usp=sharing).
+
+**Answer the questions below**
+
+Q1: What is the value of local_ch when its corresponding movl instruction is called(first if multiple)?
+
+A: 1
+
+**Solution**
+
+Download the task file and there we got two files `file1` and `challenge1` here `file1` is the file you can use to follow the supporting material to understands how to do task in radar2 aka r2. when you familiar with r2 then you use your knowledge in `challenge1` file to solve the answer.
+So now do the task by first open the `chanllenge1` file in `r2` with the following command
+```shell
+$ r2 -d challenge1
+```
+This will open it in debugged mode and after that the next command we use is `aa` That will analyze the binary.
+
+When they will complete use the command `afl` this will analyze the function and list it.They show us many function so we can grep specific function like `main` using the following command
+```r2
+afl | grep main
+```
+![[Task26R2.png]]
+
+Here's we see the `main` function in the output so now we can use the following command to view its summary
+```r2
+pdf@main
+```
+and output is like this 
+![[Task26Pdfmain.png]]
+
+There we see three variables  `var_ch` `var_8h` and `var_4h` so our question is to find the value of `local_ch` that represent `var_ch` here so do the following steps to find its value first we have to set breakpoints using the following command syntax
+```r2
+db <memory location>
+```
+So according to question we have to set three breakpoints first on the following line 
+![[Task26Db1.png]]
+
+Second one is here 
+![[Task26Db2.png]]
+
+And third one is here
+![[Task26Db3.png]]
+
+So we can use its memory address in `db` command syntax and after setting all the breakpoints we get the following output
+
+![[Task26Breakpoints.png]]
+
+We see all the breakpoints address have small `b` after it so that means our breakpoints is set now we can run the binary with the command `dc` they will run the binary and stop on our first break point so now we use the following command  syntax
+```r2
+px @<variable address here>
+```
+This show us variable value in hex so the above command is like this 
+```r2
+px @rbp-0xc
+```
+![[Task26Var_ch.png]]
+
+Here we see hex value is only `0000` so use `ds` command now to compile one step after break point and again use `px @rbp-0xc` command and we see the following output now 
+![[Task26Var_ch1.png]]
+
+And we got the first variable value and it is `1`
+
+Q2: What is the value of eax when the imull instruction is called?
+
+A: 6
+**Solution**
+
+So Now we use the same procedure again for second break point use `dc` command to compile second break point we set and again use `pdf@main` and we see we are now at second break point and now we `ds` command to compile one step after and now we use `dr` command because we are now interested to see register value not a variable so we use `dr` command and we see our register value is like this
+![[Task26Eax.png]]
+
+And there we see register value is `6` in last that's its value
+
+Q3: What is the value of local_4h before eax is set to 0?
+
+A: 6
+**Solution**
+Now again use `dc` to compile the third break point and use `pdf@main` to see break point and now use `px` command with forth variable address like we do in first step to see its value like this 
+```r2
+px @rbp-0x4
+```
+and our output is like this 
+
+![[Task26Var_ch4.png]]
+
+and we see the variable hex value have `6` and that our answer
 
 
 
