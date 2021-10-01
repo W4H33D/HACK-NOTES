@@ -1232,7 +1232,7 @@ When they will complete use the command `afl` this will analyze the function and
 ```r2
 afl | grep main
 ```
-![[Task26R2.png]]
+![image](https://user-images.githubusercontent.com/85181215/135634079-b7fb1abf-f141-4d2a-92a7-bc6089b30f2b.png)
 
 Here's we see the `main` function in the output so now we can use the following command to view its summary
 ```r2
