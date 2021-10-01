@@ -1249,12 +1249,10 @@ db <memory location>
 So according to question we have to set three breakpoints first on the following line 
 
 ![Task26Db1](https://user-images.githubusercontent.com/85181215/135635051-39a0942b-956c-4f2a-9ad8-b1151cbb27fc.png)
-g]]
 
 Second one is here 
 
 ![Task26Db2](https://user-images.githubusercontent.com/85181215/135635144-db4467f7-8036-409b-9760-6143e7dcced0.png)
-ng]]
 
 And third one is here
 
