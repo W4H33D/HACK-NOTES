@@ -155,7 +155,10 @@ Now when i use file command on `CustomerDetails.xlsx` file they will show us the
 
 
 Now this will become an excel file so we can open it on excel to see its content.
-![OverpassHostingBackupsZipFileDecryptedTypeDetails png ](https://user-images.githubusercontent.com/85181215/128857234-3855709c-a632-4613-8faa-c37e8bfa7e65.png)
+
+![overpass_temp](https://user-images.githubusercontent.com/85181215/135749758-4bb4c739-c6f6-4892-9dbd-d73dfa610d39.png)
+
+<!--![OverpassHostingBackupsZipFileDecryptedTypeDetails png ](https://user-images.githubusercontent.com/85181215/128857234-3855709c-a632-4613-8faa-c37e8bfa7e65.png)-->
 
 This is a content that are in the file there we can see the Customer Name its Username and password and Credit Card Number and also CVC numbers.But wait we can see some of the name from the website also like `Paradox` and `MuirlandOracle` i wonder that username and password is also used in the system ssh. No its not but there is also ftp service running on the server so we can try that username and password on that.
 
