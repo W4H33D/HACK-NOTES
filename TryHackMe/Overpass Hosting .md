@@ -312,6 +312,8 @@ $ cd /mnt/nfs
 
 # Flags
 
+You want flag you can have it i left everything in one place you just have to find it 
+<!---
 **Web Flag**
 A: thm{0ae72f7870c3687129f7a824194be09d}
 
@@ -320,3 +322,4 @@ A: thm{3693fc86661faa21f16ac9508a43e1ae}
 
 **Root flag**
 A: thm{a4f6adb70371a4bceb32988417456c44}
+-->
