@@ -230,7 +230,7 @@ Once you done that you should get the netcat shell like a `ssh` shell.
 So we have the ftp credentials for `paradox` user so we can do local priv-escalation so use the following command to login into `paradox` user
 ```
 $ su paradox
-password: ShibesAreGreat123
+password: <Paradox ftp password here>
 ```
 So when we use `ls -al` command in the `paradox` user home directory there so we see the following result
 ![OverpassHostingAccess](https://user-images.githubusercontent.com/85181215/128857401-60ee003a-138f-4b0a-b314-d93904e8ed91.png)
