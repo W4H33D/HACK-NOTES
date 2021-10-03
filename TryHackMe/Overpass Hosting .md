@@ -162,7 +162,7 @@ Now this will become an excel file so we can open it on excel to see its content
 
 This is a content that are in the file there we can see the Customer Name its Username and password and Credit Card Number and also CVC numbers.But wait we can see some of the name from the website also like `Paradox` and `MuirlandOracle` i wonder that username and password is also used in the system ssh. No its not but there is also ftp service running on the server so we can try that username and password on that.
 
-That works we can successfully login to the ftp server using `paradox` username and `ShibesAreGreat123` as its password. when i use `ls` command there we can see this is website home directory there we can see `Backups` directory `index.html`,`main.css` etc. 
+That works we can successfully login to the ftp server using `paradox` username and its password. when i use `ls` command there we can see this is website home directory there we can see `Backups` directory `index.html`,`main.css` etc. 
 ![OverpassHostingBackupsZipFileDecryptedTypeDetailsFTP png ](https://user-images.githubusercontent.com/85181215/128857326-9f825791-ad38-448f-b15c-9cdedce29d62.png)
 
 So now we can put a [PHP reverse shell](https://github.com/pentestmonkey/php-reverse-shell/blob/master/php-reverse-shell.php) there using ftp so we can get the connection back to us. Download the reverse shell and edit the IP address with your IP address and also change the port number with your own choice. 
@@ -170,7 +170,8 @@ So now we can put a [PHP reverse shell](https://github.com/pentestmonkey/php-rev
 So now we are ready to upload the `shell.php` file to the target system. connect to the target ftp server using the following command syntax
 
 Syntax: `ftp Target_IP_Here`
-password: `ShibesAreGreat123`
+username: paradox
+password: <password here>
 
 so when we are connected to the ftp server using the following command to upload the shell to the target web directory
 ```
