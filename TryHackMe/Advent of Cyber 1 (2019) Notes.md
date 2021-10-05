@@ -1308,7 +1308,116 @@ and our output is like this
 
 and we see the variable hex value have `6` and that our answer
 
+## Task 27  [Day 22] If Santa, Then Christmas
 
+McSkidy has been faring on well so far with assembly - they got some inside knowledge that the christmas monster is weaponizing if statements. Can they get ahead of the curve?
+
+These programs have been compiled to be executed on Linux x86-64 systems.
+
+Check out the supporting material [here](https://docs.google.com/document/d/1cIHd_YQ_PHhkUPMrEDWAIfQFb9M9ge3OFr22HHaHQOU/edit?usp=sharing). 
+
+The questions below relate to the _if2_ binary.
+
+**Answer the questions below**
+
+Q1: what is the value of local_8h before the end of the main function?
+
+A: 9
+
+**Solution**
+
+To find the answer for this task we have to know about if statements syntax and also understand how they work on assembly language also in assembly language they use jumps to control the structure we know about it on supporting materials TryHackMe made for us above. Download the task file and open supporting material and use `if1` binary to follow along with supporting material. When you are good in that then use your knowledge to solve this task as follows
+
+first open the binary in radara2 binary with the following command
+```bash
+$ r2 -d if2
+```
+after that use the following command in `r2`
+```r2
+e asm.syntax=att
+```
+After that use `aaa` command to analyze the program when this is done use `afl` command to analyze the functions they show you so many functions so you can use `afl | grep main` instead.
+Now you see `main` function there so use `pdf@main` command to see the main function and try to understand the program.
+![[task27_if2main.png]]
+
+The image above shows that there are two variables `var_8h` and `var_4h` the first `var_8h` stores value `8` in it and `var_4h` stores value `2` in it. After that `var_8h` value is transferred to `eax` register so `eax` register now have value `8` in it.
+After that we see two jumps in the program also `jle` and `jmp` we can know about that jumps in supporting materials
+![[task27_jumps.png]]
+
+So `jle` is the jump that check if the condition is `less or equal` and `jmp` is the `unconditional` jump.We can see one statement above `jle` jump there is a statement like following
+```
+0x00400b62 3b45fc cmpl var_4h, %eax
+```
+`cmpl` is checking/comparing the `var_4h` with `eax` register.**Note `var_4h`
+have value `2` and `eax` have value `8`.**
+So they compare is 2 is less or equal to 8 and we know they are not less or equal to 8 so this jump will not execute and execution is move forward one step ahead and we see they statement like following
+```
+0x00400b67 8345f801 addl $1, var_8h
+```
+they add `1` in `var_8h` that have value 8 in it so after that there value is 9 and that our answer for this question.
+
+Q2: what is the value of local_4h before the end of the main function?
+
+A: 2
+
+**Solution**
+
+After adding the value 1 in var_8h there is a jump statement and that are unconditional jump in the program so program control now move to the following statement
+```
+0x00400b71 b800000000 movl $0, %eax
+```
+And that clear the value of `eax` with 0 and after that there is just the ending instruction for the program so var_4h value does not change in the ending of program so var_4h have value 2 in it.
+
+But this is just a theory we do to check if this is correct we have to set up break points in the program with the `db` command with memory location where we want to add break points.We add break points in the program both jumps.
+
+![[task27_if2Break.png]]
+
+From the above image we see how its looks like when we setup a break point in the program so when program execute there execution is now break in the first line where we setup the break point.We can see it when we execute the program with `dc` command in r2 they compile the program. 
+Now program is compiled and there execution is stop in the `jle` jump so we can see the values of `var_8h`,`var_4h` and `eax` register like this
+
+![[task27_Values.png]]
+
+there we use `px @<var_8h r2 memory location>` and `px @<var_4h r2 memory loacation>` command to see the value of the variables in memory and that is in the form of hex.And we use `dr` command to see registers values and there we see `rax` register value that is `eax` register and its register value is in the form of register values but they are 8 we see in the end.
+That's all the values of the variable that are in memory before the first break point we set on first jump in program.Now we use `ds` command to execute one statement after the break and now if we use again `px @<var_8h r2 memory location>` command we see the `var_8h` have now a value 9 instead of 8 because their value is now incremented because of the following statement
+```
+0x00400b67 8345f801 add dword [var_8h], 1
+```
+Now we use `dc` command to execute the program again but now our execution break is set on second jump and then we use `ds` command to execute one statement ahead of break and check all the variables values again using the above method we use and we see `eax` register now have value `0`, `var_8h` have value `9` and `var_4h` have value `2` and after that program is end so now we practically see the variables values also.
+
+## Task 28  [Day 23] LapLANd (SQL Injection)
+
+Santa’s been inundated with Facebook messages containing Christmas wishlists, so Elf Jr. has taken an online course in developing a North Pole-exclusive social network, LapLANd! Unfortunately, he had to cut a few corners on security to complete the site in time for Christmas and now there are rumours spreading through the workshop about Santa! Can you gain access to LapLANd and find out the truth once and for all?
+
+**This machine may take up to 5 minutes to boot and configure.**
+
+Supporting material available [here](https://docs.google.com/document/d/15XH_T1o6FLvnV19_JnXdlG2A8lj2QtepXMtVQ32QXk0/edit?usp=sharing).  
+
+**Answer the questions below**
+
+Q1: Which field is SQL injectable? Use the input name used in the HTML code.
+**Hint: SQLMap will highlight which field is vulnerable, if you decide to use it.**
+
+A:
+
+Q2: What is Santa Claus' email address? 
+**Hint: If your injection is going very slowly, consider enumerating only the information you need instead of trying to dump the whole database.**
+
+A:
+
+Q3: What is Santa Claus' plaintext password?
+**Hint: It's in rockyou.txt - also try online sites such as HashKiller or Crackstation**
+
+A:
+
+Q4: Santa has a secret! Which station is he meeting Mrs Mistletoe in?
+**Hint: Look at the private messages between users, either through the database or logging in as Santa!**
+
+A:
+
+Q5: Once you're logged in to LapLANd, there's a way you can gain a shell on the machine! Find a way to do so and read the file in /home/user/
+**Hint: If you're getting an error about a file format being blacklisted, try looking up alternative file extensions that will still execute.**
+
+A:
 
 
 
