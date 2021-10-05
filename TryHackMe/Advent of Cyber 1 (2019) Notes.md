@@ -1338,11 +1338,14 @@ e asm.syntax=att
 ```
 After that use `aaa` command to analyze the program when this is done use `afl` command to analyze the functions they show you so many functions so you can use `afl | grep main` instead.
 Now you see `main` function there so use `pdf@main` command to see the main function and try to understand the program.
-![[task27_if2main.png]]
+
+![task27_if2main](https://user-images.githubusercontent.com/85181215/136015754-c5a07d29-44dd-4527-a88a-eefc94ad6d36.png)
+
 
 The image above shows that there are two variables `var_8h` and `var_4h` the first `var_8h` stores value `8` in it and `var_4h` stores value `2` in it. After that `var_8h` value is transferred to `eax` register so `eax` register now have value `8` in it.
 After that we see two jumps in the program also `jle` and `jmp` we can know about that jumps in supporting materials
-![[task27_jumps.png]]
+
+![task27_jumps](https://user-images.githubusercontent.com/85181215/136015792-a9bf361a-ff4c-40d3-bd02-566a0dc1b730.png)
 
 So `jle` is the jump that check if the condition is `less or equal` and `jmp` is the `unconditional` jump.We can see one statement above `jle` jump there is a statement like following
 ```
@@ -1370,12 +1373,13 @@ And that clear the value of `eax` with 0 and after that there is just the ending
 
 But this is just a theory we do to check if this is correct we have to set up break points in the program with the `db` command with memory location where we want to add break points.We add break points in the program both jumps.
 
-![[task27_if2Break.png]]
+![task27_if2Break](https://user-images.githubusercontent.com/85181215/136015850-3d15d50a-2e44-4877-b7ae-d73c48286535.png)
+
 
 From the above image we see how its looks like when we setup a break point in the program so when program execute there execution is now break in the first line where we setup the break point.We can see it when we execute the program with `dc` command in r2 they compile the program. 
 Now program is compiled and there execution is stop in the `jle` jump so we can see the values of `var_8h`,`var_4h` and `eax` register like this
 
-![[task27_Values.png]]
+![task27_Values](https://user-images.githubusercontent.com/85181215/136015896-af3d4f48-1143-4c93-b124-c5d24fc398c3.png)
 
 there we use `px @<var_8h r2 memory location>` and `px @<var_4h r2 memory loacation>` command to see the value of the variables in memory and that is in the form of hex.And we use `dr` command to see registers values and there we see `rax` register value that is `eax` register and its register value is in the form of register values but they are 8 we see in the end.
 That's all the values of the variable that are in memory before the first break point we set on first jump in program.Now we use `ds` command to execute one statement after the break and now if we use again `px @<var_8h r2 memory location>` command we see the `var_8h` have now a value 9 instead of 8 because their value is now incremented because of the following statement
