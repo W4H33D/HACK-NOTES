@@ -1519,8 +1519,69 @@ Now you got the reverse shell so now use the following command to see the flag
 ```shell
 $ cat /home/user/flag.txt
 ```
+## Task 29  [Day 24] Elf Stalk
+
+McDatabaseAdmin has been trying out some new storage technology and came across the ELK stack(consisting of Elastic Search, Kibana and Log Stash). 
+
+The Christmas Monster found this insecurely configured instance and locked McDatabaseAdmin out of it. Can McSkidy help to retrieve the lost data?
+
+While this task does not have supporting material, here is a general approach on how to go about this challenge:
+
+-   scan the machine to look for open ports(specific to services running as well)
+-   as with any database enumeration, check if the database requires authentication. If not, enumerate the database to check the tables and records
+-   for other open ports, identify misconfigurations or public exploits based on version numbers
+
+**The machine may take up to 5 minutes to boot.**
+
+**Answer the questions below**
+
+Q1: Find the password in the database
+**Hint: how do you search for strings in an elasticsearch database**
+
+A: 9Qs58Ol3AXkMWLxiEyUyyf
+
+**Solution**
+
+First of all use Nmap to scan all open port 
+
+![Task29AllPorts](https://user-images.githubusercontent.com/85181215/136557995-9f6e02ce-afb8-4f52-8dce-7be358bb9454.png)
 
 
+There we see 6 open port and two ports have http service running on it but when i go there i don't understand what is use for so i use port 5601 there they host `kibana` web service i do a google search to learn about it but i did'nt understand anything there but in management section we see a console so there we can search some query with a little researching on google found how to do that and use the following query and run it to find the password
+
+![Task29password](https://user-images.githubusercontent.com/85181215/136558044-472a5e3f-d48a-4ab4-95b5-45ae5c0cc003.png)
+
+
+Q2: Read the contents of the /root.txt file
+**Hint: use the 3rd open port and a Kibana public vulnerability**
+
+A someELKfun
+
+**Solution**
+
+To find the root flag we have to find public vulnerability and to do that we have to find which version `kibana` they host again google it and found that there is a `status` directory there we see the plugin version to find the version number after found out that search a public vulnerability and found LFI vulnerability there take some time to understand what they doing and after that i use the following URL to get the flag that present in `/root.txt` path 
+
+```
+10.10.5.205:5601/api/console/api_server?sense_version=%40%40SENSE_VERSION&apis=../../../../../../../root.txt
+```
+
+When to go to that location web site will hang and did not load something and keep searching but when you go the port 8000 log files they are host there you can find root flag but you have to use you eagle eye there because there are so many things 
+
+![Task29_flag](https://user-images.githubusercontent.com/85181215/136558094-fedf6d41-8d0a-455c-b92e-0d69424017b4.png)
+
+There is a RCE flaw also and got the following URL there they show some prof of concept also but could not able to execute that because there we don't have `convas` menu i think this is for different version
+
+```
+https://research.securitum.com/prototype-pollution-rce-kibana-cve-2019-7609/
+```
+
+## Task 30  [Day 25] Challenge-less
+
+To everyone who participated in our Advent of Cyber event, we hope you learnt something new! There is no challenge on the last day, instead we ask you complete a room on TryHackMe and enjoy some time off on Christmas day!
+
+  
+
+We will pick the daily prize winners and the main winners on Sunday, so there is still time to complete challenges and enter yourself!
 
 
 
