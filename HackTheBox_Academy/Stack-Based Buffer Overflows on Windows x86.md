@@ -36,12 +36,13 @@ Let's start by demonstrating how the stack works in storing data. The stack has 
 
 The following table demonstrates how the stack works. We can click on `push` to push a value from `eax` to the stack, and `pop` to pop the top value from the stack into `eax`:
 
- ![[Stack Overflow Concept.png]]
+![Stack Overflow Concept](https://user-images.githubusercontent.com/85181215/142864991-71175c10-10bb-4541-91fa-10c808f1441c.png)
 
 The above example correctly receives buffer data, such that it never gets overflowed to the next item. Now let's review another example that does not correctly store data on the stack.
 
 The following example expects an input from us that is eight characters long. But what would happen if we sent something longer? Let's try to send '`01234567890123456789`':
-![[Stack Overflow Concept2.png]]
+
+![Stack Overflow Concept2](https://user-images.githubusercontent.com/85181215/142865049-5e29389e-0823-46e2-8c93-d223595cf317.png)
 
 As we can see, when we send a string that is longer than expected, it overwrites other existing values on the stack and would even overwrite the entire stack if it is long enough. Most importantly, we see that it overwrote the value at `EIP`, and when the function tries to return to this address, the program will crash since this address '`0x6789`' does not exist in memory. This happens because of the LIFO design of the stack, which grows upwards, while a long string overflows values downwards until it eventually overwrites the return address `EIP` and the bottom of the stack pointer `EBP`. This was explained in the [Intro to Assembly Language](https://academy.hackthebox.com/module/details/85) module.
 
@@ -173,7 +174,9 @@ First Connect to Academy VPN and after that connect to virtual machine RDP using
 $ xfreerdp /v:<target IP address> /u:htb-student /p:<password>
 ```
 After successfully connected to the RDP you will see a executable file in desktop name `x32dbg` and `free CD to mp3 converter` Open both files. In `x32dbg` press `ALT+A` or use `file/attach` option to attach a running program to `x32dbg` They will show you all running processes and there you will see `free CD to mp3 converter` process but with different name and have same icon. Submit its name in `Name` section.
-![[x32dbg_ProcessName.png]]
+
+![x32dbg_ProcessName](https://user-images.githubusercontent.com/85181215/142865150-511e58ef-4222-4b6d-9bcf-868e48f6e7ea.png)
+
 
 **Page 3 / Fuzzing Parameters**
 
@@ -615,7 +618,7 @@ bad_chars()
 ```
 Save the exploit code and run it in python and after that you got a file in `htb-student` home directory name `chars.wav` 
 
-![[exploit_code.png]]
+![exploit_code](https://user-images.githubusercontent.com/85181215/142865348-1c5e2727-c99a-4910-8761-2ae25fc0b9d8.png)
 
 Load that `chars.wav` file in `free CD to Mp3 Converter` that attached to our debugger what they are loaded in `free CD to Mp3 Converter` then we have to copy `ESP` value and use that in the following `ERC` command to compare the bad character with `ByteArray.bin` file.
 ```
@@ -624,7 +627,7 @@ ERC --compare <ESP Value Here> C:\Users\htb-student\Desktop\ByteArray_1.bin
 
 After that we got the following output in Log Section
 
-![[ByteArray_Compare.png]]
+![ByteArray_Compare](https://user-images.githubusercontent.com/85181215/142865415-6e7a109f-7640-4575-86f9-224c06543e64.png)
 
 There we see all the line are same that means they don't have any bad character in it so answer is `0`
 
@@ -1044,7 +1047,7 @@ cd C://Users/Administrator/Desktop/
 
 type flag.txt
 ```
-![[Local Overflow master flag.gif]]
+![Local Overflow master flag](https://user-images.githubusercontent.com/85181215/142865544-900fc752-6706-4599-aa6c-583942a69001.gif)
 
 **Page 8 / Remote Fuzzing**
 
@@ -1226,7 +1229,8 @@ and name him like `remote_exploit.py`. You can do this using Python IDLE in the 
 PS C:\User\htb-student> python ./Desktop/remote_exploit.py
 ```
 set debugger and `powershell` side by side so you can see when `EIP` value is overwritten and launch the exploit in `powershell` and `Press Enter each iteration` and you will see which iteration cause the value of `EIP` overwritten.
-![[Remote_exploit_BufferBytes.png]]
+
+![Remote_exploit_BufferBytes](https://user-images.githubusercontent.com/85181215/142865615-cab56cf2-2388-45f4-92d5-c2b74cb6223b.png)
 
 **Page 9 / Building a Remote Exploit**
 
@@ -1549,7 +1553,11 @@ $ nc -lvnp 4444
 ```
 There `4444` is the port we set when we create our payload in `msfvenom` command `LPORT=4444` this should be same other wise you get nothing.
 Run the exploit and we got the connection.
-![[remote_exploit_connection.png]]
+
+![remote_exploit_connection](https://user-images.githubusercontent.com/85181215/142865746-4fd21a03-b077-4cbc-bce5-7771a6e7040e.png)
+
+
+
 Now use `whoami` command to see which user account is compromised and go to his Desktop and there you will get the `flag.txt`. Use `type` command to see its content.
 ```cmd
 C:\WINDOWS\system32>type C:\Users\remote\Desktop\flag.txt
@@ -1614,7 +1622,9 @@ remote_buffer()
 ```
 
 After running the above python script EIP value is changed in the debugger and by using `/usr/bin/msf-pattern_offset -q <EIP value>` found exact offset is at `469`
-![[Assessment_offsetNo.png]]
+
+![Assessment_offsetNo](https://user-images.githubusercontent.com/85181215/142865804-2569f95c-4720-42e3-a3c9-0bd0c42b52d1.png)
+
 
 Now we know the exact value of offset is at `469` bytes and after that `4` bytes is use to overwrite EIP we can confirm this using the following script
 ```python
@@ -1634,7 +1644,8 @@ def remote_buffer():
 remote_buffer()
 ```
 After running the above script we see EIP is change with `42424242` That is `B` in hex.
-![[Assessment_EIPinControl.png]]
+
+![Assessment_EIPinControl](https://user-images.githubusercontent.com/85181215/142865850-3db3524d-5018-436d-951e-5a978e380591.png)
 
 So we now fully control the EIP next step is to find bad characters to do this we use `ERC --bytearray` command in `x32dbg`. They will create two files in our desktop name `ByteArray_1.txt` and `ByteArray_1.bin`. The `ByteArray_1.txt` file contain all the bad characters that we use in our python exploit to send to the server and compare it with `ByteArray_1.bin` file so we know how and which bad characters exits in the program. Now we have to copy the content of Raw bad chars from `ByteArray_1.txt` and remove all his new line and send him to the server after the Buffer and EIP value. The example code look like this 
 ```python
