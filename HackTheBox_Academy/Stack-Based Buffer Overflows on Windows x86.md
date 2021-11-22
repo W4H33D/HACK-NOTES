@@ -16,9 +16,15 @@ Both Assembly language and Computer Architecture were thoroughly covered in the 
 
 ## Buffer Overflows
 
-In Binary exploitation, our primary goal is to subvert the binary's execution in a way that benefits us. Buffer Overflows are the most common type of binary exploitation, but other types of binary exploitation exist, such as [Format String](https://owasp.org/www-community/attacks/Format_string_attack) exploitation and [Heap Exploitation](https://wiki.owasp.org/index.php/Buffer_Overflows#Heap_Overflow).
+In Binary exploitation, our primary goal is to subvert the binary's execution in a way that benefits us. Buffer Overflows are the most common type of binary exploitation, but other types of binary exploitation exist, such as [Format String](https://owasp.org/www-community/attacks/Format_string_attack) exploitation and 
 
-A buffer overflow occurs when a program receives data that is longer than expected, such that it overwrites the entire buffer memory space on the [stack](https://en.wikipedia.org/wiki/Stack_(abstract_data_type)). This can overwrite the next Instruction Pointer `EIP` (_or `RIP` in x86_64_), which causes the program to crash because it will attempt to execute instructions at an invalid memory address. By forcing the program to crash, this is the most basic example of exploiting buffer overflows - known as a Denial of Service (`DOS`) attack.
+[Heap Exploitation](https://wiki.owasp.org/index.php/Buffer_Overflows#Heap_Overflow).
+
+A buffer overflow occurs when a program receives data that is longer than expected, such that it overwrites the entire buffer memory space on the 
+
+[stack](https://en.wikipedia.org/wiki/Stack_(abstract_data_type)).
+
+This can overwrite the next Instruction Pointer `EIP` (_or `RIP` in x86_64_), which causes the program to crash because it will attempt to execute instructions at an invalid memory address. By forcing the program to crash, this is the most basic example of exploiting buffer overflows - known as a Denial of Service (`DOS`) attack.
 
 Another basic attack is to overwrite a value on the stack to change the program's behavior. For example, if an exam program had a buffer overflow vulnerability, we can overwrite the buffer enough to overwrite our score. Since our exam score is stored in the stack in this example, we could take advantage of this flaw to change our score.
 
@@ -120,7 +126,9 @@ Finally, we can double-click on `C:\Program Files\x64dbg\x96dbg.exe` to register
 
 Note: `x64dbg` comes with two separate applications, one for `x32` and one for `x64`, each under their folder. Clicking on `x96dbg.exe` as noted above will register the version that matches our Windows VM, which in our case is the `x32` one.
 
-Once that's done, we can find the `x32dbg` icon on our Desktop, and we can double-click it to start our debugger: ![x32dbg](https://academy.hackthebox.com/storage/modules/89/win32bof_x32dbg_1.jpg)
+Once that's done, we can find the `x32dbg` icon on our Desktop, and we can double-click it to start our debugger: 
+
+![x32dbg](https://academy.hackthebox.com/storage/modules/89/win32bof_x32dbg_1.jpg)
 
 Tip: To use the dark theme like the above screenshot, simply go to `Options > Theme` and select `dark`.
 
@@ -148,7 +156,9 @@ Now all of our output should be saved on our Desktop.
 
 Whenever we want to debug a program, we can either run it through `x32dbg`, or run it separately and then attach to its process through `x32dbg`.
 
-To open a program with `x32dbg`, we can select `File>Open` or press `F3`, which will prompt us to select the program to be debugged. If we wanted to attach to a process/program that is already running, we could select `File>Attach` or press `Alt+A`, and it will present us with various running processes accessible by our user: ![Attach Process](https://academy.hackthebox.com/storage/modules/89/win32bof_attach_process.jpg)
+To open a program with `x32dbg`, we can select `File>Open` or press `F3`, which will prompt us to select the program to be debugged. If we wanted to attach to a process/program that is already running, we could select `File>Attach` or press `Alt+A`, and it will present us with various running processes accessible by our user: 
+
+![Attach Process](https://academy.hackthebox.com/storage/modules/89/win32bof_attach_process.jpg)
 
 We can select the process we want to debug and click on `Attach` to start debugging it.
 
@@ -249,6 +259,7 @@ AAAAA...SNIP....AAAA
 ```
 
 Now we can copy our payload and paste it in both fields of the registration window, and click `Ok`:  
+
 ![](https://academy.hackthebox.com/storage/modules/89/win32bof_registration_fuzz.jpg)
 
 As we can see, the program does not crash and just tells us `Registration is not valid`.
@@ -270,9 +281,12 @@ PS C:\Users\htb-student\Desktop> python -c "print('A'*10000, file=open('fuzz.wav
 Note: There are much more advanced methods of fuzzing parameters, by automatically sending various types of input fields and parameters to attempt and crash the program. In our case, we are starting with a basic example of a simple long string.
 
 Now, while being attached to `x32dbg`, let's try to open our payload file, by clicking on the `Encode` icon:  
+
 ![](https://academy.hackthebox.com/storage/modules/89/win32bof_converter_open_wav.jpg)
 
-The program may get `paused` at some points of the debugging due to breakpoints or `INT3` instructions, so we can simply click on the `Run` button located at the top bar to continue the execution: ![Debugger Pause](https://academy.hackthebox.com/storage/modules/89/win32bof_x32dbg_pause.jpg) ![](https://academy.hackthebox.com/storage/modules/89/win32bof_x32dbg_run.jpg)
+The program may get `paused` at some points of the debugging due to breakpoints or `INT3` instructions, so we can simply click on the `Run` button located at the top bar to continue the execution: ![Debugger Pause](https://academy.hackthebox.com/storage/modules/89/win32bof_x32dbg_pause.jpg) 
+
+![](https://academy.hackthebox.com/storage/modules/89/win32bof_x32dbg_run.jpg)
 
 Tip: If we want to skip breaking on the built in breakpoints, we can select `Options > Preferences > Events`, and un-tick everything under `Break on`. Once we do so, the program should stop breaking every time we run it, and will only break when we crash it on an overflow.
 
@@ -282,7 +296,9 @@ Once we open the file, we see that the program crashes, and the debugger pauses 
 
 The message indicates that the program tried to execute the address `41414141`. In ASCII, the upper case `A` has hex code `0x41`, so it looks like the program tried to go to address `AAAA`, which means that we have successfully changed the `EIP` address.
 
-We can confirm that by checking the registers window on the top right: ![Crash Registers](https://academy.hackthebox.com/storage/modules/89/win32bof_crash_registers.jpg)
+We can confirm that by checking the registers window on the top right: 
+
+![Crash Registers](https://academy.hackthebox.com/storage/modules/89/win32bof_crash_registers.jpg)
 
 As we can see, we indeed overwrote both `EBP` and `EIP`, and then the program tried to execute our overwritten `EIP` address.
 
@@ -347,7 +363,9 @@ providing a search string (must be at least 3 chars long).
     Pattern offset: ERC --pattern <offset | o> <search string>
 ```
 
-As we can see, we can use `ERC --pattern c 5000` to get our pattern. So, let's use this command and see what we get: ![Pattern Create](https://academy.hackthebox.com/storage/modules/89/win32bof_erc_pattern_create_1.jpg)
+As we can see, we can use `ERC --pattern c 5000` to get our pattern. So, let's use this command and see what we get: 
+
+![Pattern Create](https://academy.hackthebox.com/storage/modules/89/win32bof_erc_pattern_create_1.jpg)
 
 This pattern is the same pattern we got with the `msf-pattern_create` tool, so we can use either. We can now go to our Desktop to find the output saved to a file called `Pattern_Create_1.txt`. Now we can save the pattern in a `.wav` file and load it into our program. However, to do that, we'll start building our exploit, which we will keep developing and using for other parts of the buffer overflow exploitation process.
 
@@ -387,7 +405,9 @@ Code: python3
 eip_offset()
 ```
 
-Now, we can save this exploit to our Desktop as `win32bof_exploit.py`, and run it. To run it while still in our `IDLE`, we can click on `Run > Run Module`, or click `F5`: ![Pattern IDLE](https://academy.hackthebox.com/storage/modules/89/win32bof_python_idle_exploit_2.jpg)
+Now, we can save this exploit to our Desktop as `win32bof_exploit.py`, and run it. To run it while still in our `IDLE`, we can click on `Run > Run Module`, or click `F5`: 
+
+![Pattern IDLE](https://academy.hackthebox.com/storage/modules/89/win32bof_python_idle_exploit_2.jpg)
 
 Once we do, we will see the new file `pattern.wav` on our Desktop.
 
@@ -396,9 +416,12 @@ Once we do, we will see the new file `pattern.wav` on our Desktop.
 ## Calculating EIP Offset
 
 Now that we have our pattern saved into a `.wav` file, we can load it into our program. We should ensure that the program is running and is attached to `x32dbg`, and then we can open our file as we did in the previous section. We can click on the `restart` button in `x32dbg` to restart our program if our previous input had crashed it:  
+
 ![](https://academy.hackthebox.com/storage/modules/89/win32bof_x32dbg_restart.jpg)
 
-Once we do, we should see that our program crashes due to the long input. Most importantly, we should see that the `EIP` register got overwritten with part of our unique pattern: ![Pattern EIP](https://academy.hackthebox.com/storage/modules/89/win32bof_pattern_eip.jpg)
+Once we do, we should see that our program crashes due to the long input. Most importantly, we should see that the `EIP` register got overwritten with part of our unique pattern: 
+
+![Pattern EIP](https://academy.hackthebox.com/storage/modules/89/win32bof_pattern_eip.jpg)
 
 Now we can use the value of `EIP` to calculate the offset. We can once again do it in our `PwnBox` with `msf-pattern_offset` (the counterpart of `msf-pattern_create`), by using the hex value in `EIP`, as follows:
 
@@ -408,9 +431,13 @@ W4H33D@htb[/htb]$ /usr/bin/msf-pattern_offset -q 31684630
 [*] Exact match at offset 4112
 ```
 
-As we can see, it tells us that our `EIP` offset is `4112` bytes. We can also stay in the `Windows` VM and use `ERC` to calculate the same offset. First, we should get the ASCII value of the hex bytes found in `EIP`, by right-clicking on `EIP` and selecting `Modify Value`, or by clicking on `EIP` and then clicking Enter. Once we do, we will see various representations of the `EIP` value, with ASCII being the last one: ![ASCII EIP](https://academy.hackthebox.com/storage/modules/89/win32bof_pattern_eip_ascii.jpg)
+As we can see, it tells us that our `EIP` offset is `4112` bytes. We can also stay in the `Windows` VM and use `ERC` to calculate the same offset. First, we should get the ASCII value of the hex bytes found in `EIP`, by right-clicking on `EIP` and selecting `Modify Value`, or by clicking on `EIP` and then clicking Enter. Once we do, we will see various representations of the `EIP` value, with ASCII being the last one: 
 
-The hex value found in `EIP` represents the string `1hF0`. Now, we can use `ERC --pattern o 1hF0` to get the pattern offset: ![Pattern Offset](https://academy.hackthebox.com/storage/modules/89/win32bof_pattern_offset.jpg)
+![ASCII EIP](https://academy.hackthebox.com/storage/modules/89/win32bof_pattern_eip_ascii.jpg)
+
+The hex value found in `EIP` represents the string `1hF0`. Now, we can use `ERC --pattern o 1hF0` to get the pattern offset: 
+
+![Pattern Offset](https://academy.hackthebox.com/storage/modules/89/win32bof_pattern_offset.jpg)
 
 We once again get `4112` bytes as our `EIP` offset.
 
@@ -489,7 +516,9 @@ To do this, we would need two files:
 1.  A `.wav` file with all characters to load into the program
 2.  A `.bin` file to compare with our input in memory
 
-We can use `ERC` to generate the `.bin` file and generate a list of all characters to create our `.wav` file. To do so, we can use the `ERC --bytearray` command: ![ERC Byte Array](https://academy.hackthebox.com/storage/modules/89/win32bof_erc_bytearry.jpg)
+We can use `ERC` to generate the `.bin` file and generate a list of all characters to create our `.wav` file. To do so, we can use the `ERC --bytearray` command: 
+
+![ERC Byte Array](https://academy.hackthebox.com/storage/modules/89/win32bof_erc_bytearry.jpg)
 
 This also creates two files on our Desktop:
 
@@ -531,11 +560,15 @@ We can now run our exploit with `F5` to generate the `chars.wav` file.
 
 ## Comparing our Input
 
-Now we can restart our program in `x32dbg` and load `chars.wav` to it. Once we do, we can start comparing our input in memory and seeing whether any characters are missing. To do so, we can check the Stack pane on the bottom right of `x32dbg`, which should be aligned exactly at the beginning of our input: ![Byte Stack](https://academy.hackthebox.com/storage/modules/89/win32bof_bytes_stack.jpg)
+Now we can restart our program in `x32dbg` and load `chars.wav` to it. Once we do, we can start comparing our input in memory and seeing whether any characters are missing. To do so, we can check the Stack pane on the bottom right of `x32dbg`, which should be aligned exactly at the beginning of our input: 
+
+![Byte Stack](https://academy.hackthebox.com/storage/modules/89/win32bof_bytes_stack.jpg)
 
 We can now manually go through the stack line by line from right to left and ensure that all hex values are present, from `0x00` to `0xff`. As this may take a while, and we would entirely rely on our eyes, we may miss a character or two. So, we will once again utilize `ERC` to make the comparison for us. It will easily compare our input in memory to all characters.
 
-We must first copy the address of `ESP` since this is where our input is located. We can do this by right-clicking on it and selecting `Copy value`, or clicking `[Ctrl + C]`: ![Byte ESP](https://academy.hackthebox.com/storage/modules/89/win32bof_bytes_esp.jpg)
+We must first copy the address of `ESP` since this is where our input is located. We can do this by right-clicking on it and selecting `Copy value`, or clicking `[Ctrl + C]`: 
+
+![Byte ESP](https://academy.hackthebox.com/storage/modules/89/win32bof_bytes_esp.jpg)
 
 Once we have the value of `ESP`, we can use `ERC --compare` and give it the `ESP` address and the location of the `.bin` file that contains all characters, as follows:
 
@@ -543,7 +576,9 @@ Once we have the value of `ESP`, we can use `ERC --compare` and give it the `ESP
 ERC --compare 0014F974 C:\Users\htb-student\Desktop\ByteArray_1.bin
 ```
 
-What this command will do is compare byte-by-byte both our input in `ESP` and all characters that we generated earlier in `ByteArray_1.bin`: ![Byte Compare 1](https://academy.hackthebox.com/storage/modules/89/win32bof_bytes_compare.jpg)
+What this command will do is compare byte-by-byte both our input in `ESP` and all characters that we generated earlier in `ByteArray_1.bin`: 
+
+![Byte Compare 1](https://academy.hackthebox.com/storage/modules/89/win32bof_bytes_compare.jpg)
 
 As we can see, this places each byte from both locations next to each other to quickly spot any issues. The output we seek is where all bytes from both locations are the same, with no differences whatsoever. However, we see that after the first character, `00`, all remaining bytes are different. `This indicates that 0x00 truncated the remaining input, and hence it should be considered a bad character.`
 
@@ -574,7 +609,9 @@ def bad_chars():
 
 Note: The `chars.wav` file may still be held by the debugger, and our python script may not be able to overwrite it. So, restart the program in `x32dbg` to release the file before running the exploit.
 
-Once we have our new `chars.wav` file, we will once again load it in our program and use `--compare` with the new `ByteArray_2.bin` file to see whether both inputs match: ![Byte Compare 2](https://academy.hackthebox.com/storage/modules/89/win32bof_bytes_compare_2.jpg)
+Once we have our new `chars.wav` file, we will once again load it in our program and use `--compare` with the new `ByteArray_2.bin` file to see whether both inputs match: 
+
+![Byte Compare 2](https://academy.hackthebox.com/storage/modules/89/win32bof_bytes_compare_2.jpg)
 
 As we can see, this time, both lines match perfectly until `0xFF`, meaning that there are no more bad characters in our input. If we had identified another bad character, we would repeat the same process as we just did for `Eliminating Bad Characters` until both lines match perfectly.
 
@@ -663,6 +700,7 @@ To direct the execution flow to the stack, we must write an address to `EIP` to 
 2.  Using a `JMP ESP` instruction, which directs the execution flow to the stack
 
 Before we continue, we must note that this method DOES NOT work with modern machines, as we have mentioned previously, and it is considered a legacy method of exploitation.  
+
 ![](https://academy.hackthebox.com/storage/modules/89/win32bof_stack_meme.png)
 
 Modern systems and programs are compiled with the `NX` bit on the stack or the `DEP` memory protection in Windows, which prevents executing any code written on the stack. So, even if we would write the shellcode on the stack, it would not be executable, nor would we find a `JMP ESP` instruction we can use within the program.
@@ -699,7 +737,9 @@ To find this instruction, we must look through executables and libraries loaded 
 2.  The program's own `.dll` libraries
 3.  Any Windows `.dll` libraries used by the program
 
-To find a list of all loaded files by the program, we can use `ERC --ModuleInfo`, as follows: ![Module Info](https://academy.hackthebox.com/storage/modules/89/win32bof_module_info.jpg)
+To find a list of all loaded files by the program, we can use `ERC --ModuleInfo`, as follows: 
+
+![Module Info](https://academy.hackthebox.com/storage/modules/89/win32bof_module_info.jpg)
 
 We find many modules loaded by the program. However, we can skip any files with:
 
@@ -731,7 +771,9 @@ Now that we have a list of loaded files that may include the instruction we are 
 
 We can start with `cdextract.exe` and double-click it to open view and search its instructions. To search for the `JMP ESP` instruction within the instructions of this file, we can click `ctrl+f`, which allows us to search for any instruction within the opened file `cdextract.exe`: ![Find Command](https://academy.hackthebox.com/storage/modules/89/win32bof_find_command.jpg)
 
-We can enter `jmp esp`, and it should show us if this file contains any of the instructions we searched for: ![Find JMP ESP](https://academy.hackthebox.com/storage/modules/89/win32bof_find_jmp_esp.jpg)
+We can enter `jmp esp`, and it should show us if this file contains any of the instructions we searched for: 
+
+![Find JMP ESP](https://academy.hackthebox.com/storage/modules/89/win32bof_find_jmp_esp.jpg)
 
 As we can see, we found the following matches:
 
@@ -764,7 +806,9 @@ After using one of these, we would find that the machine code for `JMP ESP` is `
 
 ![Find Pattern](https://academy.hackthebox.com/storage/modules/89/win32bof_find_pattern.jpg)
 
-Once we do, we would find a few other addresses we can use as well: ![Find Pattern PUSH ESP](https://academy.hackthebox.com/storage/modules/89/win32bof_find_pattern_push_esp.jpg)
+Once we do, we would find a few other addresses we can use as well: 
+
+![Find Pattern PUSH ESP](https://academy.hackthebox.com/storage/modules/89/win32bof_find_pattern_push_esp.jpg)
 
 We can double-click any of them and confirm that it is indeed a `PUSH ESP` instruction followed by a `RET` instruction:
 
@@ -1254,7 +1298,9 @@ With fuzzing complete, we'll go through the remaining steps in this section unti
 
 ## Controlling EIP
 
-We'll start by creating a unique pattern `2000` bytes long, using `ERC --pattern c 2000` as we previously did: ![Remote Pattern](https://academy.hackthebox.com/storage/modules/89/win32bof_remote_pattern.jpg)
+We'll start by creating a unique pattern `2000` bytes long, using `ERC --pattern c 2000` as we previously did: 
+
+![Remote Pattern](https://academy.hackthebox.com/storage/modules/89/win32bof_remote_pattern.jpg)
 
 Now we start writing our `eip_offset()` function. We'll add our `pattern` variable like with the pattern under `Ascii` in the `Pattern_Create_1.txt` file created on our desktop, like we did with our previous exploit. After that, to send our pattern, we can use the same code we used to fuzz the port:
 
@@ -1274,7 +1320,9 @@ def eip_offset():
 eip_offset()
 ```
 
-Once our `eip_offset()` function is ready, we can restart our program in `x32dbg` and run our code, and our program should crash, and we should see `EIP` overwritten with our pattern as `316A4230`: ![Pattern Crash](https://academy.hackthebox.com/storage/modules/89/win32bof_remote_pattern_crash.jpg)
+Once our `eip_offset()` function is ready, we can restart our program in `x32dbg` and run our code, and our program should crash, and we should see `EIP` overwritten with our pattern as `316A4230`: 
+
+![Pattern Crash](https://academy.hackthebox.com/storage/modules/89/win32bof_remote_pattern_crash.jpg)
 
 Now we can use `ERC --pattern o 1jB0` to calculate the exact offset, which is found at `1052` bytes:
 
@@ -1299,7 +1347,9 @@ def eip_control():
 eip_control()
 ```
 
-We'll once again restart our program and run our exploit, and we can confirm that we control `EIP` as we overwrote `EIP` with 4 `B`'s: ![Pattern Control](https://academy.hackthebox.com/storage/modules/89/win32bof_remote_pattern_control.jpg)
+We'll once again restart our program and run our exploit, and we can confirm that we control `EIP` as we overwrote `EIP` with 4 `B`'s: 
+
+![Pattern Control](https://academy.hackthebox.com/storage/modules/89/win32bof_remote_pattern_control.jpg)
 
 ---
 
@@ -1330,7 +1380,9 @@ def bad_chars():
 bad_chars()
 ```
 
-Once we restart our program in `x32dbg` and run our exploit, we can use `ERC --compare` to compare the bytes at the `ESP` address with the `ByteArray_1.bin` file: ![Bytes Compare](https://academy.hackthebox.com/storage/modules/89/win32bof_remote_bytes_compare.jpg)
+Once we restart our program in `x32dbg` and run our exploit, we can use `ERC --compare` to compare the bytes at the `ESP` address with the `ByteArray_1.bin` file: 
+
+![Bytes Compare](https://academy.hackthebox.com/storage/modules/89/win32bof_remote_bytes_compare.jpg)
 
 As we can see, all of the bytes match between memory and `ByteArray_1.bin`, which means that this program does not have any bad characters.
 
@@ -1359,7 +1411,9 @@ Process Name: CloudMe Modules total: 79
  0x6aa80000      0x1410          0x1b7000    False      False      False      False      False      5.9.0.0;C:\Users\htb-student\AppData\Local\Programs\CloudMe\CloudMe\platforms\qwindows.dll 
 ```
 
-As we can see, there are several libraries loaded by the program with no memory protections, including the `CloudMe.exe` program itself. To search all of them for `JMP ESP`, we can go to the `CPU` tab and right-click then select `Search For>All Modules>Command`, and enter the `JMP ESP`, and we will get a list of `JMP ESP` instructions in loaded modules: ![Find JMP](https://academy.hackthebox.com/storage/modules/89/win32bof_remote_find_jmp_1.jpg)
+As we can see, there are several libraries loaded by the program with no memory protections, including the `CloudMe.exe` program itself. To search all of them for `JMP ESP`, we can go to the `CPU` tab and right-click then select `Search For>All Modules>Command`, and enter the `JMP ESP`, and we will get a list of `JMP ESP` instructions in loaded modules: 
+
+![Find JMP](https://academy.hackthebox.com/storage/modules/89/win32bof_remote_find_jmp_1.jpg)
 
 If we had not found any results, we could search for the `FFE4` pattern in the entire module or all modules, as was shown in an earlier section. We can also look for other useful instructions, like `54C3`. In our case, after double-clicking on the first result to ensure it is indeed `JMP ESP`, we can copy the address `0069D2E5` and use it in our exploit. (Try to find other instructions and use them as the return address).
 
@@ -1676,7 +1730,9 @@ ERC --compare 0014F974 C:\Users\htb-student\Desktop\ByteArray_1.bin
 ```
 
 This will show us output like following
+
 ![Byte Compare 1](https://academy.hackthebox.com/storage/modules/89/win32bof_bytes_compare.jpg)
+
 We see After `00` all the output didn't match so that is our first bad character so we have to remove it from our payload to do this we have to generate new bad characters list using command `ERC --bytearray -bytes 0x00` this will again generate `ByteArray_1.txt` if you delete previous `ByteArray_1.txt` and `ByteArray_1.bin` file if not then your new file have other name you can check on your own. So now we have to repeat the process again and send the new bad character to the server copy the ESP value and compare it using `ERC --compare <ESP value here> <PATH of ByteArray.bin>`
 and found new bad character again and every time you found new bad character add him into the variable `all_bad_chars` like following
 ```python
