@@ -580,42 +580,8 @@ The [SysInternals Tools suite](https://docs.microsoft.com/en-us/sysinternals) is
 
 For example, we can run procdump.exe directly from this share without downloading it directly to disk.
 
-```cmd-session
+![image](https://user-images.githubusercontent.com/85181215/186616035-c8058fb3-ac99-4cb1-8c85-2fedc35c12c1.png)
 
-C:\htb> \\live.sysinternals.com\tools\procdump.exe -accepteula
-
-ProcDump v9.0 - Sysinternals process dump utility
-Copyright (C) 2009-2017 Mark Russinovich and Andrew Richards
-Sysinternals - www.sysinternals.com
-
-Monitors a process and writes a dump file when the process exceeds the
-specified criteria or has an exception.
-
-Capture Usage:
-   procdump.exe [-mm] [-ma] [-mp] [-mc Mask] [-md Callback_DLL] [-mk]
-                [-n Count]
-                [-s Seconds]
-                [-c|-cl CPU_Usage [-u]]
-                [-m|-ml Commit_Usage]
-                [-p|-pl Counter_Threshold]
-                [-h]
-                [-e [1 [-g] [-b]]]
-                [-l]
-                [-t]
-                [-f  Include_Filter, ...]
-                [-fx Exclude_Filter, ...]
-                [-o]
-                [-r [1..5] [-a]]
-                [-wer]
-                [-64]
-                {
-                 {{[-w] Process_Name | Service_Name | PID} [Dump_File | Dump_Folder]}
-                |
-                 {-x Dump_Folder Image_File [Argument, ...]}
-                }
-				
-<SNIP>
-```
 
 The suite includes tools such as `Process Explorer`, an enhanced version of `Task Manager`, and `Process Monitor`, which can be used to monitor file system, registry, and network activity related to any process running on the system. Some additional tools are TCPView, which is used to monitor internet activity, and PSExec, which can be used to manage/connect to systems via the SMB protocol remotely.
 
