@@ -43,23 +43,23 @@ So let's summarize Business Unit's benefices with an example let's say we have t
 
 In our enterprise, we have so many Business Units and each has there own AWS Accounts with its own bills How we can manage all of the costs and bills, How we can manage all the policies? We have to manage all the bills and Policies individually which is quite cumbersome. To Help That Problem we have AWS Organizations. To use AWS Organization we have to make an account that we called Management and Administration Account In that account we make our AWS Organization. The First thing we do in AWS Organization is to define Business Units for each business. So If someone makes an account in that business we have to invite that to our Organizational Business unit. After that, we get a Consolidated AWS Bill that combined all of the business costs in a single bill. For Policy Standpoint we also have Service Control Policies. Each Business Units have its own policies but with the help of the AWS Organizations Service Control Policy, we can define a high level of policy that overwrite all of the IAM policy in that business unit's accounts. For example, if we want to restrict making a VPC on a specific region we can make a policy that denies that so even Business Unit allows making VPC on any region they cannot able to deploy any VPC in that region.
 
-![[AWS Organizations.png]]
+![AWS Organizations](https://user-images.githubusercontent.com/85181215/191954910-bdcdbba7-e108-4a68-a5ab-1a405d34f2aa.png)
 
 **Resource Sharing**
 
 After you successfully configure AWS Organizations now can configure Resource Sharing with other Business Units i.e VPC Subnets sharing with other accounts so they can deploy their EC2 Instance in our CIDR (Classless Inter-Domain Routing) range and become a part of that network but you still maintaining your VPC. To configure Resource Sharing you use AWS Resource Access Manager.
 
-![[AWS Resource Sharing.png]]
+![AWS Resource Sharing](https://user-images.githubusercontent.com/85181215/191954961-90a15e52-6ece-43f9-8e3b-11c96abec4b7.png)
 
 ## AWS Region
 
 From a single AWS Account, you can deploy AWS Services in any AWS Region unless you are restricted by some policy. **AWS Region** is a place in the world where AWS made its Data Centers and Organize them into AWS Region. All these Regions are connected to AWS's global backbone and provide high availability to its customers. 
 
-![[AWS Regions.png]]
+![AWS Regions](https://user-images.githubusercontent.com/85181215/191955028-0aca3411-6536-437c-9dc3-8115095f076f.png)
 
 Now, let's look deeper into the AWS Region. A region is made up of more than one **Availability Zone (AZ)** and each AZ has more than one AWS Data Center that is connected to each other with fast internet connections to provide high availability. All the Data centers in the Availability Zone are in the same failure domain so they may experience power failures. They are also in the same flood plans and tornado plans. So that's why AWS made multiple AZ in the region that are on different flood plans or failure plans so if for any circumstance one Availability Zone suffers from catastrophic conditions other AZ continue their work and give their services to the customers.
 
-![[AWS Availability Zones.png]]
+![AWS Availability Zones](https://user-images.githubusercontent.com/85181215/191955071-5ffa186a-be2d-4e24-8b24-f4c07e800080.png)
 
 So when you create any VPC you select which region you want to deploy and specify which AZ to use for running AWS services by creating a subnet and assigning that subnet to that AZ and now you can run your Services like EC2 instances there. Customers use the best practices by deploying their application into multiple Availability Zones so if one zone is fail another zone still works and their application gets high availability.
 
@@ -69,22 +69,25 @@ The most used or fundamental service in AWS is AWS VPC (Amazon Virtual Private C
 
 You can deploy many VPCs in one account and region but there is a default limit to deploy VPCs. You can only deploy 5 VPCs in one region but that's a **Soft Limit** and that can be raised when you asked AWS to raise them for you.
 
-![[AWS VPC Subnets EC2.png]]
+![AWS VPC Subnets EC2](https://user-images.githubusercontent.com/85181215/191955147-009c57fd-942e-4d0c-8145-9b78fe0ab6be.png)
+
 
 Now we have our VPC setup and our Instances are launched so now we are moving to other AWS Services that are used in the VPC and that have their specific purposes.
 
 **1. Flow Logs**
 Flow Logs are the AWS services that can be enabled in the VPC that can keep track of all the sessions and traffic going in and out from the VPC and their EC2 Instances. So we can see it or visualize it for other security and analytical purposes.
 
-![[AWS Flow Logs.png]]
+![AWS Flow Logs](https://user-images.githubusercontent.com/85181215/191955229-5bff7073-21d5-49be-9282-262f2765b91e.png)
 
 Each business has multiple AWS accounts and each account has multiple AWS VPCs and subnets. To get log data in all of them we have to enable Flow logs in each of them. Flow Logs are just a stream of text data so every VPC has its own flow log data. So if we want to Aggregate all of them for visualization and search for a specific event we use different AWS services for that.  
 
-![[AWS Flow Logs Aggregation.png]]
+![AWS Flow Logs Aggregation](https://user-images.githubusercontent.com/85181215/191955269-54ebd032-2a4f-4f48-ac93-1a6913f91a89.png)
+
 
 In the above image, you can see all the AWS services that are used in data aggregation. The step for data aggregation and visualization by AWS looks like this.
 
-![[AWS Flow Logs Aggregation Services steps.png]]
+![AWS Flow Logs Aggregation Services steps](https://user-images.githubusercontent.com/85181215/191955291-d62dc3b8-7524-47e3-bb5d-0211885d088e.png)
+
 
 **2. Elastic Network Interface (ENI)**
 Every Computer Required **Network Interface Card (NIC)** card to talk and connect with other computers in the network so EC2 instances are not different they also need NIC like thing but in AWS we called it **Elastic Network Interface (ENI)**. When you create an EC2 Instance ENI will automatically assign to that instance and get the IP address from the subnet range they were attached to. You can create your own ENI and assign them IP Addresses manually and assign that to your EC2 instance.  We called it Elastic because it can be detached and attached to other EC2 Instances. When you detach ENI and connect to other instances then all the configurations applied in that ENI will remain the same so the instance that attaches that ENI has the same network configuration they were detached.
