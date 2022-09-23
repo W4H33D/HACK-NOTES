@@ -236,32 +236,40 @@ The thing we can do is make a new subnet in the same VPC and route their traffic
 ## AWS Wavelength Zones
 The Wavelength Zone is like the Local Zone that extends the AWS region to the user but this time they are for Mobile Users through wireless carriers. As mobile users traffic goes to different wireless carriers and then goes to the AWS Datacenter because of that face very high latency and low throughput.
 
-![[AWS Wavelength Wireless Carrier.png]]
+![AWS Wavelength Wireless Carrier](https://user-images.githubusercontent.com/85181215/191956718-e1e1dbb5-b125-4900-8af3-4dd7f2dae214.png)
+
 So wavelength zone makes the Availability Zone that builds inside the wireless carrier network. Because of that, you can launch your instance inside the carrier's network and now mobile users get low latency and high throughput.
 
-![[AWS Wavelength Zone.png]]
+![AWS Wavelength Zone](https://user-images.githubusercontent.com/85181215/191956738-07c60215-4da8-42a0-b703-940c31ec229b.png)
+
 Same thing we did in a local zone not all the AWS services available there so we can do the same things to create VPC subnets in the wavelength zone and connect all of them using VPC peering.
 
 ## AWS Outpost
 We mentioned earlier that we can connect the On-Prem data center using DX but to get high throughput and low latency we can use AWS Outpost. AWS Outpost allows you to run AWS Services i.e EC2 instances in the AWS racks that can be installed in the customer's On-Prem Network to provide low latency. This is also like a Local Zone that can extend AWS Region. All the concepts we explain for creating new subnets and connecting them through peering can be applied here also. 
-![[AWS Outposts.png]]
+
+![AWS Outposts](https://user-images.githubusercontent.com/85181215/191956787-cd898c44-2a2d-4da8-a8b7-0ed74d23d8a1.png)
+
 
 ## AWS Transit Gateway - Operational and Visibility Challenges
-![[AWS TGW Operational Chanllenges.png]]
+
+![AWS TGW Operational Chanllenges](https://user-images.githubusercontent.com/85181215/191956841-973d64aa-db90-4b40-883d-110bc1e4ccbf.png)
+
 
 ## AWS Transit Gateway Connect
 AWS Transit Gateway Connect (TGW Connect) is the service that lets you connect through other VPCs using Generic Routing Encapsulations (GRE) Tunnel. **GRE is a protocol for wrapping data packets inside secondary data packets in order to set up a direct point-to-point network connection.** The Question is why do we want to do that? So the answer is to consider we have a software-defined network in the VPC. A software Defined Network is a virtual Network that is running inside our EC2 instance. So how we can connect through that network and exchange routes so to do that we use Transit Gateway Connect. First, we do is to connect all our VPCs and the VPCs that have **Network Virtual Appliance (NVA)** to TGW like we did before nothing has been changed there. After that, we defined the TGW Connect Attachment when we did that we do TGW Connect peering that made the GRE tunnel between NVA and TGW. In that tunnel, we run BGP to routes. One thing to note in GRE tunnel TGW can propagate more routes than we see before. In Simple TGW to only propagate 20 routes but in GRE tunnel you can propagate up to 5000 routes and NVA propagates up to 1000 routes.
 
-![[AWS TGW Connect.png]]
+![AWS TGW Connect](https://user-images.githubusercontent.com/85181215/191956883-9403ac89-e57c-41c4-87f2-dc9645ab1036.png)
+
 
 TGW Connect support Direct Connect (DX) to connect our VPC to our On-Prem Data centers. So In Simple DX connection, we have only 100 route propagation to our VPC and only 20 routes propagation from our On-Prem data center but with the help of TGW Connect, we can get more route propagation. We just follow the same steps to create GRE Tunnel as with did above and in the GRE we run BGP to share routes with more route propagation. They add a little more complexity but we get more routes.
 
-![[AWS TGW Connect On-Prem.png]]
+![AWS TGW Connect On-Prem](https://user-images.githubusercontent.com/85181215/191956945-a4617219-af79-49bd-9b8e-0152fe5bf229.png)
+
 
 ## AWS Cloud WAN
 AWS Cloud WAN is the service that helps you to create Cloud WAN without all the complexity you get when configuring TGW or VPC isolation etc. AWS Cloud WAN does some of the configurations you did before for you automatically and helps you to use AWS as a global WAN for all of your remote sites and VPCs. What Cloud WAN do is orchestrate the logical segmentation and isolation of your VPC environment and also orchestrate your network peering between different regions. What you have to do is to make a JavaScript Object Notation(JSON) policy where you defined your zones, policies, etc and Cloud WAN does that for you. The downside of that is you again have less visibility. One last thing I have to mention AWS Cloud WAN is not free.
 
-![[AWS Cloud WAN.png]]
+![AWS Cloud WAN](https://user-images.githubusercontent.com/85181215/191956990-de2a5d7a-e8ea-43df-8c48-8400a77a76b2.png)
 
 ## Other AWS Network Services
 - **AWS Elastic Load Balancing:** Provide Load Balancing Service that manages traffic flow to get high availability.
