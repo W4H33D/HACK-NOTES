@@ -97,7 +97,9 @@ Some Common ENI Properties you should know are the following.
 - You can have multiple ENI attached to your EC2 Instance and the number of ENI you can have depends on the EC2 Instance type and size you are using.
 - One thing to remember in ENI is that ENI and EC2 instances mush is in the same Availability Zone. If your EC2 instance lies in a different AZ and your ENI from a different AZ then you cannot connect that to each other, you will get an error if you want to do that.
 - Each ENI has an identifier and you will use that Identifier in the VPC Route Table and for some other services we discussed just in a moment.
-![[AWS Elastic Network Interface.png]]
+
+![AWS Elastic Network Interface](https://user-images.githubusercontent.com/85181215/191955468-4b7e53ef-1bcb-4b68-89f3-f305aedfb297.png)
+
 
 **3. VPC Security Groups and NACLs**
 - **Security Group**
@@ -109,16 +111,19 @@ Some Common ENI Properties you should know are the following.
 - **Network Access Control List (NACL)**
 	NACL is similar to Security Group but they protect the VPC Subnet instead of the EC2 instance.  They are also created by default when you create a subnet and by default, they allow all inbound and outbound traffic. NACL has both allow and deny rules. NACLs are like stateless firewalls so they don't keep track of full connection. You can make NACL rules by defining which IP Address and Range to allow and which to deny.
 
-![[AWS Security Group.png]]
+![AWS Security Group](https://user-images.githubusercontent.com/85181215/191955530-ce808bd5-8289-4650-8f80-5ba763bb7825.png)
+
 
 **Example**
 Let's take an example case 1 where Instance B wants to talk to instance C in the private subnet 1. So by default, all the traffic going out to the instance is allowed so instance B successfully communicate to instance C as they allow all the traffic from security group 1.
 
-![[AWS Security Group Example case 1.png]]
+![AWS Security Group Example case 1](https://user-images.githubusercontent.com/85181215/191955560-e12512bd-0625-40e7-af6a-41383554273e.png)
+
 
 Now case 2 where Instance C talks to instance D that is from a different Subnet. First Instance C Traffic comes to NACL that by default allows all inbound and outbound rules so they pass the traffic to NACL of subnet 2 and they also allow it because of the default rule and pass that traffic to security group 3 of subnet 2. Now Security Group 3 denies all inbound traffic by default so they don't allow it.
 
-![[AWS Security Group Example case 2.png]]
+![AWS Security Group Example case 2](https://user-images.githubusercontent.com/85181215/191955594-1b084bac-7182-4fd8-acec-03c4acda14b1.png)
+
 
 **4. VPC Route Tables**
 VPC Route Tables are like simple router route tables there they route traffic to one network and subnet to other networks/subnets. In AWS you must have a routing table attached to the subnet. Like we said before Route Table has a list of destination addresses and they route your traffic according to that list. By Default Route Table only have a local route `10.1.0.0/16 -> local`. That basically says if any traffic that has addresses in this range is local so they route that traffic locally to its subnet.
@@ -130,18 +135,24 @@ Common things to Remember about Route Tables are the following.
 	- **Internet Gateway  (IGW)**
 		Internet Gateway is an AWS service that provides internet connection in the VPC.
 
-![[AWS Route Table.png]]
+![AWS Route Table](https://user-images.githubusercontent.com/85181215/191955645-655343c1-6b79-43c0-af3b-acfecd18ee6f.png)
 	- **NAT Gateways**
 		If we want one subnet can use the internet but we still want to make that subnet private we use NAT Gateway. NAT (Network Address Translation) Gateway is the AWS service that provides Internet connection but in a private manner like our home computers. In thing to note is that NAT Gateway always connects to the Public Subnet we have to make a route table entry that has a default route to NAT Gateway.
-![[AWS NAT Gateway.png]]
+
+![AWS NAT Gateway](https://user-images.githubusercontent.com/85181215/191955723-f827ab7b-f77d-451a-9893-227aa6a65eab.png)
+
 		**Security Considerations in NAT/IGW**
 		NAT and IGW will allow any traffic without any questions. So that makes a security risk because you didn't want to blindly trust all the IP Addresses and domains so for better security we have to use other AWS services instead of NAT and IGW.
 
 The AWS add some new capabilities in Route Tables and that is a most specific route which can add route entry that is pointing to the next hop, in that case, ENI of subnet 2 will ENI acts like an intermediary system and forward the traffic to another system in that subnet. So using that you can talk to other instances in different subnets.
-![[AWS Most Specific Route Table .png]]
+
+![AWS Most Specific Route Table ](https://user-images.githubusercontent.com/85181215/191955812-e53f7a75-568c-432b-aaca-70acd6b94a8e.png)
+
 
 In AWS configured Route Tables look like the following.
-![[AWS Configured Route Tables.png]]
+
+![AWS Configured Route Tables](https://user-images.githubusercontent.com/85181215/191955856-ff583e04-cf37-48bd-a1ee-51cbaf98336e.png)
+
 
 **5. Virtual Private Gateway (VGW)**
 The VGW is the AWS Service that is used to connect VPC to our On-premises data center using a private network connection. To connect our VPC to the On-premises data center we create and assign a VGW in our VPC. When we do that we can configure site-to-site IPSec VPN to connect that VPN to our on-prem data center router or customer gateway(cgw). When our VPN is set up we can run Border Gateway Protocol (BGP) to share/propagate routes to our VPC. By route propagation all the route VGW learn are directly added to our route tables.
@@ -150,12 +161,17 @@ Some important considerations for VGW are the following.
 - The IPSec VPN tunnel has only 1.25 Gbps throughput and that's also a hard limit. You can create more the one IPSec VPN tunnel and do some load balancing to increase throughput but that makes your network more complex and difficult to troubleshoot.
 
 When you set up VGW correctly then you can access your VPC EC2 instance through your On-Prem Data centers.
-![[AWS VGW.png]]
+
+![AWS VGW](https://user-images.githubusercontent.com/85181215/191955907-ae447329-7c19-47d0-8476-f9d08966528e.png)
+
 
 **6. AWS Direct Connect (DX)**
 Above we use VGW to connect our On-Prem Data Center to our VPC but that's the one way to do that. The other way to connect our On-Prem Data Center to our VPC is to use AWS Direct Connect. AWS Direct Connect is a service where you can connect your On-Prem data center to your AWS VPC using a physical dedicated connection to the AWS Direct Connect facility. You have to buy the fiber connection that has a connection speed of 1, 10, or 100 Gbps depending on the Direct Connect Location you are using, and connect that with your on-prem router and AWS Direct Connect facility. So when you did that configure a Direct Connect Gateway (DXGW) from your AWS console and connect that with the AWS Direct Connect facility and then associate your DXGW with your VPC Virtual Gateway (VGW). When all that is set up then we run BGP to propagate routes that have the same 100 route hard limit as discussed before. So if we run more than 100 routes it will break everything. The only advantage of DX is they have more speed than IPSec VPN.
+
 ![[AWS Direct Connect.png]]
+
 They also have one disadvantage, In IPSec VPN we have end-to-end encryption but In the DX connect we don't have that. We can enable encryption but that's limited because DX uses only MACSec Encryption. MACSec encryption only encrypts data when they travel through the cable and when they come in the Direct Connect facility they will decrypt and all the data are in plain text in that facility. When they travel through the facility then they are again encrypted with MACSec and decrypted in Direct Connect Gateway.
+
 ![[AWS Direct Connect MACSec.png]]
 So from the security standpoint, we should use end-to-end encryption but the only downside to that is only 1.25 Gbps speed so we have to trade off with security and performance.
 
