@@ -1,6 +1,6 @@
 # AWS 101
 
-The First thing you need to do anything in AWS is an AWS account so you have to [Register/sign up](https://portal.aws.amazon.com/billing/signup) for an account in AWS. To make an account in AWS you need an email valid address and credit card information with you follow the instruction to make an account.
+The First thing you need to do anything in AWS is an AWS account so you have to [Register/sign up](https://portal.aws.amazon.com/billing/signup) for an account in AWS. To make an account in AWS you need an valid email address and credit card information with that follow form instruction to make an account.
 
 ![AWS SignUp Form](https://user-images.githubusercontent.com/85181215/191954517-e8c8802f-ea61-434b-a0b8-83af0dd47811.png)
 
