@@ -90,13 +90,14 @@ $ john <shadow_file_here> --wordlist=fasttrack.txt
 ```
 
 
-==Here is a fun Tip about WireShark If you just click on the packet where the attacker interacts with the bash rev-shell like that packet where the attacker uses the "ls" command. Right Click on that packet and it will open a drop-down menu, You will see an option named "Follow" Hover into that option and you will see a Sub-drop-down menu. You will see an option "TCP stream" Click on it or You can just use "Ctrl+Alt+Shift+T" on that packet and you will see all the bash command the attacker uses in a clean bash like format==
+> Here is a fun Tip about WireShark If you just click on the packet where the attacker interacts with the bash rev-shell like that packet where the attacker uses the "ls" command. Right Click on that packet and it will open a drop-down menu, You will see an option named "Follow" Hover into that option and you will see a Sub-drop-down menu. You will see an option "TCP stream" Click on it or You can just use "Ctrl+Alt+Shift+T" on that packet and you will see all the bash command the attacker uses in a clean bash like format
 
 ## Task 2  Research - Analyze the code
 
 Now that you've found the code for the backdoor, it's time to analyze it.
 
 Q1: What's the default hash for the backdoor?
+
 **Hint: Variable values!**
 
 ```
@@ -107,10 +108,12 @@ A: bdd04d9bb7621687f5df9001f5098eb22bf19eac4c2c30b6f23efed4d24807277d0f8bfccb9e7
 
 In the previous Task, we found out that the attacker downloads a backdoor file from the github using the following link: https://github.com/NinjaJc01/ssh-backdoor
 
-Now time to analyze that code go to that link there is a source code file name "main. go". There you will see a variable name "hash string" In that variable you will find the default hash for the backdoor
+Now time to analyze that code go to that link there is a source code file name "`main. go`". There you will see a variable name "hash string" In that variable you will find the default hash for the backdoor
 
 Q2: What's the hard-coded salt for the backdoor?
+
 **Hint: If you read the code, you can fairly quickly see what salt is provided to the function call.**
+
 ```
 A:  1c362db832f3f864c8c2fe05f2002a05
 ```
@@ -120,6 +123,7 @@ A:  1c362db832f3f864c8c2fe05f2002a05
 Read all the code if you know a little bit of programming you get a rough idea of what the code does. Read all the way to the end and in the last line, you will find the salt hash that is used in the backdoor. Just keep in mind the position of the salt variable in the functions that you see above the code and you will find the salt hash for sure.
 
 Q3: What was the hash that the attacker used? - go back to the PCAP for this!
+
 **Hint: Reading the code, the -a or --a [hash] flag can be used to supply a hash at runtime.**
 
 ```
@@ -130,7 +134,8 @@ A: 6d05358f090eea56a238af02e47d44ee5489d234810ef6240280857ec69712a3e5e370b8a4189
 
 Now come back again to wireshark and start your packet analyses after the backdoor is downloaded or you can Follow the attacker Bash TCP stream. In wire shark packet number `3479` you can see the attacker use the"`./backdoor`" command and pass the `-a` flag and after that attacker put its own hash. see it and submit it
 
-Q4: Crack the hash using rockyou and a cracking tool of your choice. What's the password?
+Q4: Crack the hash using `rockyou.txt` and a cracking tool of your choice. What's the password?
+
 **Hint: It's salted, so make sure you use the correct mode. This also means crackstation etc won't work.**
 
 Now we have to crack the hash attacker used in the ssh backdoor so we just use any regular cracking tool for this but I use Hashcat there. So first we have to know what type of hash the attacker uses so do that we can use the hash-identifier tool you can install it with the following command
@@ -169,12 +174,12 @@ Least Possible Hashs:
 ----------------------------------------------------------------------------------
 ```
 
-As you can see this is SHA-512 hash but we can't crack it using the online tool because they add salt to that hash so we have to use our cracking tools like hashcat and john.
+As you can see this is `SHA-512` hash but we can't crack it using the online tool because they add salt to that hash so we have to use our cracking tools like hashcat and john.
 
 So now follow the following steps to crack that hash using hash cat 
 
-Step 1: 
-- In the first step, we have to find the hashcat code for sha512 with salt so to do that we use the following command
+**Step 1:**
+- In the first step, we have to find the hashcat code for `sha512` with salt so to do that we use the following command
 
 ```bash
 $ hashcat --help | grep sha512
@@ -204,7 +209,7 @@ So following that format in our hash file, we write the attacker hash and the ba
 
 So that's it now we use the following hashcat command to crack that hash 
 
-Command: 
+**Command:**
 
 ```
 $ hashcat -m 1710 -a 0 hash rockyou.txt -o cracked
@@ -224,6 +229,7 @@ A: november16
 
 
 ## Task 3  Attack - Get back in!
+
 Now that the incident is investigated, Paradox needs someone to take control of the Overpass production server again.
 
 There are flags on the box that Overpass can't afford to lose by formatting the server!
@@ -289,6 +295,7 @@ A: thm{d119b4fa8c497ddb0525f7ad200e6567}
 When you have access to the system go to the home directory of the `James` user and in their home directory you will find the `user.txt` file that contains the flag and submit it to THM
 
 Q4: What's the root flag?
+
 **Hint: Did the attacker leave a quick way for them to get root again without a password?**
 
 ```
